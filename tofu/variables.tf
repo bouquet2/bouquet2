@@ -18,7 +18,7 @@ variable "controlplane_url" {
 
 variable "firewall_rules" {
   description = "Firewall rules"
-  type        = map(object({
+  type = map(object({
     name        = string
     description = string
     protocol    = string

@@ -36,40 +36,40 @@ workers = {
 
 # Firewall rules
 firewall_rules = {
-    1 = {
-        name        = "HTTPS (TCP)",
-        description = "Allow HTTPS traffic",
-        protocol    = "tcp",
-        direction   = "in",
-        port        = "443",
-        cloud_type  = "both",
-        source_ips  = [
-            "0.0.0.0/0",
-            "::/0"
-        ]
-    },
-    2 = {
-        name        = "HTTPS (UDP)",
-        description = "Allow HTTPS traffic",
-        protocol    = "udp",
-        direction   = "in",
-        port        = "443",
-        cloud_type  = "both",
-        source_ips  = [
-            "0.0.0.0/0",
-            "::/0"
-        ]
-    },
-    3 = {
-        name        = "Tailscale (UDP)",
-        description = "Allow direct Tailscale traffic",
-        protocol    = "udp",
-        direction   = "in",
-        port        = "41641",
-        cloud_type  = "both",
-        source_ips  = [
-            "0.0.0.0/0",
-            "::/0"
-        ]
-    }
+  1 = {
+    name        = "HTTPS (TCP)",
+    description = "Allow HTTPS traffic",
+    protocol    = "tcp",
+    direction   = "in",
+    port        = "443",
+    cloud_type  = "both",
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  },
+  2 = {
+    name        = "HTTPS (UDP)",
+    description = "Allow HTTPS traffic",
+    protocol    = "udp",
+    direction   = "in",
+    port        = "443",
+    cloud_type  = "both",
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  },
+  3 = {
+    name        = "Tailscale (UDP)",
+    description = "Allow direct Tailscale traffic",
+    protocol    = "udp",
+    direction   = "in",
+    port        = "41641",
+    cloud_type  = "both",
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
 }
