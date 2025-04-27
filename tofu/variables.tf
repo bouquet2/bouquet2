@@ -104,35 +104,48 @@ variable "hcloud_token" {
 
 # bouquet:oci
 variable "oci_tenancy_ocid" {
-  description = "OCI tenancy OCID"
+  description = "OCI tenancy OCID you can get at https://cloud.oracle.com/tenancy"
   sensitive   = true
   type        = string
   default     = null
 }
 
 variable "oci_user_ocid" {
-  description = "OCI user OCID"
+  description = "OCI user OCID you can get at https://cloud.oracle.com/identity/domains/my-profile"
   sensitive   = true
   type        = string
   default     = null
 }
 
 variable "oci_fingerprint" {
-  description = "OCI fingerprint"
+  description = "OCI fingerprint you can get at https://cloud.oracle.com/identity/domains/my-profile/api-keys"
   sensitive   = true
   type        = string
   default     = null
 }
 
 variable "oci_private_key_path" {
-  description = "OCI private key path"
+  description = "OCI private key path you can get at https://cloud.oracle.com/identity/domains/my-profile/api-keys"
   sensitive   = true
   type        = string
   default     = null
 }
 
 variable "oci_region" {
-  description = "OCI region"
+  description = "OCI region you can get at https://cloud.oracle.com/regions"
+  type        = string
+  default     = null
+}
+
+variable "oci_compartment_ocid" {
+  description = "OCI compartment OCID you can get at https://cloud.oracle.com/identity/compartments"
+  sensitive   = true
+  type        = string
+  default     = null
+}
+
+variable "oci_talos_image_oci_bucket_url" {
+  description = "OCI Talos image bucket URL you can get at https://cloud.oracle.com/object-storage/buckets"
   type        = string
   default     = null
 }

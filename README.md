@@ -8,6 +8,9 @@ Sequel to [bouquet](https://github.com/kreatoo/bouquet) that uses Talos Linux in
 
 ## DRAWBACKS
 * When `tofu destroy` is run, it won't destroy the Tailscale entries. This is because the entry is not made by OpenTofu itself, but comes from the node. [See this issue](https://github.com/tailscale/terraform-provider-tailscale/issues/68) for more information.
+* OCI part does not support multi-arch. As it is not needed for this project, I will not add it.
+* OCI part does not support being added as a control plane node. As it is not needed for this project, I will not add it. Recommend using Hetzner Cloud or another provider that is easier to handle.
+  * The OCI part is mainly to use the Always Free Tier which is why these parts are not added. I don't trust it enough to use it as a control plane node. If that changes, I will add it.
 
 ## Setup
 
