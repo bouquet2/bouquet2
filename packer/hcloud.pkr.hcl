@@ -21,7 +21,7 @@ variable "arch" {
 
 variable "server_type" {
   type    = string
-  default = "cax21"
+  default = "cax11"
 }
 
 variable "server_location" {

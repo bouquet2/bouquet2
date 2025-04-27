@@ -22,7 +22,7 @@ Sequel to [bouquet](https://github.com/kreatoo/bouquet) that uses Talos Linux in
     * Region: Helsinki
     * OS: Talos Linux
     * Role: Control plane node
-    * Machine: CAX21 (Ampere Altra) with 4 cores, 8GB RAM, 80GB storage
+    * Machine: CAX11 (Ampere Altra) with 2 cores, 4GB RAM, 40GB storage
  
 * lily
     * Cloud: Hetzner Cloud

@@ -5,9 +5,9 @@ control_planes = {
   1 = {
     name        = "rose-new"
     cloud_type  = "hetzner",
-    server_type = "cax21",
+    server_type = "cax11",
     location    = "hel1",
-    image       = "233648394",
+    image       = "233700094",
     taints      = [],
   }
 }
@@ -18,7 +18,7 @@ workers = {
     cloud_type  = "hetzner",
     server_type = "cax21",
     location    = "fsn1",
-    image       = "233648394",
+    image       = "233700094",
     taints      = [],
   },
   2 = {
