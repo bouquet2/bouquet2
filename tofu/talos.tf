@@ -1,0 +1,66 @@
+resource "talos_machine_secrets" "this" {
+  talos_version = var.talos_version
+}
+
+data "talos_machine_configuration" "controlplane" {
+  for_each = {
+    for k, v in var.control_planes : k => v
+  }
+
+  cluster_name       = var.cluster_name
+  cluster_endpoint   = "https://${var.controlplane_url}:6443"
+  machine_type       = "controlplane"
+  machine_secrets    = talos_machine_secrets.this.machine_secrets
+  talos_version      = var.talos_version
+  config_patches     = [
+      templatefile("${path.module}/templates/tailscale-config.yaml.tmpl", {
+          TS_AUTHKEY = tailscale_tailnet_key.auth.key,
+          TS_HOSTNAME = each.value.name
+      })
+  ]
+}
+
+data "talos_client_configuration" "this" {
+  cluster_name         = var.cluster_name
+  client_configuration = talos_machine_secrets.this.client_configuration
+  endpoints = [
+    var.controlplane_url
+  ]
+}
+
+resource "talos_machine_bootstrap" "bootstrap" {
+  client_configuration = talos_machine_secrets.this.client_configuration
+  node                 = data.tailscale_device.control_planes["1"].addresses[0]
+}
+
+data "talos_machine_configuration" "worker" {
+  for_each = {
+    for k, v in var.workers : k => v
+  }
+
+  cluster_name       = var.cluster_name
+  cluster_endpoint   = "https://${var.controlplane_url}:6443"
+  machine_type       = "worker"
+  machine_secrets    = talos_machine_secrets.this.machine_secrets
+  talos_version      = var.talos_version
+  config_patches     = [
+      templatefile("${path.module}/templates/tailscale-config.yaml.tmpl", {
+          TS_AUTHKEY = tailscale_tailnet_key.auth.key,
+          TS_HOSTNAME = each.value.name
+        })
+  ]
+
+  depends_on = [
+    talos_machine_bootstrap.bootstrap,
+    cloudflare_dns_record.control_planes
+  ]
+}
+
+resource "talos_cluster_kubeconfig" "this" {
+  client_configuration = talos_machine_secrets.this.client_configuration
+  node                 = data.tailscale_device.control_planes["1"].addresses[0]
+  depends_on = [
+    cloudflare_dns_record.control_planes,
+    talos_machine_bootstrap.bootstrap
+  ]
+}
