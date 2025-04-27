@@ -91,5 +91,5 @@ graph LR
 
     %% Connections between subgraphs
     Storage <--> Core
-    Core --> Ingress
+    Core <--> Ingress
 ```
