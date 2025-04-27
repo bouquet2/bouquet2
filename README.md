@@ -1,10 +1,13 @@
 <img src="https://raw.githubusercontent.com/xelab04/ServiceLogos/refs/heads/main/Kubernetes/Kubernetes%20V3.png"  height="100">
 
-## bouquet2: Talos boogaloo
+## bouquet2
 Sequel to [bouquet](https://github.com/kreatoo/bouquet) that uses Talos Linux instead of k0s.
 
 > [!WARNING]
 > This is a work in progress and is not deployed yet.
+
+## DRAWBACKS
+* When `tofu destroy` is run, it won't destroy the Tailscale entries. This is because the entry is not made by OpenTofu itself, but comes from the node. [See this issue](https://github.com/tailscale/terraform-provider-tailscale/issues/68) for more information.
 
 ## Setup
 
