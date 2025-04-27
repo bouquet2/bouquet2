@@ -7,16 +7,16 @@ data "talos_machine_configuration" "controlplane" {
     for k, v in var.control_planes : k => v
   }
 
-  cluster_name       = var.cluster_name
-  cluster_endpoint   = "https://${var.controlplane_url}:6443"
-  machine_type       = "controlplane"
-  machine_secrets    = talos_machine_secrets.this.machine_secrets
-  talos_version      = var.talos_version
-  config_patches     = [
-      templatefile("${path.module}/templates/tailscale-config.yaml.tmpl", {
-          TS_AUTHKEY = tailscale_tailnet_key.auth.key,
-          TS_HOSTNAME = each.value.name
-      })
+  cluster_name     = var.cluster_name
+  cluster_endpoint = "https://${var.controlplane_url}:6443"
+  machine_type     = "controlplane"
+  machine_secrets  = talos_machine_secrets.this.machine_secrets
+  talos_version    = var.talos_version
+  config_patches = [
+    templatefile("${path.module}/templates/tailscale-config.yaml.tmpl", {
+      TS_AUTHKEY  = tailscale_tailnet_key.auth.key,
+      TS_HOSTNAME = each.value.name
+    })
   ]
 }
 
@@ -38,16 +38,16 @@ data "talos_machine_configuration" "worker" {
     for k, v in var.workers : k => v
   }
 
-  cluster_name       = var.cluster_name
-  cluster_endpoint   = "https://${var.controlplane_url}:6443"
-  machine_type       = "worker"
-  machine_secrets    = talos_machine_secrets.this.machine_secrets
-  talos_version      = var.talos_version
-  config_patches     = [
-      templatefile("${path.module}/templates/tailscale-config.yaml.tmpl", {
-          TS_AUTHKEY = tailscale_tailnet_key.auth.key,
-          TS_HOSTNAME = each.value.name
-        })
+  cluster_name     = var.cluster_name
+  cluster_endpoint = "https://${var.controlplane_url}:6443"
+  machine_type     = "worker"
+  machine_secrets  = talos_machine_secrets.this.machine_secrets
+  talos_version    = var.talos_version
+  config_patches = [
+    templatefile("${path.module}/templates/tailscale-config.yaml.tmpl", {
+      TS_AUTHKEY  = tailscale_tailnet_key.auth.key,
+      TS_HOSTNAME = each.value.name
+    })
   ]
 
   depends_on = [

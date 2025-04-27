@@ -1,59 +1,59 @@
 # bouquet:cluster
 variable "talos_version" {
-    description = "Talos version"
-    type        = string
-    default     = "v1.9.2"
+  description = "Talos version"
+  type        = string
+  default     = "v1.9.2"
 }
 
 variable "cluster_name" {
-    description = "Cluster name"
-    type        = string
-    default     = "bouquet2"
+  description = "Cluster name"
+  type        = string
+  default     = "bouquet2"
 }
 
 variable "controlplane_url" {
-    description = "Control plane URL"
-    type        = string
+  description = "Control plane URL"
+  type        = string
 }
 
 variable "workers" {
-    description = "Worker definition"
-    type = map(object({
-      name         = string
-      cloud_type   = string
-      server_type  = string
-      location     = optional(string) # Shouldn't be required for OCI
-      taints       = list(string)
-      image        = optional(string) # Shouldn't be required for OCI
+  description = "Worker definition"
+  type = map(object({
+    name        = string
+    cloud_type  = string
+    server_type = string
+    location    = optional(string) # Shouldn't be required for OCI
+    taints      = list(string)
+    image       = optional(string) # Shouldn't be required for OCI
 
-      # OCI-specific attributes (optional)
-      ocpus          = optional(number)
-      memory_in_gb   = optional(number)
-      boot_volume_in_gb = optional(number)
-    }))
+    # OCI-specific attributes (optional)
+    ocpus             = optional(number)
+    memory_in_gb      = optional(number)
+    boot_volume_in_gb = optional(number)
+  }))
 }
 
 variable "control_planes" {
-    description = "Control plane definition"
-    type = map(object({
-      name         = string
-      cloud_type   = string
-      server_type  = string
-      location     = optional(string) # Shouldn't be required for OCI
-      taints       = optional(list(string))
-      image        = optional(string) # Shouldn't be required for OCI
-      
-      # OCI-specific attributes (optional)
-      ocpus          = optional(number)
-      memory_in_gb   = optional(number)
-      boot_volume_in_gb = optional(number)
-    }))
+  description = "Control plane definition"
+  type = map(object({
+    name        = string
+    cloud_type  = string
+    server_type = string
+    location    = optional(string) # Shouldn't be required for OCI
+    taints      = optional(list(string))
+    image       = optional(string) # Shouldn't be required for OCI
+
+    # OCI-specific attributes (optional)
+    ocpus             = optional(number)
+    memory_in_gb      = optional(number)
+    boot_volume_in_gb = optional(number)
+  }))
 }
 
 # bouquet:tailnet
 variable "tailnet" {
-    description = "Tailnet name"
-    type        = string
+  description = "Tailnet name"
+  type        = string
 }
 
 variable "tailnet_oauth_client_id" {

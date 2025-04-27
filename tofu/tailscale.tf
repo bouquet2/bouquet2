@@ -5,11 +5,11 @@ provider "tailscale" {
 }
 
 resource "tailscale_tailnet_key" "auth" {
-  reusable = true
-  ephemeral = false
+  reusable      = true
+  ephemeral     = false
   preauthorized = true
-  expiry = 3600
-  description = "Terraform generated key"
+  expiry        = 3600
+  description   = "Terraform generated key"
   tags = [
     "tag:k8s-operator",
     "tag:servers"
