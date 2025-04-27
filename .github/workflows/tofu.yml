@@ -7,6 +7,7 @@ on:
   pull_request:
     paths:
       - 'tofu/**/*.tf'
+  workflow_dispatch:
 
 permissions:
   contents: read
