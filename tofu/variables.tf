@@ -86,6 +86,40 @@ variable "hcloud_token" {
   description = "Hetzner Cloud token"
   sensitive   = true
   type        = string
+  default     = null
 }
 
 # bouquet:oci
+variable "oci_tenancy_ocid" {
+  description = "OCI tenancy OCID"
+  sensitive   = true
+  type        = string
+  default     = null
+}
+
+variable "oci_user_ocid" {
+  description = "OCI user OCID"
+  sensitive   = true
+  type        = string
+  default     = null
+}
+
+variable "oci_fingerprint" {
+  description = "OCI fingerprint"
+  sensitive   = true
+  type        = string
+  default     = null
+}
+
+variable "oci_private_key_path" {
+  description = "OCI private key path"
+  sensitive   = true
+  type        = string
+  default     = null
+}
+
+variable "oci_region" {
+  description = "OCI region"
+  type        = string
+  default     = null
+}
