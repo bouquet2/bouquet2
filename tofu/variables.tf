@@ -16,6 +16,19 @@ variable "controlplane_url" {
   type        = string
 }
 
+variable "firewall_rules" {
+  description = "Firewall rules"
+  type        = map(object({
+    name        = string
+    description = string
+    protocol    = string
+    direction   = string
+    port        = number
+    cloud_type  = string
+    source_ips  = list(string)
+  }))
+}
+
 variable "workers" {
   description = "Worker definition"
   type = map(object({
