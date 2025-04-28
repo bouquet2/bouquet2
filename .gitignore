@@ -2,4 +2,5 @@
 .terraform*
 secrets.tfvars
 secrets*
+oracle-arm64*
 *.tfstate*
