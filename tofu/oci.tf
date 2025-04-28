@@ -8,14 +8,21 @@ provider "oci" {
 
 locals {
   instance_mode = "PARAVIRTUALIZED"
+  has_oci_or_oracle = length([
+    for worker in values(var.workers) : worker
+    if worker.cloud_type == "oci" || worker.cloud_type == "oracle"
+  ]) > 0
 }
 
 data "oci_identity_availability_domains" "availability_domains" {
+  count = local.has_oci_or_oracle ? 1 : 0
   #Required
   compartment_id = var.oci_tenancy_ocid
 }
 
 resource "oci_core_image" "talos_image" {
+  count = local.has_oci_or_oracle ? 1 : 0
+
   #Required
   compartment_id = var.oci_compartment_ocid
 
@@ -39,12 +46,12 @@ resource "oci_core_image" "talos_image" {
 
 resource "oci_core_shape_management" "image_shape" {
   for_each = {
-    for k, v in var.control_planes : k => v
+    for k, v in var.workers : k => v
     if v.cloud_type == "oci" || v.cloud_type == "oracle"
   }
   # Required
   compartment_id = var.oci_compartment_ocid
-  image_id       = oci_core_image.talos_image.id
+  image_id       = oci_core_image.talos_image[0].id
   shape_name     = each.value.server_type
 }
 
@@ -67,7 +74,7 @@ resource "oci_core_instance" "worker" {
   }
 
   display_name        = each.value.name
-  availability_domain = data.oci_identity_availability_domains.availability_domains.availability_domains[each.key % length(data.oci_identity_availability_domains.availability_domains.availability_domains)].name
+  availability_domain = data.oci_identity_availability_domains.availability_domains[0].availability_domains[each.key % length(data.oci_identity_availability_domains.availability_domains[0].availability_domains)].name
 
   create_vnic_details {
     assign_public_ip = true
@@ -87,7 +94,7 @@ resource "oci_core_instance" "worker" {
 
   source_details {
     source_type             = "image"
-    source_id               = oci_core_image.talos_image.id
+    source_id               = oci_core_image.talos_image[0].id
     boot_volume_size_in_gbs = each.value.boot_volume_in_gb
   }
   preserve_boot_volume = false
