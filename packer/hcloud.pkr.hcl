@@ -33,14 +33,7 @@ variable "hcloud_token" {
 }
 
 locals {
-  # Schematic
-  # ---
-  # customization:
-  #  systemExtensions:
-  #      officialExtensions:
-  #          - siderolabs/qemu-guest-agent
-  #          - siderolabs/tailscale
-  image = "https://factory.talos.dev/image/7d4c31cbd96db9f90c874990697c523482b2bae27fb4631d5583dcd9c281b1ff/${var.talos_version}/hcloud-${var.arch}.raw.xz"
+  image = "https://factory.talos.dev/image/8cdf4cd0a3a9fa4771aab65437032804940f2115b1b1ef6872274dde261fa319/${var.talos_version}/hcloud-${var.arch}.raw.xz"
 }
 
 source "hcloud" "talos" {

@@ -13,7 +13,7 @@ ARCH="arm64"
 TALOS_VERSION="v1.9.2"
 OCI_VM_SIZE="VM.Standard.A1.Flex"
 
-[ ! -f "oracle-$ARCH.tar.xz" ] && aria2c "https://factory.talos.dev/image/7d4c31cbd96db9f90c874990697c523482b2bae27fb4631d5583dcd9c281b1ff/$TALOS_VERSION/oracle-$ARCH.raw.xz"
+[ ! -f "oracle-$ARCH.tar.xz" ] && aria2c "https://factory.talos.dev/image/8cdf4cd0a3a9fa4771aab65437032804940f2115b1b1ef6872274dde261fa319/$TALOS_VERSION/oracle-$ARCH.raw.xz"
 
 xz -d "oracle-$ARCH.raw.xz"
 

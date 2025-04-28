@@ -3,18 +3,18 @@ cluster_name = "bouquet2"
 
 # Round Robin URL for the control plane
 # Control planes will always use Round Robin.
-controlplane_url = "controlplane.internal.kreato.dev"
+controlplane_url = "controlplane.alpha.internal.kreato.dev"
 
 # Base URL for Worker nodes
 # Example: rose-new would be rose-new.internal.kreato.dev
-worker_url_internal_base = "internal.kreato.dev"
+worker_url_internal_base = "alpha.internal.kreato.dev"
 
 # Example: rose-new would be rose-new.kreato.dev
-worker_url_external_base = "kreato.dev"
+worker_url_external_base = "alpha.kreato.dev"
 
 # Round Robin URL configuration
 # This is the URL that you should use to expose services to the outside world.
-rr_url = "rr.internal.kreato.dev"
+rr_url = "rr.alpha.internal.kreato.dev"
 
 # Control plane and worker node configuration
 control_planes = {
@@ -23,7 +23,7 @@ control_planes = {
     cloud_type  = "hetzner",
     server_type = "cax11",
     location    = "hel1",
-    image       = "233700094",
+    image       = "233953667",
     taints      = [],
   }
 }
@@ -34,18 +34,18 @@ workers = {
     cloud_type  = "hetzner",
     server_type = "cax21",
     location    = "fsn1",
-    image       = "233700094",
+    image       = "233953667",
     taints      = [],
   },
-  2 = {
-    name              = "tulip-new"
-    cloud_type        = "oci",
-    server_type       = "VM.Standard.A1.Flex",
-    ocpus             = 4,
-    memory_in_gb      = 24,
-    boot_volume_in_gb = 200,
-    taints            = [],
-  }
+#  2 = {
+#    name              = "tulip-new"
+#    cloud_type        = "oci",
+#    server_type       = "VM.Standard.A1.Flex",
+#    ocpus             = 4,
+#    memory_in_gb      = 24,
+#    boot_volume_in_gb = 200,
+#    taints            = [],
+#  }
 }
 
 # Firewall rules
