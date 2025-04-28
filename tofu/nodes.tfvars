@@ -1,6 +1,20 @@
-# Cluster name and control plane URL
-cluster_name     = "bouquet2"
+# Cluster name, control plane URL and worker URL configuration
+cluster_name = "bouquet2"
+
+# Round Robin URL for the control plane
+# Control planes will always use Round Robin.
 controlplane_url = "controlplane.internal.kreato.dev"
+
+# Base URL for Worker nodes
+# Example: rose-new would be rose-new.internal.kreato.dev
+worker_url_internal_base = "internal.kreato.dev"
+
+# Example: rose-new would be rose-new.kreato.dev
+worker_url_external_base = "kreato.dev"
+
+# Round Robin URL configuration
+# This is the URL that you should use to expose services to the outside world.
+rr_url = "rr.internal.kreato.dev"
 
 # Control plane and worker node configuration
 control_planes = {

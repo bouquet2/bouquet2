@@ -16,6 +16,21 @@ variable "controlplane_url" {
   type        = string
 }
 
+variable "rr_url" {
+  description = "RoundRobin URL"
+  type        = string
+}
+
+variable "worker_url_internal_base" {
+  description = "Internal base URL for workers"
+  type        = string
+}
+
+variable "worker_url_external_base" {
+  description = "External base URL for workers"
+  type        = string
+}
+
 variable "firewall_rules" {
   description = "Firewall rules"
   type = map(object({
