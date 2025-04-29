@@ -4,13 +4,13 @@ default:
 [confirm("Are you sure you want to deploy? This will overwrite ~/.kube/config")]
 deploy:
     cd tofu && \
-    tofu apply -var-file=nodes.tfvars -var-file=secrets.tfvars -auto-approve && \ # Apply infrastructure changes
-    tofu output -raw kubeconfig > ~/.kube/config # Update kubeconfig
+    tofu apply -var-file=nodes.tfvars -var-file=secrets.tfvars -auto-approve && \
+    tofu output -raw kubeconfig > ~/.kube/config
 
 [confirm("Are you sure you want to destroy? This will delete all resources!")]
 destroy:
     cd tofu && \
-    tofu destroy -var-file=nodes.tfvars -var-file=secrets.tfvars -auto-approve # Destroy infrastructure
+    tofu destroy -var-file=nodes.tfvars -var-file=secrets.tfvars -auto-approve
 
 [confirm("Are you sure you want to build the image?")]
 hcloud-image-build:
@@ -20,5 +20,5 @@ hcloud-image-build:
 [confirm("Are you sure you want to deploy manifests?")]
 deploy-manifests:
     cd manifests && \
-    kubectl kustomize --enable-helm | kubectl apply -f - # Apply manifests
+    kubectl kustomize --enable-helm | kubectl apply -f -
 
