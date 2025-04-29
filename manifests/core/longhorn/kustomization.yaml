@@ -1,0 +1,9 @@
+namespace: longhorn-system
+
+resources:
+  - https://raw.githubusercontent.com/longhorn/longhorn/v1.8.1/deploy/longhorn.yaml
+
+patches:
+  - path: namespace.yaml
+#- networkpolicy.yaml
+#  - ingressroute.yaml
