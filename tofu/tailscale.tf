@@ -40,7 +40,6 @@ data "tailscale_device" "workers" {
 
   depends_on = [
     tailscale_tailnet_key.auth,
-    hcloud_server.worker,
-    oci_core_instance.worker
+    hcloud_server.worker
   ]
 }

@@ -56,14 +56,9 @@ variable "workers" {
     name        = string
     cloud_type  = string
     server_type = string
-    location    = optional(string) # Shouldn't be required for OCI
+    location    = optional(string)
     taints      = list(string)
-    image       = optional(string) # Shouldn't be required for OCI
-
-    # OCI-specific attributes (optional)
-    ocpus             = optional(number)
-    memory_in_gb      = optional(number)
-    boot_volume_in_gb = optional(number)
+    image       = optional(string)
   }))
 }
 
@@ -73,14 +68,9 @@ variable "control_planes" {
     name        = string
     cloud_type  = string
     server_type = string
-    location    = optional(string) # Shouldn't be required for OCI
+    location    = optional(string)
     taints      = optional(list(string))
-    image       = optional(string) # Shouldn't be required for OCI
-
-    # OCI-specific attributes (optional)
-    ocpus             = optional(number)
-    memory_in_gb      = optional(number)
-    boot_volume_in_gb = optional(number)
+    image       = optional(string)
   }))
 }
 
@@ -123,50 +113,3 @@ variable "hcloud_token" {
   default     = null
 }
 
-# bouquet:oci
-variable "oci_tenancy_ocid" {
-  description = "OCI tenancy OCID you can get at https://cloud.oracle.com/tenancy"
-  sensitive   = true
-  type        = string
-  default     = null
-}
-
-variable "oci_user_ocid" {
-  description = "OCI user OCID you can get at https://cloud.oracle.com/identity/domains/my-profile"
-  sensitive   = true
-  type        = string
-  default     = null
-}
-
-variable "oci_fingerprint" {
-  description = "OCI fingerprint you can get at https://cloud.oracle.com/identity/domains/my-profile/api-keys"
-  sensitive   = true
-  type        = string
-  default     = null
-}
-
-variable "oci_private_key_path" {
-  description = "OCI private key path you can get at https://cloud.oracle.com/identity/domains/my-profile/api-keys"
-  sensitive   = true
-  type        = string
-  default     = null
-}
-
-variable "oci_region" {
-  description = "OCI region you can get at https://cloud.oracle.com/regions"
-  type        = string
-  default     = null
-}
-
-variable "oci_compartment_ocid" {
-  description = "OCI compartment OCID you can get at https://cloud.oracle.com/identity/compartments"
-  sensitive   = true
-  type        = string
-  default     = null
-}
-
-variable "oci_talos_image_oci_bucket_url" {
-  description = "OCI Talos image bucket URL you can get at https://cloud.oracle.com/object-storage/buckets"
-  type        = string
-  default     = null
-}

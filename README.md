@@ -26,14 +26,6 @@ Sequel to [bouquet](https://github.com/kreatoo/bouquet) that uses Talos Linux in
 
 #### Installation
 ```bash
-### Generating the image (OCI)
-cd oci
-sh oci.sh
-
-cd ..
-
-# Upload the resulting image (oracle-arm64.oci) to an OCI storage bucket and get its URL
-
 ### Generating the image (Hetzner Cloud)
 cd packer
 cp secrets.hcl.example secrets.hcl
@@ -69,12 +61,12 @@ just destroy
 
 ### Servers
 
-* tulip
-    * Cloud: OCI (Oracle Cloud Infrastructure)
-    * Region: Frankfurt
+* iris
+    * Cloud: Hetzner Cloud 
+    * Region: Nuremberg
     * OS: Talos Linux
     * Role: Agent node
-    * Machine: VM.Standard.A1.Flex (Ampere Altra) with 4 cores, 24GB RAM, 200GB storage
+    * Machine: CAX11 (Ampere Altra) with 2 cores, 4GB RAM, 40GB storage
 
 * rose
     * Cloud: Hetzner Cloud
@@ -108,10 +100,10 @@ graph LR
         core_talos_api_up["Talos API (TCP 50000*)"]:::dashed
         core_tailscale["Tailscale (siderolabs/tailscale)"]
         core_talos_api_down["Talos API (TCP 50000*)"]:::dashed
-        core_tulip["tulip (worker)"]
+        core_iris["iris (worker)"]
         core_lily["lily (worker)"]
 
-        core_tulip --> core_talos_api_down
+        core_iris --> core_talos_api_down
         core_lily --> core_talos_api_down
         core_talos_api_down --> core_tailscale
         core_tailscale --> core_talos_api_up
