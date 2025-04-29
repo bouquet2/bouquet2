@@ -13,7 +13,6 @@ Sequel to [bouquet](https://github.com/kreatoo/bouquet) that uses Talos Linux in
   * The OCI part is mainly to use the Always Free Tier which is why these parts are not added. I don't trust it enough to use it as a control plane node. If that changes, I will add it.
 * Control plane and worker internal roundrobin load-balancing does not support automatic failover.
   * I will add a Deployment that watches over the Ingress resources and removes the DNS record of the node if it is down.
-* The OpenEBS part is not added yet. I will add it when I push this to production.
 
 ## Setup
 
@@ -71,7 +70,7 @@ graph LR
 
     subgraph Storage [storage]
         direction TB
-        storage_openebs{"OpenEBS"}:::dashed
+        storage_openebs{"Longhorn"}:::dashed
         storage_velero["backup (velero)"]:::dashed
         storage_s3["S3 (Hetzner<br>Object Storage)"]
 
