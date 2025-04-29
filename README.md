@@ -81,10 +81,10 @@ just destroy
 
 ### System Architecture Overview
 ```mermaid
-%%{init: {'theme': 'dark', 'themeVariables': {'mainBkg': '#282a36', 'nodeBorder': '#f8f8f2', 'textColor': '#f8f8f2', 'lineColor': '#f8f8f2', 'primaryColor': '#282a36', 'primaryTextColor': '#f8f8f2', 'primaryBorderColor': '#f8f8f2'}}}%%
 graph LR
     classDef dashed stroke-dasharray: 5 5, stroke-width:1px
-
+    %% User Context:
+    %% 1. [2025-04-10]. User knows Ansible
     %% - All nodes run Talos Linux
     %% - Will be multi-cloud
     %% - Will be expandable
@@ -99,7 +99,6 @@ graph LR
         core_talos_api_down["Talos API (TCP 50000*)"]:::dashed
         core_iris["iris (worker)"]
         core_lily["lily (worker)"]
-
         core_iris --> core_talos_api_down
         core_lily --> core_talos_api_down
         core_talos_api_down --> core_tailscale
@@ -109,11 +108,11 @@ graph LR
 
     subgraph Storage [storage]
         direction TB
-        storage_openebs{"Longhorn"}:::dashed
+        storage_longhorn{"Longhorn"}:::dashed
+        %% Kept Longhorn as per original chart text
         storage_velero["backup (velero)"]:::dashed
         storage_s3["S3 (Oracle<br>MinIO Instance)"]
-
-        storage_openebs -.-> storage_velero
+        storage_longhorn -.-> storage_velero
         storage_velero -.-> storage_s3
     end
 
@@ -125,8 +124,8 @@ graph LR
         ingress_yes["yes (remove<br>DNS record<br>of node)"]
         ingress_no["no (continue<br>serving<br>connection)"]
         ingress_note(["(traefik as IngressController)"])
-        style ingress_note fill:none,stroke:none,color:#aaa %% Make note less prominent
-
+        style ingress_note fill:none,stroke:none,color:#aaa
+        %% Make note less prominent
         ingress_rr -.-> ingress_watcher
         ingress_watcher --> ingress_check
         ingress_check -- yes --> ingress_yes
@@ -136,7 +135,22 @@ graph LR
         ingress_no --> ingress_note
     end
 
+    subgraph InternalNetworking [Internal Networking Flow]
+        direction TB
+        int_net_node[Node]
+        int_net_coredns[CoreDNS]
+        int_net_cilium["Cilium (Both as CNI<br>and as kube-proxy<br>replacement)"]
+        int_net_pod[Pod]
+        %% Use dashed lines for first two hops as in the source image
+        int_net_node -.-> int_net_coredns
+        int_net_coredns -.-> int_net_cilium
+        %% Use solid line for the last hop as in the source image
+        int_net_cilium --> int_net_pod
+    end
+
     %% Connections between subgraphs
     Storage <--> Core
     Core <--> Ingress
+    %% Show that Internal Networking runs *within* the Core nodes and relates to Pods
+    Core -- "runs components like" --> InternalNetworking
 ```
