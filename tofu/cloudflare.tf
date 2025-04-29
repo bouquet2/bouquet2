@@ -31,7 +31,7 @@ resource "cloudflare_dns_record" "oci_workers_rr" {
   content = oci_core_instance.worker[each.key].public_ip
   comment = each.value.name
   type    = "A"
-  ttl     = 3600
+  ttl     = 1
   proxied = true
 }
 
@@ -44,7 +44,7 @@ resource "cloudflare_dns_record" "hetzner_workers_rr" {
   content = hcloud_server.worker[each.key].ipv4_address
   comment = each.value.name
   type    = "A"
-  ttl     = 3600
+  ttl     = 1
   proxied = true
 }
 
@@ -57,7 +57,8 @@ resource "cloudflare_dns_record" "oci_workers_external" {
   content = oci_core_instance.worker[each.key].public_ip
   comment = each.value.name
   type    = "A"
-  ttl     = 3600
+  ttl     = 1
+  proxied = true
 }
 
 resource "cloudflare_dns_record" "hetzner_workers_external" {
@@ -69,5 +70,6 @@ resource "cloudflare_dns_record" "hetzner_workers_external" {
   content = hcloud_server.worker[each.key].ipv4_address
   comment = each.value.name
   type    = "A"
-  ttl     = 3600
+  ttl     = 1
+  proxied = true
 }

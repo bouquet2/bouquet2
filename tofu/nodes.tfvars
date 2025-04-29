@@ -37,15 +37,15 @@ workers = {
     image       = "233953667",
     taints      = [],
   },
-#  2 = {
-#    name              = "tulip-new"
-#    cloud_type        = "oci",
-#    server_type       = "VM.Standard.A1.Flex",
-#    ocpus             = 4,
-#    memory_in_gb      = 24,
-#    boot_volume_in_gb = 200,
-#    taints            = [],
-#  }
+  #  2 = {
+  #    name              = "tulip-new"
+  #    cloud_type        = "oci",
+  #    server_type       = "VM.Standard.A1.Flex",
+  #    ocpus             = 4,
+  #    memory_in_gb      = 24,
+  #    boot_volume_in_gb = 200,
+  #    taints            = [],
+  #  }
 }
 
 # Firewall rules

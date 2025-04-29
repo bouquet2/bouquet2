@@ -5,6 +5,12 @@ variable "talos_version" {
   default     = "v1.9.2"
 }
 
+variable "kubernetes_version" {
+  description = "Kubernetes version"
+  type        = string
+  default     = "v1.32.4"
+}
+
 variable "cluster_name" {
   description = "Cluster name"
   type        = string
