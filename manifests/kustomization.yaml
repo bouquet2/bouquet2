@@ -1,2 +1,4 @@
 resources:
   - core/longhorn
+  - core/argocd
+  - core/traefik

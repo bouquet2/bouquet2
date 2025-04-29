@@ -1,0 +1,21 @@
+deployment:
+  replicas: 1
+
+ports:
+  websecure:
+    hostPort: 443
+    middlewares:
+      - traefik-cloudflare@kubernetescrd
+
+ingressClass:
+  enabled: true
+  isDefaultClass: true
+
+additionalArguments:
+  - --providers.kubernetescrd.allowCrossNamespace=true
+  - --entrypoints.name.http3
+
+tlsStore:
+  default:
+    defaultCertificate:
+        secretName: wildcard-kreato.dev-tls

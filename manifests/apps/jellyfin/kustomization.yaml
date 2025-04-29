@@ -1,0 +1,4 @@
+resources:
+  - app.yaml
+  - networkpolicy.yaml
+  - ingressroute.yaml
