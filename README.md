@@ -32,7 +32,7 @@ sh oci.sh
 
 cd ..
 
-# Upload the resulting image (oracle-arm64.oci) to a storage bucket and get its URL
+# Upload the resulting image (oracle-arm64.oci) to an OCI storage bucket and get its URL
 
 ### Generating the image (Hetzner Cloud)
 cd packer
