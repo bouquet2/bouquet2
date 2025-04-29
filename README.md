@@ -81,7 +81,7 @@ just destroy
     * Region: Helsinki
     * OS: Talos Linux
     * Role: Control plane node
-    * Machine: CAX11 (Ampere Altra) with 2 cores, 4GB RAM, 40GB storage
+    * Machine: CAX21 (Ampere Altra) with 4 cores, 8GB RAM, 80GB storage
  
 * lily
     * Cloud: Hetzner Cloud
