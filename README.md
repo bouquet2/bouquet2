@@ -11,10 +11,61 @@ Sequel to [bouquet](https://github.com/kreatoo/bouquet) that uses Talos Linux in
 * OCI part does not support multi-arch. As it is not needed for this project, I will not add it.
 * OCI part does not support being added as a control plane node. As it is not needed for this project, I will not add it. Recommend using Hetzner Cloud or another provider that is easier to handle.
   * The OCI part is mainly to use the Always Free Tier which is why these parts are not added. I don't trust it enough to use it as a control plane node. If that changes, I will add it.
-* Control plane and worker internal roundrobin load-balancing does not support automatic failover.
+* Worker internal roundrobin load-balancing does not support automatic failover.
   * I will add a Deployment that watches over the Ingress resources and removes the DNS record of the node if it is down.
+  * Control plane node uses KubePrism so that won't be an issue.
 
 ## Setup
+
+### Prerequisites
+* [OpenTofu](https://opentofu.org)
+* [Kubectl](https://kubernetes.io/docs/tasks/tools/)
+* [talosctl](https://www.talos.dev/v1.9/introduction/quickstart/#talosctl)
+* [just](https://github.com/casey/just)
+* [Packer](https://www.packer.io/)
+
+#### Installation
+```bash
+### Generating the image (OCI)
+cd oci
+sh oci.sh
+
+cd ..
+
+# Upload the resulting image (oracle-arm64.oci) to a storage bucket and get its URL
+
+### Generating the image (Hetzner Cloud)
+cd packer
+cp secrets.hcl.example secrets.hcl
+
+# Edit secrets.hcl and add your secrets
+vim secrets.hcl
+
+# Build the image
+cd ..
+just hcloud-image-build
+
+### Deploying the cluster
+cd tofu
+mv secrets.tfvars.example secrets.tfvars
+
+# Edit secrets.tfvars and add your secrets
+vim secrets.tfvars
+
+# Configure nodes (make sure to replace the Image IDs and URLs with the correct ones)
+vim nodes.tfvars
+
+cd ..
+
+just deploy
+
+### Deploying Kubernetes manifests
+just deploy-manifests
+
+### Destroying the cluster
+just destroy
+```
+
 
 ### Servers
 
@@ -38,7 +89,6 @@ Sequel to [bouquet](https://github.com/kreatoo/bouquet) that uses Talos Linux in
     * OS: Talos Linux
     * Role: Agent node
     * Machine: CAX21 (Ampere Altra) with 4 cores, 8GB RAM, 80GB storage
-
 
 ### System Architecture Overview
 ```mermaid

@@ -1,6 +1,7 @@
 .aider*
 .terraform*
 secrets.tfvars
-secrets*
+secrets*.tfvars
+secrets*.hcl
 oracle-arm64*
 *.tfstate*
