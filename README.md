@@ -114,7 +114,7 @@ graph LR
         direction TB
         storage_openebs{"Longhorn"}:::dashed
         storage_velero["backup (velero)"]:::dashed
-        storage_s3["S3 (Hetzner<br>Object Storage)"]
+        storage_s3["S3 (Oracle<br>MinIO Instance)"]
 
         storage_openebs -.-> storage_velero
         storage_velero -.-> storage_s3
