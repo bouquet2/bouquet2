@@ -20,7 +20,8 @@ data "talos_machine_configuration" "controlplane" {
     }),
     templatefile("${path.module}/templates/kubeprism-enable.yaml.tmpl", {}),
     templatefile("${path.module}/templates/longhorn.yaml.tmpl", {}),
-    templatefile("${path.module}/templates/disable-cni.yaml.tmpl", {})
+    templatefile("${path.module}/templates/disable-cni.yaml.tmpl", {}),
+    templatefile("${path.module}/templates/cilium.yaml.tmpl", {})
   ]
 }
 
@@ -55,7 +56,8 @@ data "talos_machine_configuration" "worker" {
     }),
     templatefile("${path.module}/templates/kubeprism-enable.yaml.tmpl", {}),
     templatefile("${path.module}/templates/longhorn.yaml.tmpl", {}),
-    templatefile("${path.module}/templates/disable-cni.yaml.tmpl", {})
+    templatefile("${path.module}/templates/disable-cni.yaml.tmpl", {}),
+    templatefile("${path.module}/templates/cilium.yaml.tmpl", {})
   ]
 
   depends_on = [
