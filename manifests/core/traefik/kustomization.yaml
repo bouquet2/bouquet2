@@ -1,5 +1,18 @@
 resources:
   - namespace.yaml
+  - cloudflare-middleware.yaml
+
+sortOptions:
+  order: legacy
+  legacySortOptions:
+    orderFirst:
+      - Namespace
+      - customResourceDefinition
+    orderLast:
+      - Middleware
+      - TLSStore
+
+namespace: traefik
 
 helmCharts:
   - name: traefik
@@ -7,4 +20,10 @@ helmCharts:
     version: 35.2.0
     releaseName: traefik
     valuesFile: values.yaml
+    namespace: traefik
+
+  - name: traefik-crds
+    repo: https://traefik.github.io/charts
+    version: 1.7.0
+    releaseName: traefik-crds
     namespace: traefik
