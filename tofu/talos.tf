@@ -29,7 +29,7 @@ data "talos_client_configuration" "this" {
   cluster_name         = var.cluster_name
   client_configuration = talos_machine_secrets.this.client_configuration
   endpoints = [
-    var.controlplane_url
+    data.tailscale_device.control_planes["1"].addresses[0]
   ]
 }
 
