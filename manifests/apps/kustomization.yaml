@@ -1,0 +1,5 @@
+resources:
+  - mastodon/
+
+sortOptions:
+  order: fifo
