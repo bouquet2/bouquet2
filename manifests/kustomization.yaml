@@ -1,5 +1,6 @@
 resources:
   - core/
+  - apps/
 
 sortOptions:
   order: fifo
