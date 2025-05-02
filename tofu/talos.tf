@@ -21,7 +21,8 @@ data "talos_machine_configuration" "controlplane" {
     templatefile("${path.module}/templates/kubeprism-enable.yaml.tmpl", {}),
     templatefile("${path.module}/templates/longhorn.yaml.tmpl", {}),
     templatefile("${path.module}/templates/disable-cni.yaml.tmpl", {}),
-    templatefile("${path.module}/templates/cilium.yaml.tmpl", {})
+    templatefile("${path.module}/templates/cilium.yaml.tmpl", {}),
+    templatefile("${path.module}/templates/kubespan-enable.yaml.tmpl", {})
   ]
 }
 
@@ -50,14 +51,11 @@ data "talos_machine_configuration" "worker" {
   talos_version      = var.talos_version
   kubernetes_version = var.kubernetes_version
   config_patches = [
-    templatefile("${path.module}/templates/tailscale-config.yaml.tmpl", {
-      TS_AUTHKEY  = tailscale_tailnet_key.auth.key,
-      TS_HOSTNAME = each.value.name
-    }),
     templatefile("${path.module}/templates/kubeprism-enable.yaml.tmpl", {}),
     templatefile("${path.module}/templates/longhorn.yaml.tmpl", {}),
     templatefile("${path.module}/templates/disable-cni.yaml.tmpl", {}),
-    templatefile("${path.module}/templates/cilium.yaml.tmpl", {})
+    templatefile("${path.module}/templates/cilium.yaml.tmpl", {}),
+    templatefile("${path.module}/templates/kubespan-enable.yaml.tmpl", {})
   ]
 
   depends_on = [

@@ -87,5 +87,17 @@ firewall_rules = {
       "0.0.0.0/0",
       "::/0"
     ]
-  }
+  },
+  4 = {
+    name        = "KubeSpan (UDP)",
+    description = "Allow direct KubeSpan traffic",
+    protocol    = "udp",
+    direction   = "in",
+    port        = "51820",
+    cloud_type  = "both",
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+}
 }

@@ -29,17 +29,3 @@ data "tailscale_device" "control_planes" {
     hcloud_server.control_plane
   ]
 }
-
-data "tailscale_device" "workers" {
-  for_each = {
-    for key, value in var.workers : key => value
-  }
-
-  hostname = each.value.name
-  wait_for = "60s"
-
-  depends_on = [
-    tailscale_tailnet_key.auth,
-    hcloud_server.worker
-  ]
-}
