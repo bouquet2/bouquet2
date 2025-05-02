@@ -27,6 +27,12 @@ variable "rr_url" {
   type        = string
 }
 
+variable "rr_internal_url" {
+  description = "RoundRobin Internal URL"
+  type        = string
+}
+
+
 variable "worker_url_internal_base" {
   description = "Internal base URL for workers"
   type        = string
