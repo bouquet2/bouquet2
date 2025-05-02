@@ -5,4 +5,5 @@ secrets*.tfvars
 secrets*.hcl
 oracle-arm64*
 *.tfstate*
+*.env
 *charts*
