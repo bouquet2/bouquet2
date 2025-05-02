@@ -1,9 +1,0 @@
-resources:
-  - namespace.yaml
-  - networkpolicy.yaml
-helmCharts:
-  - name: argo-cd
-    repo: https://argoproj.github.io/argo-helm
-    releaseName: argocd
-    version: 7.8.27
-    namespace: argocd
