@@ -1,0 +1,9 @@
+resources:
+  - longhorn/
+  - traefik/
+  - cert-manager/
+  - cloudnative-pg/
+  - dragonfly/
+
+sortOptions:
+  order: fifo
