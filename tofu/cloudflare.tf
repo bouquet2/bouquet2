@@ -22,7 +22,7 @@ resource "cloudflare_dns_record" "workers_internal" {
   ttl      = 3600
 }
 
-resource "cloudflare_dns_record" "hetzner_workers_rr" {
+resource "cloudflare_dns_record" "hetzner_workers_rr_external" {
   for_each = {
     for k, v in var.workers : k => v if v.cloud_type == "hetzner"
   }
@@ -47,3 +47,35 @@ resource "cloudflare_dns_record" "hetzner_workers_external" {
   ttl     = 1
   proxied = true
 }
+
+resource "cloudflare_dns_record" "workers_rr_internal" {
+  for_each = {
+    for k, v in var.workers : k => v
+  }
+  zone_id = var.cloudflare_zone_id
+  name    = var.rr_internal_url
+  content  = data.tailscale_device.workers[each.key].addresses[0]
+  comment = each.value.name
+  type    = "A"
+  ttl     = 1
+}
+
+resource "cloudflare_dns_record" "wildcard_rr_external" {
+  zone_id = var.cloudflare_zone_id
+  name    = "*"
+  content = var.rr_url
+  comment = "Wildcard RR External"
+  type    = "CNAME"
+  ttl     = 1
+  proxied = true
+}
+
+resource "cloudflare_dns_record" "wildcard_rr_internal" {
+  zone_id = var.cloudflare_zone_id
+  name    = "*.internal"
+  content = var.rr_internal_url
+  comment = "Wildcard RR Internal"
+  type    = "CNAME"
+  ttl     = 1
+}
+

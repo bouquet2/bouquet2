@@ -3,23 +3,26 @@ cluster_name = "bouquet2"
 
 # Round Robin URL for the control plane
 # Control planes will always use Round Robin.
-controlplane_url = "controlplane.alpha.internal.kreato.dev"
+controlplane_url = "controlplane.internal.kreato.dev"
 
 # Base URL for Worker nodes
 # Example: rose-new would be rose-new.internal.kreato.dev
-worker_url_internal_base = "alpha.internal.kreato.dev"
+worker_url_internal_base = "internal.kreato.dev"
 
 # Example: rose-new would be rose-new.kreato.dev
-worker_url_external_base = "alpha.kreato.dev"
+worker_url_external_base = "kreato.dev"
 
 # Round Robin URL configuration
 # This is the URL that you should use to expose services to the outside world.
-rr_url = "rr.alpha.internal.kreato.dev"
+rr_url = "lb.kreato.dev"
+
+# This is the URL that you should use to expose internal services.
+rr_internal_url = "lb.internal.kreato.dev"
 
 # Control plane and worker node configuration
 control_planes = {
   1 = {
-    name        = "rose-new"
+    name        = "rose"
     cloud_type  = "hetzner",
     server_type = "cax21",
     location    = "hel1",
@@ -30,7 +33,7 @@ control_planes = {
 
 workers = {
   1 = {
-    name        = "lily-new"
+    name        = "lily"
     cloud_type  = "hetzner",
     server_type = "cax21",
     location    = "fsn1",
