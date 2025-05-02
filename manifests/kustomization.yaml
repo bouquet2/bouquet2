@@ -1,3 +1,7 @@
 resources:
   - core/longhorn
   - core/traefik
+  - core/cert-manager
+
+sortOptions:
+  order: fifo
