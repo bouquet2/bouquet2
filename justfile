@@ -25,5 +25,9 @@ hcloud-image-build:
 [confirm("Are you sure you want to deploy manifests?")]
 deploy-manifests:
     cd manifests && \
-    kubectl kustomize --enable-helm | kubectl apply -f -
+    kubectl kustomize --enable-helm | kubectl apply --force-conflicts --server-side -f -
 
+[confirm("Are you sure you want to destroy manifests?")]
+destroy-manifests:
+    cd manifests && \
+    kubectl kustomize --enable-helm | kubectl delete --force-conflicts --server-side -f -
