@@ -63,7 +63,7 @@ just destroy
     * Region: Nuremberg
     * OS: Talos Linux
     * Role: Agent node
-    * Machine: CAX11 (Ampere Altra) with 2 cores, 4GB RAM, 40GB storage
+    * Machine: CAX21 (Ampere Altra) with 4 cores, 8GB RAM, 80GB storage
 
 * rose
     * Cloud: Hetzner Cloud
