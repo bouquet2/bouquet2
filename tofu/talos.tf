@@ -29,7 +29,7 @@ data "talos_machine_configuration" "controlplane" {
 data "talos_client_configuration" "this" {
   cluster_name         = var.cluster_name
   client_configuration = talos_machine_secrets.this.client_configuration
-  
+
   endpoints = flatten([
     [for cp in data.tailscale_device.control_planes : cp.addresses],
   ])
