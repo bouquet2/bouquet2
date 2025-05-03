@@ -2,7 +2,7 @@
 variable "talos_version" {
   description = "Talos version"
   type        = string
-  default     = "v1.9.2"
+  default     = "v1.10.0"
 }
 
 variable "kubernetes_version" {

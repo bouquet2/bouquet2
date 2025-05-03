@@ -19,6 +19,12 @@ rr_url = "lb.kreato.dev"
 # This is the URL that you should use to expose internal services.
 rr_internal_url = "lb.internal.kreato.dev"
 
+# Talos version (initial)
+talos_version = "v1.10.0"
+
+# Kubernetes version (initial)
+kubernetes_version = "v1.33.0"
+
 # Control plane and worker node configuration
 control_planes = {
   1 = {

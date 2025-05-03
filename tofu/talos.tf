@@ -29,9 +29,15 @@ data "talos_machine_configuration" "controlplane" {
 data "talos_client_configuration" "this" {
   cluster_name         = var.cluster_name
   client_configuration = talos_machine_secrets.this.client_configuration
-  endpoints = [
-    data.tailscale_device.control_planes["1"].addresses[0]
-  ]
+  
+  endpoints = flatten([
+    [for cp in data.tailscale_device.control_planes : cp.addresses],
+  ])
+
+  nodes = flatten([
+    [for cp in data.tailscale_device.control_planes : cp.addresses[0]],
+    [for worker in data.tailscale_device.workers : worker.addresses[0]],
+  ])
 }
 
 resource "talos_machine_bootstrap" "bootstrap" {
@@ -51,6 +57,10 @@ data "talos_machine_configuration" "worker" {
   talos_version      = var.talos_version
   kubernetes_version = var.kubernetes_version
   config_patches = [
+    templatefile("${path.module}/templates/tailscale-config.yaml.tmpl", {
+      TS_AUTHKEY  = var.tailscale_auth_key,
+      TS_HOSTNAME = each.value.name
+    }),
     templatefile("${path.module}/templates/kubeprism-enable.yaml.tmpl", {}),
     templatefile("${path.module}/templates/longhorn.yaml.tmpl", {}),
     templatefile("${path.module}/templates/disable-cni.yaml.tmpl", {}),
