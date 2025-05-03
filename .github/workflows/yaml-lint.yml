@@ -1,0 +1,32 @@
+name: YAML Format and Lint
+on:
+  push:
+    paths:
+      - '**/*.yaml'
+      - '**/*.yml'
+  pull_request:
+    paths:
+      - '**/*.yaml'
+      - '**/*.yml'
+permissions:
+  contents: write
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+      - name: Install yamlfmt
+        run: go install github.com/google/yamlfmt/cmd/yamlfmt@latest
+      - name: Format YAML files
+        run: |
+          export PATH=$PATH:$HOME/go/bin
+          yamlfmt .
+          git restore .github/workflows
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: 'Format YAML files'
+          add: '*.yaml *.yml'

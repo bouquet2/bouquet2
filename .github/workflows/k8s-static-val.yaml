@@ -1,0 +1,77 @@
+name: Kubernetes Static Validation
+on:
+  workflow_run:
+    workflows: ["YAML Format and Lint"]
+    types:
+      - completed
+    branches: [master]
+  workflow_dispatch:
+jobs:
+  validate:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    name: Validate Kubernetes Configuration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v4.0.0
+      - name: Install Helm
+        uses: azure/setup-helm@v4.3.0
+      - name: Install kubeconform
+        run: |
+          wget https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz
+          tar xf kubeconform-linux-amd64.tar.gz
+          sudo mv kubeconform /usr/local/bin
+      - name: Install kube-linter
+        run: |
+          curl -L "https://github.com/stackrox/kube-linter/releases/latest/download/kube-linter-linux.tar.gz" | tar -xz
+          sudo mv kube-linter /usr/local/bin
+      - name: Download Pluto
+        uses: FairwindsOps/pluto/github-action@master
+      - name: Copy example env files for validation
+        run: |
+          cd manifests
+          # Copy example env files to their required locations
+          for dir in core/cert-manager apps/mastodon apps/litellm; do
+            if [ -f "$dir/.env.example" ]; then
+              echo "Copying $dir/.env.example to $dir/.env"
+              cp $dir/.env.example $dir/.env
+            fi
+          done
+
+          # Create generated_values.yaml for robusta
+          mv robusta/generated_values.yaml.example robusta/generated_values.yaml
+      - name: Validate kustomize
+        run: |
+          echo "Validating kustomization files can generate valid YAML..."
+          # Create directory for validation output
+          mkdir -p .manifests
+
+          # Test individual components with appropriate flags
+          for dir in $(find . -maxdepth 1 -mindepth 1 -type d -not -path "./.*"); do
+            if [ -f "$dir/kustomization.yaml" ]; then
+              echo "Validating $dir"
+              kubectl kustomize --enable-helm $dir > .manifests/$(basename $dir).yaml
+            fi
+          done
+      - name: Validate with kubeconform
+        run: "echo \"Running schema validation with kubeconform...\"\nif [ -n \"$(ls -A .manifests)\" ]; then\n  # Download common CRD schemas to a local directory\n  mkdir -p .crds\n\n  # Download Argo CD CRDs\n  echo \"Downloading Argo CD CRDs...\"\n  curl -s -L https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/crds/application-crd.yaml -o .crds/application-crd.yaml\n  curl -s -L https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/crds/appproject-crd.yaml -o .crds/appproject-crd.yaml\n  \n  # Download cert-manager CRDs\n  echo \"Downloading cert-manager CRDs...\"\n  curl -s -L https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.crds.yaml -o .crds/cert-manager-crds.yaml\n  \n  # Download Traefik CRDs\n  echo \"Downloading Traefik CRDs...\"\n  curl -s -L https://raw.githubusercontent.com/traefik/traefik/v2.10/docs/content/reference/dynamic-configuration/kubernetes-crd-definition-v1.yml -o .crds/traefik-crds.yaml\n  \n  # Run kubeconform with multiple schema sources\n  kubeconform -summary \\\n    -skip CustomResourceDefinition \\\n    -schema-location default \\\n    -schema-location .crds \\\n    -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json' \\\n    .manifests/*.yaml\nelse\n  echo \"No manifests to validate\"\n  exit 1\nfi\n"
+      - name: Check for deprecated APIs
+        run: |
+          echo "Checking for deprecated Kubernetes APIs..."
+          if [ -n "$(ls -A .manifests)" ]; then
+            pluto detect-files -d .manifests
+          else
+            echo "No manifests to check for deprecated APIs"
+            exit 1
+          fi
+      - name: Clean up manifests
+        run: |
+          echo "Cleaning up manifests directory..."
+          rm -rf .manifests
+      - name: Run kube-linter
+        run: |
+          echo "Running kube-linter for best practices..."
+          # Run kube-linter directly on the repository files
+          kube-linter lint . --config .kube-linter.yaml || echo "Linting produced warnings"
