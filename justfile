@@ -1,6 +1,11 @@
 default:
     just --list
 
+plan:
+    cd tofu && \
+    tofu init && \
+    tofu plan -var-file=nodes.tfvars -var-file=secrets.tfvars
+
 [confirm("Are you sure you want to deploy? This will overwrite ~/.kube/config and ~/.talos/config!")]
 deploy:
     cd tofu && \

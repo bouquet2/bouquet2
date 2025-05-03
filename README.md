@@ -4,7 +4,7 @@
 Sequel to [bouquet](https://github.com/kreatoo/bouquet) that uses Talos Linux instead of k0s.
 
 > [!WARNING]
-> This is a work in progress and is not deployed yet.
+> This is a work in progress, and while it is functional, it is not yet fully tested. Please use at your own risk.
 
 ## DRAWBACKS/TODO
 * When `tofu destroy` is run, it won't destroy the Tailscale entries. This is because the entry is not made by OpenTofu itself, but comes from the node. [See this issue](https://github.com/tailscale/terraform-provider-tailscale/issues/68) for more information.
