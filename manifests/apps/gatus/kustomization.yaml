@@ -5,7 +5,6 @@ helmCharts:
     releaseName: gatus
     namespace: gatus
     valuesFile: values.yaml
-
 resources:
   - namespace.yaml
   - networkpolicy.yaml

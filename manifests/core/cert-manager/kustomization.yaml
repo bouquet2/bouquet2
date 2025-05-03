@@ -1,7 +1,6 @@
 resources:
   - issuer.yaml
   - wildcard-cert.yaml
-
 sortOptions:
   order: legacy
   legacySortOptions:
@@ -10,11 +9,9 @@ sortOptions:
       - customResourceDefinition
     orderLast:
       - ClusterIssuer
-      - Certificate 
-
+      - Certificate
 generatorOptions:
   disableNameSuffixHash: true
-
 helmCharts:
   - name: cert-manager
     repo: https://charts.jetstack.io
@@ -23,7 +20,6 @@ helmCharts:
     namespace: traefik
     valuesInline:
       installCRDs: true
-
 secretGenerator:
   - name: cloudflare-api-token-secret
     namespace: traefik

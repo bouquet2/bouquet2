@@ -1,13 +1,11 @@
 resources:
   - namespace.yaml
-
 sortOptions:
   order: legacy
   legacySortOptions:
     orderFirst:
       - Namespace
       - customResourceDefinition
-
 helmCharts:
   - name: cloudnative-pg
     repo: https://cloudnative-pg.github.io/charts

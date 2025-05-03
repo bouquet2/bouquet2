@@ -2,9 +2,7 @@ resources:
   - namespace.yaml
   - networkpolicy.yaml
   - ingressroute.yaml
-
 namespace: jellyfin
-
 helmCharts:
   - name: jellyfin
     repo: https://jellyfin.github.io/jellyfin-helm

@@ -5,6 +5,5 @@ resources:
   - cloudnative-pg/
   - dragonfly/
   - robusta/
-
 sortOptions:
   order: fifo
