@@ -81,6 +81,12 @@ variable "control_planes" {
 }
 
 # bouquet:tailnet
+variable "tailscale_auth_key" {
+  description = "Tailscale auth key"
+  sensitive   = true
+  type        = string
+}
+
 variable "tailnet" {
   description = "Tailnet name"
   type        = string

@@ -40,7 +40,7 @@ resource "cloudflare_dns_record" "hetzner_workers_external" {
 
 resource "cloudflare_dns_record" "wildcard_rr_external" {
   zone_id = var.cloudflare_zone_id
-  name    = "*"
+  name    = "*.${var.worker_url_external_base}"
   content = var.rr_url
   comment = "Wildcard RR External"
   type    = "CNAME"

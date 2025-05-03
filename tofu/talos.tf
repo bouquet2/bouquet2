@@ -15,7 +15,7 @@ data "talos_machine_configuration" "controlplane" {
   kubernetes_version = var.kubernetes_version
   config_patches = [
     templatefile("${path.module}/templates/tailscale-config.yaml.tmpl", {
-      TS_AUTHKEY  = tailscale_tailnet_key.auth.key,
+      TS_AUTHKEY  = var.tailscale_auth_key,
       TS_HOSTNAME = each.value.name
     }),
     templatefile("${path.module}/templates/kubeprism-enable.yaml.tmpl", {}),

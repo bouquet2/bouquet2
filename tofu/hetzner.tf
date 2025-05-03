@@ -39,6 +39,10 @@ resource "hcloud_server" "control_plane" {
     ipv6_enabled = true
   }
 
+  lifecycle {
+    ignore_changes = [user_data]
+  }
+
   depends_on = [
     data.talos_machine_configuration.controlplane
   ]
@@ -62,6 +66,11 @@ resource "hcloud_server" "worker" {
     ipv4_enabled = true
     ipv6_enabled = true
   }
+
+  lifecycle {
+    ignore_changes = [user_data]
+  }
+
   depends_on = [
     data.talos_machine_configuration.worker
   ]
