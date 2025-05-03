@@ -4,6 +4,7 @@ resources:
   - cert-manager/
   - cloudnative-pg/
   - dragonfly/
+  - robusta/
 
 sortOptions:
   order: fifo
