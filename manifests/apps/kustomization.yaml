@@ -1,6 +1,8 @@
 resources:
   - gatus/
   - mastodon/
+  - litellm/
+  - open-webui/
 
 sortOptions:
   order: fifo

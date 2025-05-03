@@ -1,0 +1,16 @@
+resources:
+  - namespace.yaml
+  - copilot-api-data-persistentvolumeclaim.yaml
+  - copilot-api-deployment.yaml
+  - copilot-api-service.yaml
+  - open-webui-data-persistentvolumeclaim.yaml
+  - open-webui-deployment.yaml
+  - open-webui-service.yaml
+  - ingressroute.yaml
+images:
+  - name: ghcr.io/kreatoo/copilot-api-docker
+    newName: ghcr.io/kreatoo/copilot-api-docker
+    newTag: v0.1.1
+  - name: ghcr.io/open-webui/open-webui
+    newName: ghcr.io/open-webui/open-webui
+    newTag: v0.6.5

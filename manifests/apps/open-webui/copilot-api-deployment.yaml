@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: copilot-api
+  name: copilot-api
+  namespace: open-webui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: copilot-api
+  template:
+    metadata:
+      labels:
+        service: copilot-api
+    spec:
+      containers:
+        - image: ghcr.io/kreatoo/copilot-api-docker
+          name: copilot-api
+          command:
+            - bun
+            - run
+            - dist/main.js
+            - start
+          ports:
+            - containerPort: 4141
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /root/.local/share/copilot-api
+              name: copilot-api-data
+      volumes:
+        - name: copilot-api-data
+          persistentVolumeClaim:
+            claimName: copilot-api-data
+      restartPolicy: Always
