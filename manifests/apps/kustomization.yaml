@@ -3,6 +3,7 @@ resources:
   - mastodon/
   - litellm/
   - open-webui/
+  - jellyfin/
 
 sortOptions:
   order: fifo

@@ -1,0 +1,9 @@
+persistence:
+  config:
+    enabled: true
+    accessMode: ReadWriteOnce
+    size: 5Gi
+  media:
+    enabled: true
+    accessMode: ReadWriteOnce
+    size: 10Gi
