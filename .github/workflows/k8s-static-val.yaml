@@ -4,7 +4,7 @@ on:
     workflows: ["YAML Format and Lint"]
     types:
       - completed
-    branches: [master]
+    branches: [main]
   workflow_dispatch:
 jobs:
   validate:
