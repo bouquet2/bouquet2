@@ -1,13 +1,7 @@
 name: Complete Pipeline
 on:
   push:
-    paths:
-      - '**/*.yaml'
-      - '**/*.yml'
   pull_request:
-    paths:
-      - '**/*.yaml'
-      - '**/*.yml'
   workflow_dispatch:
 
 permissions:
@@ -17,6 +11,10 @@ jobs:
   format:
     uses: ./.github/workflows/yaml-lint.yml
     
-  validate:
+  validate-k8s:
     needs: format
     uses: ./.github/workflows/k8s-static-val.yaml
+
+  validate-tofu:
+    needs: format
+    uses: ./.github/workflows/tofu.yml 

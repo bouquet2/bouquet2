@@ -1,13 +1,7 @@
 name: 'OpenTofu'
 
 on:
-  push:
-    paths:
-      - 'tofu/**/*.tf'
-  pull_request:
-    paths:
-      - 'tofu/**/*.tf'
-  workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
@@ -43,7 +37,13 @@ jobs:
 
     # Generates an execution plan for Terraform
     #- name: OpenTofu Plan
-    #  run: tofu plan -input=false
+    #  run: |
+    #    if tofu plan -input=false -detailed-exitcode; then
+    #      echo "OpenTofu plan matches the current state"
+    #    else
+    #      echo "OpenTofu plan does not match the current state"
+    #      exit 1
+    #    fi
     #  working-directory: tofu
 
       # On push to "main", build or change infrastructure according to Terraform configuration files
