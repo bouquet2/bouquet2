@@ -10,6 +10,9 @@ on:
       - '**/*.yml'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   format:
     uses: ./.github/workflows/yaml-lint.yml
