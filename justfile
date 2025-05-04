@@ -4,7 +4,7 @@ default:
 plan:
     cd tofu && \
     tofu init && \
-    tofu plan -var-file=nodes.tfvars -var-file=secrets.tfvars
+    tofu plan -var-file=nodes.tfvars -var-file=secrets.tfvars -detailed-exitcode
 
 [confirm("Are you sure you want to deploy? This will overwrite ~/.kube/config and ~/.talos/config!")]
 deploy:
