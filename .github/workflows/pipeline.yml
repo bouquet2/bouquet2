@@ -1,0 +1,19 @@
+name: Complete Pipeline
+on:
+  push:
+    paths:
+      - '**/*.yaml'
+      - '**/*.yml'
+  pull_request:
+    paths:
+      - '**/*.yaml'
+      - '**/*.yml'
+  workflow_dispatch:
+
+jobs:
+  format:
+    uses: ./.github/workflows/yaml-lint.yml
+    
+  validate:
+    needs: format
+    uses: ./.github/workflows/k8s-static-val.yaml

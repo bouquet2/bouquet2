@@ -1,14 +1,8 @@
 name: Kubernetes Static Validation
 on:
-  workflow_run:
-    workflows: ["YAML Format and Lint"]
-    types:
-      - completed
-    branches: [main]
-  workflow_dispatch:
+  workflow_call:
 jobs:
   validate:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Validate Kubernetes Configuration
     runs-on: ubuntu-latest
     steps:
