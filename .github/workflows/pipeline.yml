@@ -18,3 +18,7 @@ jobs:
   validate-tofu:
     needs: format
     uses: ./.github/workflows/tofu.yml 
+
+  deploy-k8s:
+    needs: validate-k8s
+    uses: ./.github/workflows/deploy-k8s.yml

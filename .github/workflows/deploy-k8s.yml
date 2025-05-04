@@ -1,0 +1,46 @@
+name: Deploy
+on:
+  worklow_run:
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Connect Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:k8s-deploy
+          version: 1.82.5
+          hostname: kreat8s-deploy
+      - name: Install kubectl
+        uses: Azure/setup-kubectl@v4.0.0
+      - name: Install Helm
+        uses: Azure/setup-helm@v4.3.0
+      - name: Add kubeconfig
+        env:
+          KUBECTLCONFFULL: ${{ secrets.KUBECONFIG }}
+        run: |
+          mkdir -p $HOME/.kube
+          echo "$KUBECTLCONFFULL" > $HOME/.kube/config
+      - name: Add .env files
+        env:
+          CERTMANAGERENV: ${{ secrets.CERTMANAGERENV }}
+          MASTODONENV: ${{ secrets.MASTODONENV }}
+          LITELLMENV: ${{ secrets.LITELLMENV }}
+          LONGHORNENV: ${{ secrets.LONGHORNENV }}
+        run: |
+          cd manifests
+          echo "$CERTMANAGERENV" > core/cert-manager/.env
+          echo "$MASTODONENV" > apps/mastodon/.env
+          echo "$LITELLMENV" > apps/litellm/.env
+          echo "$LONGHORNENV" > core/longhorn/.env
+      - name: Add hack for immutable jobs
+        run: |
+          kubectl delete -n mastodon job --all
+      - name: Run Kustomize
+        run: | 
+          cd manifests
+          kubectl kustomize --enable-helm | kubectl apply -f -
