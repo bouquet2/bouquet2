@@ -1,8 +1,11 @@
 <img src="https://raw.githubusercontent.com/xelab04/ServiceLogos/refs/heads/main/Kubernetes/Kubernetes%20V3.png"  height="100">
 
 ## bouquet2
-Sequel to [bouquet](https://github.com/kreatoo/bouquet) that uses Talos Linux instead of k0s.
+![Load Balancer Uptime (7d)](https://status.kreato.dev/api/v1/endpoints/internal_lb/uptimes/7d/badge.svg) ![Load Balancer Uptime (24h)](https://status.kreato.dev/api/v1/endpoints/internal_lb/uptimes/24h/badge.svg) ![Load Balancer Uptime (1h)](https://status.kreato.dev/api/v1/endpoints/internal_lb/uptimes/1h/badge.svg)
 
+Infinitely scalable, multi-cloud, secure and network-agnostic declarative Kubernetes configuration that focuses on stability and simplicity, while not compromising on modularity.
+
+Sequel to [bouquet](https://github.com/kreatoo/bouquet) that uses Talos Linux instead of k0s, Terraform for provisioning resources and many more improvements.
 
 ## DRAWBACKS/TODO
 * When `tofu destroy` is run, it won't destroy the Tailscale entries. This is because the entry is not made by OpenTofu itself, but comes from the node. [See this issue](https://github.com/tailscale/terraform-provider-tailscale/issues/68) for more information.
@@ -15,7 +18,7 @@ Sequel to [bouquet](https://github.com/kreatoo/bouquet) that uses Talos Linux in
 
 ### Prerequisites
 * [OpenTofu](https://opentofu.org)
-* [Kubectl](https://kubernetes.io/docs/tasks/tools/)
+* [kubectl](https://kubernetes.io/docs/tasks/tools/)
 * [talosctl](https://www.talos.dev/v1.9/introduction/quickstart/#talosctl)
 * [just](https://github.com/casey/just)
 * [Packer](https://www.packer.io/)
