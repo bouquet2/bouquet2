@@ -22,3 +22,4 @@ jobs:
   deploy-k8s:
     needs: validate-k8s
     uses: ./.github/workflows/deploy-k8s.yml
+    secrets: inherit
