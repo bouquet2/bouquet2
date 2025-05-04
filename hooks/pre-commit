@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# Pre-commit hook that runs 'just plan' and prevents commit if it fails
+
+if ! just plan; then
+    echo "ERROR: 'just plan' failed with exit code $RESULT"
+    echo "Commit aborted. Please fix the issues before committing."
+    exit 1
+fi
+
+echo "'just plan' completed successfully! Proceeding with commit..."
+exit 0
