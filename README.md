@@ -3,14 +3,13 @@
 ## bouquet2
 Sequel to [bouquet](https://github.com/kreatoo/bouquet) that uses Talos Linux instead of k0s.
 
-> [!WARNING]
-> This is a work in progress, and while it is functional, it is not yet fully tested. Please use at your own risk.
 
 ## DRAWBACKS/TODO
 * When `tofu destroy` is run, it won't destroy the Tailscale entries. This is because the entry is not made by OpenTofu itself, but comes from the node. [See this issue](https://github.com/tailscale/terraform-provider-tailscale/issues/68) for more information.
-* Worker internal roundrobin load-balancing does not support automatic failover.
-  * I will add a Deployment that watches over the Ingress resources and removes the DNS record of the node if it is down.
-  * Control plane node uses KubePrism so that won't be an issue.
+* CI is not finished yet.
+  * OpenTofu workflow does not have plan and apply yet.
+  * K8s manifest deployment is missing entirely.
+* MinIO is not yet set up (on my end).
 
 ## Setup
 
@@ -95,7 +94,7 @@ graph LR
         direction TB
         core_rose["rose (control plane)"]
         core_talos_api_up["Talos API (TCP 50000*)"]:::dashed
-        core_tailscale["Tailscale (siderolabs/tailscale)"]
+        core_tailscale["Tailscale (siderolabs/tailscale) and KubeSpan"]
         core_talos_api_down["Talos API (TCP 50000*)"]:::dashed
         core_iris["iris (worker)"]
         core_lily["lily (worker)"]
