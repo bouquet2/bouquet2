@@ -5,3 +5,11 @@ patches:
   - path: namespace.yaml
 #- networkpolicy.yaml
 #  - ingressroute.yaml
+generatorOptions:
+  disableNameSuffixHash: true
+
+secretGenerator:
+  - name: s3-creds
+    namespace: longhorn-system
+    envs:
+      - .env
