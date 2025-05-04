@@ -1,6 +1,6 @@
 name: Deploy
 on:
-  worklow_run:
+  workflow_run:
 jobs:
   deploy:
     runs-on: ubuntu-latest
