@@ -7,7 +7,6 @@ patches:
 #  - ingressroute.yaml
 generatorOptions:
   disableNameSuffixHash: true
-
 secretGenerator:
   - name: s3-creds
     namespace: longhorn-system
