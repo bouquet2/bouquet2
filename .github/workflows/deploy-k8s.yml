@@ -42,7 +42,7 @@ jobs:
           kubectl delete -n mastodon job --all
       - name: Install Just
         run: |
-          curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /usr/bin --tag 1.40.0
+          curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | sudo bash -s -- --to /usr/bin --tag 1.40.0
 
       - name: Run Kustomize
         run: just --yes deploy-manifests 
