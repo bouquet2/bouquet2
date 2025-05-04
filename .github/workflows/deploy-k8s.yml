@@ -13,7 +13,7 @@ jobs:
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:k8s-deploy
-          version: 1.82.5
+          version: latest
           hostname: kreat8s-deploy
       - name: Install kubectl
         uses: Azure/setup-kubectl@v4.0.0
@@ -40,7 +40,9 @@ jobs:
       - name: Add hack for immutable jobs
         run: |
           kubectl delete -n mastodon job --all
+      - name: Install Just
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /usr/bin --tag 1.40.0
+
       - name: Run Kustomize
-        run: | 
-          cd manifests
-          kubectl kustomize --enable-helm | kubectl apply -f -
+        run: just --yes deploy-manifests 
