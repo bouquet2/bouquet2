@@ -7,9 +7,9 @@ spec:
   type: ClusterIP
   clusterIP: None
   ports:
-  - port: 9000 
-    targetPort: 9000
-    name: api
-  - port: 9001 
-    targetPort: 9001
-    name: console
+    - port: 9000
+      targetPort: 9000
+      name: api
+    - port: 9001
+      targetPort: 9001
+      name: console

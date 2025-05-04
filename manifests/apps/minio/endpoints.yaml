@@ -15,6 +15,6 @@ ports:
     port: 9001
 endpoints:
   - addresses:
-    - "100.65.112.62" # tulip
+      - "100.65.112.62" # tulip
     conditions:
       ready: true

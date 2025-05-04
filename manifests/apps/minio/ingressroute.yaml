@@ -10,7 +10,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`s3.kreato.dev`) 
+      match: Host(`s3.kreato.dev`)
       priority: 10
       services:
         - kind: Service
