@@ -5,7 +5,7 @@
 
 Infinitely scalable, multi-cloud, secure and network-agnostic declarative Kubernetes configuration that focuses on stability and simplicity, while not compromising on modularity.
 
-Sequel to [bouquet](https://github.com/kreatoo/bouquet) that uses Talos Linux instead of k0s, Terraform for provisioning resources and many more improvements.
+Sequel to [bouquet](https://github.com/kreatoo/bouquet) that uses Talos Linux instead of k0s, OpenTofu for provisioning resources and many more improvements.
 
 ## DRAWBACKS/TODO
 * When `tofu destroy` is run, it won't destroy the Tailscale entries. This is because the entry is not made by OpenTofu itself, but comes from the node. [See this issue](https://github.com/tailscale/terraform-provider-tailscale/issues/68) for more information.
