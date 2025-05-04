@@ -76,7 +76,7 @@ data "talos_machine_configuration" "worker" {
 
 resource "talos_cluster_kubeconfig" "this" {
   client_configuration = talos_machine_secrets.this.client_configuration
-  node                 = data.tailscale_device.control_planes["1"].addresses[0]
+  node                 = var.controlplane_url
   depends_on = [
     cloudflare_dns_record.control_planes,
     talos_machine_bootstrap.bootstrap
