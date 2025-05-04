@@ -11,7 +11,6 @@ Sequel to [bouquet](https://github.com/kreatoo/bouquet) that uses Talos Linux in
 * When `tofu destroy` is run, it won't destroy the Tailscale entries. This is because the entry is not made by OpenTofu itself, but comes from the node. [See this issue](https://github.com/tailscale/terraform-provider-tailscale/issues/68) for more information.
 * CI is not finished yet.
   * K8s manifest deployment is missing entirely.
-* MinIO is not yet set up (on my end).
 
 ## Setup
 

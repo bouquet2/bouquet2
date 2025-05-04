@@ -1,0 +1,38 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: minio
+  namespace: minio
+  annotations:
+    cert-manager.io/cluster-issuer: mainissuer
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`s3.kreato.dev`) 
+      priority: 10
+      services:
+        - kind: Service
+          name: minio
+          namespace: minio
+          passHostHeader: true
+          port: 9000
+          scheme: http
+    - kind: Rule
+      match: Host(`bin.kreato.dev`)
+      priority: 20
+      services:
+        - kind: Service
+          name: minio
+          namespace: minio
+          passHostHeader: true
+          port: 9000
+          scheme: http
+      middlewares:
+        - name: point-to-bucket
+          namespace: minio
+  tls:
+    secretName: wildcard-kreato.dev-tls
+    domains:
+      - main: s3.kreato.dev

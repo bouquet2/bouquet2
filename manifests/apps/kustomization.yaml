@@ -4,5 +4,6 @@ resources:
   - litellm/
   - open-webui/
   - jellyfin/
+  - minio/
 sortOptions:
   order: fifo
