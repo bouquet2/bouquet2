@@ -109,10 +109,8 @@ graph LR
         direction TB
         storage_longhorn{"Longhorn"}:::dashed
         %% Kept Longhorn as per original chart text
-        storage_velero["backup (velero)"]:::dashed
         storage_s3["S3 (Oracle<br>MinIO Instance)"]
-        storage_longhorn -.-> storage_velero
-        storage_velero -.-> storage_s3
+        storage_longhorn -.-> storage_s3
     end
 
     subgraph Ingress
