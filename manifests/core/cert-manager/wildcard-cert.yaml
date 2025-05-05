@@ -1,14 +1,14 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: wildcard-kreato.dev
+  name: wildcard-krea.to
   namespace: traefik
 spec:
-  secretName: wildcard-kreato.dev-tls
+  secretName: wildcard-krea.to-tls
   dnsNames:
-    - "kreato.dev"
-    - "*.kreato.dev"
-    - "*.internal.kreato.dev"
+    - "krea.to"
+    - "*.krea.to"
+    - "*.internal.krea.to"
   issuerRef:
     name: mainissuer
     kind: ClusterIssuer

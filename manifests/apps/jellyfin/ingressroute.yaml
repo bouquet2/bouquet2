@@ -10,7 +10,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`media.kreato.dev`)
+      match: Host(`media.krea.to`)
       priority: 10
       services:
         - kind: Service
@@ -20,6 +20,6 @@ spec:
           port: 8096
           scheme: http
   tls:
-    secretName: wildcard-kreato.dev-tls
+    secretName: wildcard-krea.to-tls
     domains:
-      - main: media.kreato.dev
+      - main: media.krea.to

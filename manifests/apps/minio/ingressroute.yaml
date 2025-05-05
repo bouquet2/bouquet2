@@ -10,7 +10,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`s3.kreato.dev`)
+      match: Host(`s3.krea.to`)
       priority: 10
       services:
         - kind: Service
@@ -33,6 +33,6 @@ spec:
         - name: point-to-bucket
           namespace: minio
   tls:
-    secretName: wildcard-kreato.dev-tls
+    secretName: wildcard-krea.to-tls
     domains:
-      - main: s3.kreato.dev
+      - main: s3.krea.to

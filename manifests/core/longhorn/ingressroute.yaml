@@ -10,7 +10,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`longhorn.internal.kreato.dev`)
+      match: Host(`longhorn.internal.krea.to`)
       priority: 10
       middlewares:
         - name: traefik-internal-hosts@kubernetescrd
@@ -22,6 +22,6 @@ spec:
           port: 80
           scheme: http
   tls:
-    secretName: wildcard-kreato.dev-tls
+    secretName: wildcard-krea.to-tls
     domains:
-      - main: longhorn.internal.kreato.dev
+      - main: longhorn.internal.krea.to

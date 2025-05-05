@@ -3,21 +3,21 @@ cluster_name = "bouquet2"
 
 # Round Robin URL for the control plane
 # Control planes will always use Round Robin.
-controlplane_url = "controlplane.internal.kreato.dev"
+controlplane_url = "controlplane.internal.krea.to"
 
 # Base URL for Worker nodes
 # Example: rose-new would be rose-new.internal.kreato.dev
-worker_url_internal_base = "internal.kreato.dev"
+worker_url_internal_base = "internal.krea.to"
 
 # Example: rose-new would be rose-new.kreato.dev
-worker_url_external_base = "kreato.dev"
+worker_url_external_base = "krea.to"
 
 # Round Robin URL configuration
 # This is the URL that you should use to expose services to the outside world.
-rr_url = "lb.kreato.dev"
+rr_url = "lb.krea.to"
 
 # This is the URL that you should use to expose internal services.
-rr_internal_url = "lb.internal.kreato.dev"
+rr_internal_url = "lb.internal.krea.to"
 
 # Talos version (initial)
 talos_version = "v1.10.0"

@@ -4,7 +4,7 @@ metadata:
   name: mainissuer
 spec:
   acme:
-    email: kreato@kreato.dev
+    email: kreato@krea.to
     server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: issuer-account-key

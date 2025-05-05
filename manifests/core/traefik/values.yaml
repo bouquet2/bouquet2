@@ -14,4 +14,4 @@ additionalArguments:
 tlsStore:
   default:
     defaultCertificate:
-      secretName: wildcard-kreato.dev-tls
+      secretName: wildcard-krea.to-tls
