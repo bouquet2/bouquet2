@@ -5,4 +5,4 @@ metadata:
   namespace: minio
 spec:
   addPrefix:
-    prefix: /kpkg-repo-bin
+    prefix: /kpkgrepobin
