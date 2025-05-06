@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: n8n
+  name: n8n
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: n8n
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        service: n8n
+    spec:
+      # Add this section to set group permissions for mounted volumes
+      securityContext:
+        fsGroup: 1000  # This is the group ID for the node user in the n8n container
+      containers:
+        - env:
+            - name: GENERIC_TIMEZONE
+              value: Europe/Istanbul
+            - name: N8N_HOST
+              value: n8n.krea.to
+            - name: N8N_PORT
+              value: "5678"
+            - name: N8N_PROTOCOL
+              value: https
+            - name: NODE_ENV
+              value: production
+            - name: WEBHOOK_URL
+              value: https://n8n.krea.to/
+          image: docker.n8n.io/n8nio/n8n
+          name: n8n
+          # Optionally, you can also set container-level security context
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+          ports:
+            - containerPort: 5678
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /home/node/.n8n
+              name: n8n-data
+            - mountPath: /files
+              name: local-files
+      restartPolicy: Always
+      volumes:
+        - name: n8n-data
+          persistentVolumeClaim:
+            claimName: n8n-data
+        - name: local-files
+          persistentVolumeClaim:
+            claimName: local-files

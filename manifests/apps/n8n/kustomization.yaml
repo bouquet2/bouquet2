@@ -1,0 +1,13 @@
+resources:
+  - namespace.yaml
+  - local-files-persistentvolumeclaim.yaml
+  - n8n-data-persistentvolumeclaim.yaml
+  - n8n-deployment.yaml
+  - n8n-service.yaml
+  #- ingressroute.yaml
+
+namespace: n8n
+
+images:
+  - name: docker.n8n.io/n8nio/n8n
+    newTag: 1.91.2
