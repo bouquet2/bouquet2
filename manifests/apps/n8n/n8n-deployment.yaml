@@ -18,7 +18,7 @@ spec:
     spec:
       # Add this section to set group permissions for mounted volumes
       securityContext:
-        fsGroup: 1000  # This is the group ID for the node user in the n8n container
+        fsGroup: 1000 # This is the group ID for the node user in the n8n container
       containers:
         - env:
             - name: GENERIC_TIMEZONE
