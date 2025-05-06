@@ -10,4 +10,4 @@ namespace: n8n
 
 images:
   - name: docker.n8n.io/n8nio/n8n
-    newTag: 1.91.2
+    newTag: 1.92.1
