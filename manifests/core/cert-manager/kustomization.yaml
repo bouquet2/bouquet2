@@ -1,6 +1,7 @@
 resources:
   - issuer.yaml
   - wildcard-cert.yaml
+  - wildcard-cert-kreato.dev.yaml
 sortOptions:
   order: legacy
   legacySortOptions:
