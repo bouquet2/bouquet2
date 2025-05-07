@@ -36,19 +36,19 @@ config:
         - "[STATUS] == 404"
     - name: "binrepo"
       group: "infra"
-      url: "https://bin.krea.to"
+      url: "https://bin.kreato.dev"
       interval: 60s
       conditions:
         - "[STATUS] == 403"
     - name: "mastodon"
       group: "infra"
-      url: "https://m.krea.to"
+      url: "https://m.kreato.dev"
       interval: 60s
       conditions:
         - "[STATUS] == 200"
     - name: "mirror"
       group: "infra"
-      url: "https://mirror.krea.to"
+      url: "https://mirror.kreato.dev"
       interval: 60s
       conditions:
         - "[STATUS] == any(404, 403)"
@@ -60,7 +60,7 @@ config:
         - "[STATUS] == 200"
     - name: "helm"
       group: "infra"
-      url: "https://helm.krea.to"
+      url: "https://helm.kreato.dev"
       interval: 60s
       conditions:
         - "[STATUS] == 200"
