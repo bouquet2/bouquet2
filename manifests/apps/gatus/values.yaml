@@ -39,7 +39,7 @@ config:
       url: "https://bin.kreato.dev"
       interval: 60s
       conditions:
-        - "[STATUS] == 403"
+        - "[STATUS] == 200"
     - name: "mastodon"
       group: "infra"
       url: "https://m.kreato.dev"
@@ -51,7 +51,7 @@ config:
       url: "https://mirror.kreato.dev"
       interval: 60s
       conditions:
-        - "[STATUS] == any(404, 403)"
+        - "[STATUS] == 200"
     - name: "main"
       group: "infra"
       url: "https://krea.to"
@@ -72,7 +72,7 @@ config:
         - "[STATUS] == 200"
     - name: "klinux"
       group: "infra"
-      url: "https://linux.krea.to"
+      url: "https://linux.kreato.dev"
       interval: 60s
       conditions:
         - "[STATUS] == 200"
