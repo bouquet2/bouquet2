@@ -11,7 +11,8 @@
       "matchPackageNames": [
         "ghcr.io/umami-software/umami"
       ],
-      "allowedVersions": "/^postgres-/"
+      "allowedVersions": "/^postgres-/",
+      "extractVersionTemplate": "^postgres-(?<version>\\d+\\.\\d+\\.\\d+)$"
     },
     {
       "matchDatasources": [
@@ -20,7 +21,8 @@
       "matchPackageNames": [
         "ghcr.io/berriai/litellm"
       ],
-      "allowedVersions": "/^main-.*-stable$/"
+      "allowedVersions": "/^main-.*-stable$/",
+      "extractVersionTemplate": "^main-v(?<version>\\d+\\.\\d+\\.\\d+)-stable$"
     }
   ]
 }
