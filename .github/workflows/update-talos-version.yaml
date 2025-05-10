@@ -42,7 +42,7 @@ jobs:
       - name: Get current Talos version from nodes
         id: current-nodes-version
         run: |
-          sleep 5 # wait for tailscale to connect
+          sleep 5
           VERSIONS=$(talosctl version | sed '1,/Server/d' | grep "Tag:" | sort -t: -u -k1,1 | awk '{printf $2}')
           UNIQUE_VERSIONS=$(echo "$VERSIONS" | sort -u | wc -l)
           if [ "$UNIQUE_VERSIONS" -gt 1 ]; then
