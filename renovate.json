@@ -11,8 +11,7 @@
       "matchPackageNames": [
         "ghcr.io/umami-software/umami"
       ],
-      "allowedVersions": "/^postgres-/",
-      "groupName": "umami"
+      "allowedVersions": "/^postgres-/"
     },
     {
       "matchDatasources": [
@@ -21,23 +20,7 @@
       "matchPackageNames": [
         "ghcr.io/berriai/litellm"
       ],
-      "allowedVersions": "/^main-.*-stable$/",
-      "groupName": "litellm"
-    },
-    {
-      "matchDatasources": [
-        "github-releases"
-      ],
-      "matchFileNames": [
-        "**/kustomization.yaml",
-        "**/kustomization.yml"
-      ],
-      "enabled": true
+      "allowedVersions": "/^main-.*-stable$/"
     }
-  ],
-  "kubernetes": {
-    "managerFilePatterns": [
-      "/^kustomization\\.ya?ml$/"
-    ]
-  }
+  ]
 }
