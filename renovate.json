@@ -5,15 +5,23 @@
   ],
   "packageRules": [
     {
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["ghcr.io/umami-software/umami"],
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "ghcr.io/umami-software/umami"
+      ],
       "allowedVersions": "/^postgres-/",
       "groupName": "umami"
     },
     {
-      "matchDatasources": ["docker"],
-      "matchPackagePatterns": ["^ghcr.io/berriai/litellm"],
-      "groupName": "litellm"
+      "matchDatasources": [
+        "docker"
+      ],
+      "groupName": "litellm",
+      "matchPackageNames": [
+        "/^ghcr.io/berriai/litellm/"
+      ]
     }
   ]
 }
