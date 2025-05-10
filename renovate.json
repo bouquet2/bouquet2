@@ -3,44 +3,50 @@
   "extends": [
     "config:recommended"
   ],
-  "packageRules": [
-    {
-      "matchDatasources": [
-        "docker"
-      ],
-      "matchPackageNames": [
-        "ghcr.io/umami-software/umami"
-      ],
-      "allowedVersions": "/^postgres-/"
-    },
-    {
-      "matchDatasources": [
-        "docker"
-      ],
-      "matchPackageNames": [
-        "ghcr.io/berriai/litellm"
-      ],
-      "allowedVersions": "/^main-.*-stable$/"
-    }
-  ],
+  "kubernetes": {
+    "fileMatch": [
+      ".+\\.yaml$",
+      "kustomization\\.yaml$"
+    ]
+  },
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": ["(^|/)kustomization\\.ya?ml$"],
-      "matchStrings": [
-        "image:\\s*(?<depName>ghcr.io/umami-software/umami):(?<currentValue>.*?)(?:@(?<currentDigest>sha256:[a-f0-9]+))?"
+      "fileMatch": [
+        "manifests/apps/umami/kustomization\\.yaml$"
       ],
-      "datasourceTemplate": "docker",
-      "extractVersionTemplate": "^postgres-(?<version>\\d+\\.\\d+\\.\\d+)$"
+      "matchStrings": [
+        "newTag:\\s+(?<currentValue>postgres-[0-9]+\\.[0-9]+\\.[0-9]+)"
+      ],
+      "depNameTemplate": "ghcr.io/umami-software/umami",
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "umami-software/umami"
     },
     {
       "customType": "regex",
-      "fileMatch": ["(^|/)kustomization\\.ya?ml$"],
-      "matchStrings": [
-        "image:\\s*(?<depName>ghcr.io/berriai/litellm):(?<currentValue>.*?)(?:@(?<currentDigest>sha256:[a-f0-9]+))?"
+      "fileMatch": [
+        "manifests/apps/litellm/kustomization\\.yaml$"
       ],
-      "datasourceTemplate": "docker",
-      "extractVersionTemplate": "^main-v(?<version>\\d+\\.\\d+\\.\\d+)-stable$"
+      "matchStrings": [
+        "newTag:\\s+(?<currentValue>main-v[0-9]+\\.[0-9]+\\.[0-9]+-stable)"
+      ],
+      "depNameTemplate": "ghcr.io/berriai/litellm",
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "berriai/litellm"
+    }
+  ],
+  "packageRules": [
+    {
+      "groupName": "umami",
+      "matchPackageNames": [
+        "ghcr.io/umami-software/umami"
+      ]
+    },
+    {
+      "groupName": "litellm",
+      "matchPackageNames": [
+        "ghcr.io/berriai/litellm"
+      ]
     }
   ]
 }
