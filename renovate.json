@@ -36,8 +36,8 @@
     }
   ],
   "kubernetes": {
-    "fileMatch": [
-      "^kustomization\\.ya?ml$"
+    "managerFilePatterns": [
+      "/^kustomization\\.ya?ml$/"
     ]
   }
 }
