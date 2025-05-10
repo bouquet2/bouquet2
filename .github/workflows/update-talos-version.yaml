@@ -29,6 +29,8 @@ jobs:
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:k8s-deploy
           hostname: kreat8s-talos-update
+          use-cache: true
+          args: '--ssh'
 
       - name: Add talosconfig
         env:
@@ -47,6 +49,13 @@ jobs:
             echo "::error::Version mismatch between nodes, can't proceed safely"
             exit 1
           fi
+
+          if [ -z "$VERSIONS" ]; then
+            echo "::error::No Talos version found"
+            sleep 10000 # ssh
+            exit 1
+          fi
+
           echo "current_nodes_version=$VERSIONS" >> $GITHUB_OUTPUT
 
       - name: Get target Talos version from vars.yaml
