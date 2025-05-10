@@ -1,0 +1,44 @@
+name: Update Talos Version
+
+on:
+  push:
+    paths:
+      - 'vars.yaml'
+    branches:
+      - main
+
+jobs:
+  update-talos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Install talosctl
+        run: |
+          curl -Lo /usr/local/bin/talosctl https://github.com/siderolabs/talos/releases/latest/download/talosctl-linux-amd64
+          chmod +x /usr/local/bin/talosctl
+
+      - name: Get current Talos version from nodes
+        id: current-nodes-version
+        run: |
+          VERSIONS=$(talosctl version | grep Tag | sort -t: -u -k1,1 | awk '{printf $2}')
+          UNIQUE_VERSIONS=$(echo "$VERSIONS" | sort -u | wc -l)
+          if [ "$UNIQUE_VERSIONS" -gt 1 ]; then
+            echo "::error::Version mismatch between nodes, can't proceed safely"
+            exit 1
+          fi
+          echo "current_nodes_version=$VERSIONS" >> $GITHUB_OUTPUT
+
+      - name: Get target Talos version from vars.yaml
+        id: target-version
+        run: |
+          TARGET_VERSION=$(grep talosVersion vars.yaml | cut -d' ' -f2)
+          echo "target_version=$TARGET_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Update Talos version if changed
+        if: steps.current-nodes-version.outputs.current_nodes_version != steps.target-version.outputs.target_version
+        run: |
+          echo "Updating Talos version from ${{ steps.current-nodes-version.outputs.current_nodes_version }} to ${{ steps.target-version.outputs.target_version }}"
