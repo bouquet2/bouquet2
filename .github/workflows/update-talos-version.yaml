@@ -321,7 +321,7 @@ jobs:
       - name: Get target Kubernetes version from vars.yaml
         id: target-k8s-version
         run: |
-          K8S_VERSION=$(grep kubernetesVersion vars.yaml | cut -d' ' -f2)
+          K8S_VERSION=$(grep k8sVersion vars.yaml | cut -d' ' -f2)
           echo "target_k8s_version=$K8S_VERSION" >> $GITHUB_OUTPUT
 
       - name: Upgrade Kubernetes on control planes if version changed
