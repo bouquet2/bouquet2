@@ -18,10 +18,11 @@
       "matchDatasources": [
         "docker"
       ],
-      "groupName": "litellm",
       "matchPackageNames": [
-        "/^ghcr.io/berriai/litellm/"
-      ]
+        "ghcr.io/berriai/litellm"
+      ],
+      "allowedVersions": "/^main-.*-stable$/",
+      "groupName": "litellm"
     }
   ]
 }
