@@ -1,4 +1,4 @@
-name: Update Talos Version
+name: Update Talos and Kubernetes Version
 
 permissions:
   contents: read
