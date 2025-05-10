@@ -6,9 +6,7 @@ resources:
   - umami-deployment.yaml
   - umami-service.yaml
   - ingressroute.yaml
-
 namespace: umami
-
 secretGenerator:
   - name: production
     namespace: umami

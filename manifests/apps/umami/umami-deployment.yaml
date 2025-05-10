@@ -21,7 +21,6 @@ spec:
                 secretKeyRef:
                   key: umami-app-secret
                   name: production
-
             - name: DATABASE_TYPE
               value: postgresql
             - name: DATABASE_URL
