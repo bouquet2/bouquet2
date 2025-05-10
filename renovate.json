@@ -9,5 +9,17 @@
       "matchPackageNames": ["ghcr.io/umami-software/umami"],
       "versioning": "regex:^postgresql-v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$"
     }
+  ],
+  "regexManagers": [
+    {
+      "fileMatch": ["^vars\\.yaml$"],
+      "matchStrings": [
+        "talosVersion:\\s*(?<currentValue>v\\d+\\.\\d+\\.\\d+)",
+        "k8sVersion:\\s*(?<currentValue>v\\d+\\.\\d+\\.\\d+)"
+      ],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "{{#if (contains currentValue 'talos')}}siderolabs/talos{{else}}kubernetes/kubernetes{{/if}}",
+      "versioningTemplate": "semver"
+    }
   ]
 }
