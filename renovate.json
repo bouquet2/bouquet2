@@ -3,49 +3,63 @@
   "extends": [
     "config:recommended"
   ],
-  "kubernetes": {
-    "fileMatch": [
-      ".+\\.yaml$",
-      "kustomization\\.yaml$"
-    ]
-  },
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": [
-        "manifests/apps/umami/kustomization\\.yaml$"
+      "managerFilePatterns": [
+        "/^manifests/apps/umami/kustomization\\.yaml$/"
       ],
       "matchStrings": [
-        "newTag:\\s+(?<currentValue>postgres-[0-9]+\\.[0-9]+\\.[0-9]+)"
+        "- name: (?<depName>ghcr.io/umami-software/umami)\\s+newTag: postgres-(?<currentValue>.*)"
       ],
-      "depNameTemplate": "ghcr.io/umami-software/umami",
-      "datasourceTemplate": "github-releases",
-      "packageNameTemplate": "umami-software/umami"
+      "datasourceTemplate": "github-tags",
+      "packageNameTemplate": "umami-software/umami",
+      "versioningTemplate": "semver",
+      "extractVersionTemplate": "^v(?<version>.*)$",
+      "depNameTemplate": "ghcr.io/umami-software/umami"
     },
     {
       "customType": "regex",
-      "fileMatch": [
-        "manifests/apps/litellm/kustomization\\.yaml$"
+      "managerFilePatterns": [
+        "/^manifests/apps/litellm/kustomization\\.yaml$/"
       ],
       "matchStrings": [
-        "newTag:\\s+(?<currentValue>main-v[0-9]+\\.[0-9]+\\.[0-9]+-stable)"
+        "- name: (?<depName>ghcr.io/berriai/litellm)\\s+newTag: main-v(?<currentValue>.*)-stable"
       ],
-      "depNameTemplate": "ghcr.io/berriai/litellm",
-      "datasourceTemplate": "github-releases",
-      "packageNameTemplate": "berriai/litellm"
+      "datasourceTemplate": "github-tags",
+      "packageNameTemplate": "berriai/litellm",
+      "versioningTemplate": "semver",
+      "extractVersionTemplate": "^v(?<version>.*)$",
+      "depNameTemplate": "ghcr.io/berriai/litellm"
     }
   ],
   "packageRules": [
     {
-      "groupName": "umami",
+      "matchFileNames": [
+        "manifests/apps/umami/kustomization.yaml"
+      ],
+      "matchDatasources": [
+        "github-tags"
+      ],
       "matchPackageNames": [
-        "ghcr.io/umami-software/umami"
+        "umami-software/umami"
+      ],
+      "prBodyNotes": [
+        "Version will be installed as: postgres-{{{newVersion}}}"
       ]
     },
     {
-      "groupName": "litellm",
+      "matchFileNames": [
+        "manifests/apps/litellm/kustomization.yaml"
+      ],
+      "matchDatasources": [
+        "github-tags"
+      ],
       "matchPackageNames": [
-        "ghcr.io/berriai/litellm"
+        "berriai/litellm"
+      ],
+      "prBodyNotes": [
+        "Version will be installed as: main-{{{newVersion}}}-stable"
       ]
     }
   ]
