@@ -11,8 +11,7 @@
       "matchPackageNames": [
         "ghcr.io/umami-software/umami"
       ],
-      "allowedVersions": "/^postgres-/",
-      "extractVersionTemplate": "^postgres-(?<version>\\d+\\.\\d+\\.\\d+)$"
+      "allowedVersions": "/^postgres-/"
     },
     {
       "matchDatasources": [
@@ -21,7 +20,26 @@
       "matchPackageNames": [
         "ghcr.io/berriai/litellm"
       ],
-      "allowedVersions": "/^main-.*-stable$/",
+      "allowedVersions": "/^main-.*-stable$/"
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["(^|/)kustomization\\.ya?ml$"],
+      "matchStrings": [
+        "image:\\s*(?<depName>ghcr.io/umami-software/umami):(?<currentValue>.*?)(?:@(?<currentDigest>sha256:[a-f0-9]+))?"
+      ],
+      "datasourceTemplate": "docker",
+      "extractVersionTemplate": "^postgres-(?<version>\\d+\\.\\d+\\.\\d+)$"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["(^|/)kustomization\\.ya?ml$"],
+      "matchStrings": [
+        "image:\\s*(?<depName>ghcr.io/berriai/litellm):(?<currentValue>.*?)(?:@(?<currentDigest>sha256:[a-f0-9]+))?"
+      ],
+      "datasourceTemplate": "docker",
       "extractVersionTemplate": "^main-v(?<version>\\d+\\.\\d+\\.\\d+)-stable$"
     }
   ]
