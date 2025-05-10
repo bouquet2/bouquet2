@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: umami
+  name: umami
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: umami
+  template:
+    metadata:
+      labels:
+        service: umami
+    spec:
+      containers:
+        - env:
+            - name: APP_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: umami-app-secret
+                  name: production
+
+            - name: DATABASE_TYPE
+              value: postgresql
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  key: umami-db-url
+                  name: production
+          image: ghcr.io/umami-software/umami
+          livenessProbe:
+            exec:
+              command:
+                - curl http://localhost:3000/api/heartbeat
+            failureThreshold: 5
+            periodSeconds: 5
+            timeoutSeconds: 5
+          name: umami
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+      restartPolicy: Always

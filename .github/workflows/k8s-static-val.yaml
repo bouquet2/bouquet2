@@ -27,7 +27,7 @@ jobs:
         run: |
           cd manifests
           # Copy example env files to their required locations
-          for dir in core/cert-manager core/longhorn apps/mastodon apps/litellm; do
+          for dir in core/cert-manager core/longhorn apps/mastodon apps/litellm apps/umami; do
             if [ -f "$dir/.env.example" ]; then
               echo "Copying $dir/.env.example to $dir/.env"
               cp $dir/.env.example $dir/.env

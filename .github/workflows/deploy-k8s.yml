@@ -31,11 +31,13 @@ jobs:
           MASTODONENV: ${{ secrets.MASTODONENV }}
           LITELLMENV: ${{ secrets.LITELLMENV }}
           LONGHORNENV: ${{ secrets.LONGHORNENV }}
+          UMAMIENV: ${{ secrets.UMAMIENV }}
         run: |
           cd manifests
           echo "$CERTMANAGERENV" > core/cert-manager/.env
           echo "$MASTODONENV" > apps/mastodon/.env
           echo "$LITELLMENV" > apps/litellm/.env
+          echo "$UMAMIENV" > apps/umami/.env
           echo "$LONGHORNENV" > core/longhorn/.env
       - name: Add hack for immutable jobs
         run: |

@@ -46,6 +46,12 @@ config:
       interval: 60s
       conditions:
         - "[STATUS] == 200"
+    - name: "umami"
+      group: "infra"
+      url: "https://umami.krea.to/dashboard"
+      interval: 60s
+      conditions:
+        - "[STATUS] == 200"
     - name: "mirror"
       group: "infra"
       url: "https://mirror.kreato.dev"

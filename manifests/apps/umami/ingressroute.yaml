@@ -1,0 +1,25 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: umami
+  namespace: umami
+  annotations:
+    cert-manager.io/cluster-issuer: mainissuer
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`umami.krea.to`)
+      priority: 10
+      services:
+        - kind: Service
+          name: umami
+          namespace: umami
+          passHostHeader: true
+          port: 3000
+          scheme: http
+  tls:
+    secretName: wildcard-kreato.dev-tls
+    domains:
+      - main: umami.krea.to
