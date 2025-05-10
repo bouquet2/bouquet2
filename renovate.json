@@ -7,7 +7,7 @@
     {
       "customType": "regex",
       "managerFilePatterns": [
-        "/^manifests/apps/umami/kustomization\\.yaml$/"
+        "^manifests/apps/umami/kustomization\\.yaml$"
       ],
       "matchStrings": [
         "- name: (?<depName>ghcr.io/umami-software/umami)\\s+newTag: postgres-(?<currentValue>.*)"
@@ -16,12 +16,13 @@
       "packageNameTemplate": "umami-software/umami",
       "versioningTemplate": "semver",
       "extractVersionTemplate": "^v(?<version>.*)$",
-      "depNameTemplate": "ghcr.io/umami-software/umami"
+      "depNameTemplate": "ghcr.io/umami-software/umami",
+      "autoReplaceStringTemplate": "postgres-{{{newValue}}}"
     },
     {
       "customType": "regex",
       "managerFilePatterns": [
-        "/^manifests/apps/litellm/kustomization\\.yaml$/"
+        "^manifests/apps/litellm/kustomization\\.yaml$"
       ],
       "matchStrings": [
         "- name: (?<depName>ghcr.io/berriai/litellm)\\s+newTag: main-v(?<currentValue>.*)-stable"
@@ -30,7 +31,8 @@
       "packageNameTemplate": "berriai/litellm",
       "versioningTemplate": "semver",
       "extractVersionTemplate": "^v(?<version>.*)$",
-      "depNameTemplate": "ghcr.io/berriai/litellm"
+      "depNameTemplate": "ghcr.io/berriai/litellm",
+      "autoReplaceStringTemplate": "main-{{{newValue}}}-stable"
     }
   ],
   "packageRules": [
