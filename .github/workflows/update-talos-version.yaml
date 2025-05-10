@@ -28,7 +28,6 @@ jobs:
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:k8s-deploy
-          version: latest
           hostname: kreat8s-talos-update
 
       - name: Add talosconfig
