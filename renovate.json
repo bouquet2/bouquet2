@@ -7,7 +7,7 @@
     {
       "matchDatasources": ["docker"],
       "matchPackageNames": ["ghcr.io/umami-software/umami"],
-      "matchVersions": ["postgres-.*"],
+      "allowedVersions": "/^postgres-/",
       "groupName": "umami"
     },
     {
