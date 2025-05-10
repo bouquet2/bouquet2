@@ -6,5 +6,6 @@ resources:
   - jellyfin/
   - minio/
   - n8n/
+  - umami/
 sortOptions:
   order: fifo
