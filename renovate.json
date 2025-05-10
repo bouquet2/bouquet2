@@ -13,12 +13,16 @@
   "regexManagers": [
     {
       "fileMatch": ["^vars\\.yaml$"],
-      "matchStrings": [
-        "talosVersion:\\s*(?<currentValue>v\\d+\\.\\d+\\.\\d+)",
-        "k8sVersion:\\s*(?<currentValue>v\\d+\\.\\d+\\.\\d+)"
-      ],
+      "matchStrings": ["talosVersion:\\s*(?<currentValue>v\\d+\\.\\d+\\.\\d+)"],
       "datasourceTemplate": "github-releases",
-      "packageNameTemplate": "{{#if (contains currentValue 'talos')}}siderolabs/talos{{else}}kubernetes/kubernetes{{/if}}",
+      "packageNameTemplate": "siderolabs/talos",
+      "versioningTemplate": "semver"
+    },
+    {
+      "fileMatch": ["^vars\\.yaml$"],
+      "matchStrings": ["k8sVersion:\\s*(?<currentValue>v\\d+\\.\\d+\\.\\d+)"],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "kubernetes/kubernetes",
       "versioningTemplate": "semver"
     }
   ]
