@@ -2,5 +2,17 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended"
+  ],
+  "packageRules": [
+    {
+      "matchPackageNames": ["@umami/umami"],
+      "groupName": "umami",
+      "schedule": ["weekly"]
+    },
+    {
+      "matchPackageNames": ["litellm"],
+      "groupName": "litellm",
+      "schedule": ["weekly"]
+    }
   ]
 }
