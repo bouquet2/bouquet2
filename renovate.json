@@ -6,33 +6,29 @@
   "customManagers": [
     {
       "customType": "regex",
-      "managerFilePatterns": [
-        "^manifests/apps/umami/kustomization\\.yaml$"
-      ],
+      "fileMatch": ["^manifests/apps/umami/kustomization\\.yaml$"],
       "matchStrings": [
-        "- name: (?<depName>ghcr.io/umami-software/umami)\\s+newTag: postgres-(?<currentValue>.*)"
+        "newTag:\\s+(?<currentValue>postgres-(?<version>[0-9]+\\.[0-9]+\\.[0-9]+))"
       ],
-      "datasourceTemplate": "github-tags",
-      "packageNameTemplate": "umami-software/umami",
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "umami-software/umami",
       "versioningTemplate": "semver",
-      "extractVersionTemplate": "^v(?<version>.*)$",
-      "depNameTemplate": "ghcr.io/umami-software/umami",
-      "autoReplaceStringTemplate": "postgres-{{{newValue}}}"
+      "currentValueTemplate": "v{{version}}",
+      "replaceString": "newTag: postgres-{{version}}",
+      "newValueTemplate": "newTag: postgres-{{#if newVersion}}{{newVersion}}{{/if}}"
     },
     {
       "customType": "regex",
-      "managerFilePatterns": [
-        "^manifests/apps/litellm/kustomization\\.yaml$"
-      ],
+      "fileMatch": ["^manifests/apps/litellm/kustomization\\.yaml$"],
       "matchStrings": [
-        "- name: (?<depName>ghcr.io/berriai/litellm)\\s+newTag: main-v(?<currentValue>.*)-stable"
+        "newTag:\\s+(?<currentValue>main-v(?<version>[0-9]+\\.[0-9]+\\.[0-9]+)-stable)"
       ],
-      "datasourceTemplate": "github-tags",
-      "packageNameTemplate": "berriai/litellm",
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "berriai/litellm",
       "versioningTemplate": "semver",
-      "extractVersionTemplate": "^v(?<version>.*)$",
-      "depNameTemplate": "ghcr.io/berriai/litellm",
-      "autoReplaceStringTemplate": "main-{{{newValue}}}-stable"
+      "currentValueTemplate": "v{{version}}",
+      "replaceString": "newTag: main-v{{version}}-stable",
+      "newValueTemplate": "newTag: main-v{{#if newVersion}}{{newVersion}}{{/if}}-stable"
     }
   ],
   "packageRules": [
@@ -41,13 +37,10 @@
         "manifests/apps/umami/kustomization.yaml"
       ],
       "matchDatasources": [
-        "github-tags"
+        "github-releases"
       ],
       "matchPackageNames": [
         "umami-software/umami"
-      ],
-      "prBodyNotes": [
-        "Version will be installed as: postgres-{{{newVersion}}}"
       ]
     },
     {
@@ -55,13 +48,10 @@
         "manifests/apps/litellm/kustomization.yaml"
       ],
       "matchDatasources": [
-        "github-tags"
+        "github-releases"
       ],
       "matchPackageNames": [
         "berriai/litellm"
-      ],
-      "prBodyNotes": [
-        "Version will be installed as: main-{{{newVersion}}}-stable"
       ]
     }
   ]
