@@ -87,37 +87,37 @@ jobs:
         id: control-plane-ips
         run: |
           for cp in $(echo ${{ steps.control-planes.outputs.control_planes }} | tr ',' ' '); do
-            echo "Getting IP for $cp..."
+            echo "Getting IP for control plane $cp..."
             IP=$(tailscale ip -4 $cp)
             if [ -z "$IP" ]; then
-              echo "::error::Could not get IP for $cp"
+              echo "::error::Could not get IP for control plane $cp"
               exit 1
             fi
-            echo "Found IP $IP for $cp"
-            echo "ip_${cp}=$IP" >> $GITHUB_OUTPUT
+            echo "Found IP $IP for control plane $cp"
+            echo "cp_ip_${cp}=$IP" >> $GITHUB_OUTPUT
           done
 
       - name: Get worker node IPs
         id: worker-node-ips
         run: |
           for worker in $(echo ${{ steps.worker-nodes.outputs.worker_nodes }} | tr ',' ' '); do
-            echo "Getting IP for $worker..."
+            echo "Getting IP for worker $worker..."
             IP=$(tailscale ip -4 $worker)
             if [ -z "$IP" ]; then
-                echo "::error::Could not get IP for $worker"
+                echo "::error::Could not get IP for worker $worker"
                 exit 1
             fi
-            echo "Found IP $IP for $worker"
-            echo "ip_${worker}=$IP" >> $GITHUB_OUTPUT
+            echo "Found IP $IP for worker $worker"
+            echo "worker_ip_${worker}=$IP" >> $GITHUB_OUTPUT
           done
-          
+
       - name: Update Talos version if changed (control planes)
         if: steps.current-nodes-version.outputs.current_nodes_version != steps.target-version.outputs.target_version
         run: |
           echo "Updating Talos version from ${{ steps.current-nodes-version.outputs.current_nodes_version }} to ${{ steps.target-version.outputs.target_version }} for control planes"
           for cp in $(echo ${{ steps.control-planes.outputs.control_planes }} | tr ',' ' '); do
             echo "Updating control plane: $cp"
-            NODE_IP=$(echo "${{ steps.control-plane-ips.outputs }}" | grep "ip_${cp}=" | cut -d'=' -f2)
+            NODE_IP=$(echo "${{ steps.control-plane-ips.outputs }}" | grep "cp_ip_${cp}=" | cut -d'=' -f2)
             talosctl upgrade --image "factory.talos.dev/installer/${{ steps.image-id.outputs.image_id }}:${{ steps.target-version.outputs.target_version }}" --nodes "$NODE_IP"
             sleep 60
 
@@ -127,14 +127,20 @@ jobs:
               exit 1
             fi
           done
-          
+
+      - name: Wait for control planes to be ready
+        if: steps.current-nodes-version.outputs.current_nodes_version != steps.target-version.outputs.target_version
+        run: |
+          echo "Waiting for control planes to be ready..."
+          sleep 60  # Wait 1 minute for control planes to stabilize
+
       - name: Update Talos version if changed (worker nodes)
         if: steps.current-nodes-version.outputs.current_nodes_version != steps.target-version.outputs.target_version
         run: |
           echo "Updating Talos version from ${{ steps.current-nodes-version.outputs.current_nodes_version }} to ${{ steps.target-version.outputs.target_version }} for worker nodes"
           for worker in $(echo ${{ steps.worker-nodes.outputs.worker_nodes }} | tr ',' ' '); do
             echo "Updating worker node: $worker"
-            NODE_IP=$(echo "${{ steps.worker-node-ips.outputs }}" | grep "ip_${worker}=" | cut -d'=' -f2)
+            NODE_IP=$(echo "${{ steps.worker-node-ips.outputs }}" | grep "worker_ip_${worker}=" | cut -d'=' -f2)
             talosctl upgrade --image "factory.talos.dev/installer/${{ steps.image-id.outputs.image_id }}:${{ steps.target-version.outputs.target_version }}" --nodes "$NODE_IP"
             sleep 60
 
