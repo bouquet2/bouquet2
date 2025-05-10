@@ -1,8 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended",
-    "kubernetes"
+    "config:recommended"
   ],
   "packageRules": [
     {
@@ -24,12 +23,21 @@
       ],
       "allowedVersions": "/^main-.*-stable$/",
       "groupName": "litellm"
+    },
+    {
+      "matchDatasources": [
+        "github-releases"
+      ],
+      "matchFileNames": [
+        "**/kustomization.yaml",
+        "**/kustomization.yml"
+      ],
+      "enabled": true
     }
   ],
   "kubernetes": {
     "fileMatch": [
-      "manifests/apps/umami/.+\\.yaml$",
-      "manifests/apps/litellm/.+\\.yaml$"
+      "^kustomization\\.ya?ml$"
     ]
   }
 }
