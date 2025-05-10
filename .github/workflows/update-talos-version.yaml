@@ -118,11 +118,11 @@ jobs:
           for cp in $(echo ${{ steps.control-planes.outputs.control_planes }} | tr ',' ' '); do
             echo "Updating control plane: $cp"
             NODE_IP=$(echo "${{ steps.control-plane-ips.outputs }}" | grep "ip_${cp}=" | cut -d'=' -f2)
-            talosctl upgrade --image "factory.talos.dev/installer/$IMAGE_ID:$TARGET_VERSION" --nodes "$NODE_IP"
+            talosctl upgrade --image "factory.talos.dev/installer/${{ steps.image-id.outputs.image_id }}:${{ steps.target-version.outputs.target_version }}" --nodes "$NODE_IP"
             sleep 60
 
             UPGRADE_VERSION=$(talosctl version --nodes "$NODE_IP" | sed '1,/Server/d' | grep "Tag:" | sort -t: -u -k1,1 | awk '{printf $2}')
-            if [ "$UPGRADE_VERSION" != "$TARGET_VERSION" ]; then
+            if [ "$UPGRADE_VERSION" != "${{ steps.target-version.outputs.target_version }}" ]; then
               echo "::error::Upgrade failed for $cp"
               exit 1
             fi
@@ -135,11 +135,11 @@ jobs:
           for worker in $(echo ${{ steps.worker-nodes.outputs.worker_nodes }} | tr ',' ' '); do
             echo "Updating worker node: $worker"
             NODE_IP=$(echo "${{ steps.worker-node-ips.outputs }}" | grep "ip_${worker}=" | cut -d'=' -f2)
-            talosctl upgrade --image "factory.talos.dev/installer/$IMAGE_ID:$TARGET_VERSION" --nodes "$NODE_IP"
+            talosctl upgrade --image "factory.talos.dev/installer/${{ steps.image-id.outputs.image_id }}:${{ steps.target-version.outputs.target_version }}" --nodes "$NODE_IP"
             sleep 60
 
             UPGRADE_VERSION=$(talosctl version --nodes "$NODE_IP" | sed '1,/Server/d' | grep "Tag:" | sort -t: -u -k1,1 | awk '{printf $2}')
-            if [ "$UPGRADE_VERSION" != "$TARGET_VERSION" ]; then
+            if [ "$UPGRADE_VERSION" != "${{ steps.target-version.outputs.target_version }}" ]; then
               echo "::error::Upgrade failed for $worker"
               exit 1
             fi
