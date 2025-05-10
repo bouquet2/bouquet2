@@ -23,4 +23,4 @@ jobs:
     needs: validate-k8s
     uses: ./.github/workflows/deploy-k8s.yml
     secrets: inherit
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && (!contains(github.event.head_commit.modified, 'vars.yaml') || contains(github.event.head_commit.modified, 'vars.yaml') && contains(github.event.head_commit.modified, 'tofu/'))
