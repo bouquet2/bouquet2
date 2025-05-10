@@ -21,10 +21,19 @@ jobs:
           curl -Lo /usr/local/bin/talosctl https://github.com/siderolabs/talos/releases/latest/download/talosctl-linux-amd64
           chmod +x /usr/local/bin/talosctl
 
+      - name: Connect Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:k8s-deploy
+          version: latest
+          hostname: kreat8s-talos-update
+
       - name: Get current Talos version from nodes
         id: current-nodes-version
         run: |
-          VERSIONS=$(talosctl version | grep Tag | sort -t: -u -k1,1 | awk '{printf $2}')
+          VERSIONS=$(talosctl version | sed '1,/Server/d' | grep "Tag:" | sort -t: -u -k1,1 | awk '{printf $2}')
           UNIQUE_VERSIONS=$(echo "$VERSIONS" | sort -u | wc -l)
           if [ "$UNIQUE_VERSIONS" -gt 1 ]; then
             echo "::error::Version mismatch between nodes, can't proceed safely"
