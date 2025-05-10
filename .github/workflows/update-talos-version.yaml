@@ -31,6 +31,14 @@ jobs:
           version: latest
           hostname: kreat8s-talos-update
 
+      - name: Add talosconfig
+        env:
+          TALOSCONFIG: ${{ secrets.TALOSCONFIG }}
+        run: |
+          mkdir -p ~/.talos
+          echo "$TALOSCONFIG" > ~/.talos/config
+          chmod 600 ~/.talos/config
+
       - name: Get current Talos version from nodes
         id: current-nodes-version
         run: |
