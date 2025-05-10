@@ -6,6 +6,7 @@ on:
       - 'vars.yaml'
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   update-talos:
