@@ -43,19 +43,33 @@ jobs:
         id: current-nodes-version
         run: |
           sleep 10
-          VERSIONS=$(talosctl version | sed '1,/Server/d' | grep "Tag:" | sort -t: -u -k1,1 | awk '{printf $2}')
-          UNIQUE_VERSIONS=$(echo "$VERSIONS" | sort -u | wc -l)
-          if [ "$UNIQUE_VERSIONS" -gt 1 ]; then
-            echo "::error::Version mismatch between nodes, can't proceed safely"
-            exit 1
-          fi
+          MAX_ATTEMPTS=3
+          ATTEMPT=1
+          while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
+            echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to get Talos versions..."
+            VERSIONS=$(talosctl version | sed '1,/Server/d' | grep "Tag:" | sort -t: -u -k1,1 | awk '{printf $2}')
+            UNIQUE_VERSIONS=$(echo "$VERSIONS" | sort -u | wc -l)
+            
+            if [ "$UNIQUE_VERSIONS" -gt 1 ]; then
+              echo "::error::Version mismatch between nodes, can't proceed safely"
+              exit 1
+            fi
 
-          if [ -z "$VERSIONS" ]; then
-            echo "::error::No Talos version found"
-            exit 1
-          fi
+            if [ -n "$VERSIONS" ]; then
+              echo "Successfully got Talos versions"
+              echo "current_nodes_version=$VERSIONS" >> $GITHUB_OUTPUT
+              break
+            fi
 
-          echo "current_nodes_version=$VERSIONS" >> $GITHUB_OUTPUT
+            if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
+              echo "::error::No Talos version found after $MAX_ATTEMPTS attempts"
+              exit 1
+            fi
+
+            echo "No version found, retrying in 30 seconds..."
+            sleep 30
+            ATTEMPT=$((ATTEMPT + 1))
+          done
 
       - name: Get target Talos version from vars.yaml
         id: target-version
@@ -121,11 +135,26 @@ jobs:
             talosctl upgrade --image "factory.talos.dev/installer/${{ steps.image-id.outputs.image_id }}:${{ steps.target-version.outputs.target_version }}" --nodes "$NODE_IP"
             sleep 60
 
-            UPGRADE_VERSION=$(talosctl version --nodes "$NODE_IP" | sed '1,/Server/d' | grep "Tag:" | sort -t: -u -k1,1 | awk '{printf $2}')
-            if [ "$UPGRADE_VERSION" != "${{ steps.target-version.outputs.target_version }}" ]; then
-              echo "::error::Upgrade failed for $cp"
-              exit 1
-            fi
+            MAX_ATTEMPTS=3
+            ATTEMPT=1
+            while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
+              echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to verify upgrade for $cp..."
+              UPGRADE_VERSION=$(talosctl version --nodes "$NODE_IP" | sed '1,/Server/d' | grep "Tag:" | sort -t: -u -k1,1 | awk '{printf $2}')
+              
+              if [ "$UPGRADE_VERSION" = "${{ steps.target-version.outputs.target_version }}" ]; then
+                echo "Successfully verified upgrade for $cp"
+                break
+              fi
+
+              if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
+                echo "::error::Upgrade verification failed for $cp after $MAX_ATTEMPTS attempts"
+                exit 1
+              fi
+
+              echo "Version mismatch, retrying in 30 seconds..."
+              sleep 30
+              ATTEMPT=$((ATTEMPT + 1))
+            done
           done
 
       - name: Wait for control planes to be ready
@@ -144,9 +173,24 @@ jobs:
             talosctl upgrade --image "factory.talos.dev/installer/${{ steps.image-id.outputs.image_id }}:${{ steps.target-version.outputs.target_version }}" --nodes "$NODE_IP"
             sleep 60
 
-            UPGRADE_VERSION=$(talosctl version --nodes "$NODE_IP" | sed '1,/Server/d' | grep "Tag:" | sort -t: -u -k1,1 | awk '{printf $2}')
-            if [ "$UPGRADE_VERSION" != "${{ steps.target-version.outputs.target_version }}" ]; then
-              echo "::error::Upgrade failed for $worker"
-              exit 1
-            fi
+            MAX_ATTEMPTS=3
+            ATTEMPT=1
+            while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
+              echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to verify upgrade for $worker..."
+              UPGRADE_VERSION=$(talosctl version --nodes "$NODE_IP" | sed '1,/Server/d' | grep "Tag:" | sort -t: -u -k1,1 | awk '{printf $2}')
+              
+              if [ "$UPGRADE_VERSION" = "${{ steps.target-version.outputs.target_version }}" ]; then
+                echo "Successfully verified upgrade for $worker"
+                break
+              fi
+
+              if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
+                echo "::error::Upgrade verification failed for $worker after $MAX_ATTEMPTS attempts"
+                exit 1
+              fi
+
+              echo "Version mismatch, retrying in 30 seconds..."
+              sleep 30
+              ATTEMPT=$((ATTEMPT + 1))
+            done
           done
