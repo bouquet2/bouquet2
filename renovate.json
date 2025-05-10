@@ -3,56 +3,11 @@
   "extends": [
     "config:recommended"
   ],
-  "customManagers": [
-    {
-      "customType": "regex",
-      "fileMatch": ["^manifests/apps/umami/kustomization\\.yaml$"],
-      "matchStrings": [
-        "newTag:\\s+(?<currentValue>postgres-(?<version>[0-9]+\\.[0-9]+\\.[0-9]+))"
-      ],
-      "datasourceTemplate": "github-releases",
-      "depNameTemplate": "umami-software/umami",
-      "versioningTemplate": "semver",
-      "currentValueTemplate": "v{{version}}",
-      "replaceString": "newTag: postgres-{{version}}",
-      "newValueTemplate": "newTag: postgres-{{#if newVersion}}{{newVersion}}{{/if}}"
-    },
-    {
-      "customType": "regex",
-      "fileMatch": ["^manifests/apps/litellm/kustomization\\.yaml$"],
-      "matchStrings": [
-        "newTag:\\s+(?<currentValue>main-v(?<version>[0-9]+\\.[0-9]+\\.[0-9]+)-stable)"
-      ],
-      "datasourceTemplate": "github-releases",
-      "depNameTemplate": "berriai/litellm",
-      "versioningTemplate": "semver",
-      "currentValueTemplate": "v{{version}}",
-      "replaceString": "newTag: main-v{{version}}-stable",
-      "newValueTemplate": "newTag: main-v{{#if newVersion}}{{newVersion}}{{/if}}-stable"
-    }
-  ],
   "packageRules": [
     {
-      "matchFileNames": [
-        "manifests/apps/umami/kustomization.yaml"
-      ],
-      "matchDatasources": [
-        "github-releases"
-      ],
-      "matchPackageNames": [
-        "umami-software/umami"
-      ]
-    },
-    {
-      "matchFileNames": [
-        "manifests/apps/litellm/kustomization.yaml"
-      ],
-      "matchDatasources": [
-        "github-releases"
-      ],
-      "matchPackageNames": [
-        "berriai/litellm"
-      ]
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["ghcr.io/umami-software/umami"],
+      "versioning": "regex:^postgresql-v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$"
     }
   ]
 }
