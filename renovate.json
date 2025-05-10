@@ -8,11 +8,6 @@
       "matchDatasources": ["docker"],
       "matchPackageNames": ["ghcr.io/umami-software/umami"],
       "versioning": "regex:^postgresql-v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$"
-    },
-    {
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["ghcr.io/litellm/litellm"],
-      "versioning": "regex:^main-v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-stable$"
     }
   ]
 }
