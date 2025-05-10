@@ -322,6 +322,8 @@ jobs:
         id: target-k8s-version
         run: |
           K8S_VERSION=$(grep k8sVersion vars.yaml | cut -d' ' -f2)
+          # Remove 'v' prefix if present
+          K8S_VERSION=$(echo "$K8S_VERSION" | sed 's/^v//')
           echo "target_k8s_version=$K8S_VERSION" >> $GITHUB_OUTPUT
 
       - name: Upgrade Kubernetes on control planes if version changed
