@@ -6,13 +6,11 @@
   "packageRules": [
     {
       "matchPackageNames": ["@umami/umami"],
-      "groupName": "umami",
-      "schedule": ["weekly"]
+      "groupName": "umami"
     },
     {
       "matchPackageNames": ["litellm"],
-      "groupName": "litellm",
-      "schedule": ["weekly"]
+      "groupName": "litellm"
     }
   ]
 }
