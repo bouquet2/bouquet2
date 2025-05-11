@@ -1,7 +1,10 @@
 <img src="https://raw.githubusercontent.com/xelab04/ServiceLogos/refs/heads/main/Kubernetes/Kubernetes%20V3.png"  height="100">
 
 ## bouquet2
-![Uptime](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fkreatoo%2Fstatus.krea.to%2Fmaster%2Fapi%2Flb%2Fuptime.json)
+![Uptime](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fkreatoo%2Fstatus.krea.to%2Fmaster%2Fapi%2Flb%2Fuptime-day.json)
+![Uptime](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fkreatoo%2Fstatus.krea.to%2Fmaster%2Fapi%2Flb%2Fuptime-week.json)
+![Uptime](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fkreatoo%2Fstatus.krea.to%2Fmaster%2Fapi%2Flb%2Fuptime-month.json)
+![Uptime](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fkreatoo%2Fstatus.krea.to%2Fmaster%2Fapi%2Flb%2Fuptime-year.json)
 
 Infinitely scalable, multi-cloud, secure and network-agnostic declarative Kubernetes configuration that focuses on stability and simplicity, while not compromising on modularity.
 
