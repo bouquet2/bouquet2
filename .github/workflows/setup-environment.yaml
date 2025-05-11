@@ -97,7 +97,7 @@ jobs:
 
       - name: Get worker node IPs
         id: worker-node-ips
-        run: |
+        run: |-
           WORKER_IPS=""
           for worker in $(echo ${{ steps.worker-nodes.outputs.worker_nodes }} | tr ',' ' '); do
             echo "Getting IP for worker $worker..."
@@ -111,4 +111,4 @@ jobs:
           done
           # Trim leading space and store in output
           WORKER_IPS=$(echo "$WORKER_IPS" | sed -e 's/^[[:space:]]*//')
-          echo "worker_ips=$WORKER_IPS" >> $GITHUB_OUTPUT 
+          echo "worker_ips=$WORKER_IPS" >> $GITHUB_OUTPUT

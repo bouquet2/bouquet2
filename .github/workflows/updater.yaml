@@ -62,7 +62,7 @@ jobs:
             echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to get Talos versions..."
             VERSIONS=$(talosctl version | sed '1,/Server/d' | grep "Tag:" | sort -t: -u -k1,1 | awk '{printf $2}')
             UNIQUE_VERSIONS=$(echo "$VERSIONS" | sort -u | wc -l)
-            
+
             if [ "$UNIQUE_VERSIONS" -gt 1 ]; then
               echo "::error::Version mismatch between nodes, can't proceed safely"
               exit 1
@@ -108,7 +108,7 @@ jobs:
           while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
             echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to verify upgrade for control planes..."
             UPGRADE_VERSION=$(talosctl version --nodes "${{ needs.setup.outputs.cp_ips }}" | sed '1,/Server/d' | grep "Tag:" | sort -t: -u -k1,1 | awk '{printf $2}')
-            
+
             if [ "$UPGRADE_VERSION" = "${{ steps.target-version.outputs.target_version }}" ]; then
               echo "Successfully verified upgrade for control planes"
               break
@@ -143,7 +143,7 @@ jobs:
             while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
               echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to verify upgrade for worker nodes..."
               UPGRADE_VERSION=$(talosctl version --nodes "${{ needs.setup.outputs.worker_ips }}" | sed '1,/Server/d' | grep "Tag:" | sort -t: -u -k1,1 | awk '{printf $2}')
-              
+
               if [ "$UPGRADE_VERSION" = "${{ steps.target-version.outputs.target_version }}" ]; then
                 echo "Successfully verified upgrade for worker nodes"
                 break
@@ -212,7 +212,7 @@ jobs:
           while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
             echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to get Kubernetes version..."
             K8S_VERSION=$(kubectl version | grep 'Server' | awk '{printf $3}' | sed 's/v//')
-            
+
             if [ -n "$K8S_VERSION" ]; then
               echo "Successfully got Kubernetes version"
               echo "current_k8s_version=$K8S_VERSION" >> $GITHUB_OUTPUT
@@ -257,17 +257,17 @@ jobs:
           while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
             echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to verify control plane Kubernetes upgrade..."
             CURRENT_K8S_VERSION=$(kubectl version | grep 'Server' | awk '{printf $3}' | sed 's/v//')
-            
+
             if [ "$CURRENT_K8S_VERSION" = "${{ steps.target-k8s-version.outputs.target_k8s_version }}" ]; then
               echo "Successfully verified control plane Kubernetes upgrade to ${{ steps.target-k8s-version.outputs.target_k8s_version }}"
               break
             fi
-            
+
             if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
               echo "::error::Control plane Kubernetes upgrade verification failed after $MAX_ATTEMPTS attempts"
               exit 1
             fi
-            
+
             echo "Version mismatch, retrying in 60 seconds..."
             sleep 60
             ATTEMPT=$((ATTEMPT + 1))
@@ -292,6 +292,6 @@ jobs:
 
       - name: Verify final cluster status
         if: steps.current-k8s-version.outputs.current_k8s_version != steps.target-k8s-version.outputs.target_k8s_version
-        run: |
+        run: |-
           echo "Verifying final cluster status..."
           kubectl get nodes -o wide

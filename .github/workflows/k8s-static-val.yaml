@@ -64,7 +64,7 @@ jobs:
           echo "Cleaning up manifests directory..."
           rm -rf .manifests
       - name: Run kube-linter
-        run: |
+        run: |-
           echo "Running kube-linter for best practices..."
           # Run kube-linter directly on the repository files
           kube-linter lint . --config .kube-linter.yaml || echo "Linting produced warnings"

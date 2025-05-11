@@ -18,37 +18,36 @@ jobs:
         shell: bash
 
     steps:
-    # Checkout the repository to the GitHub Actions runner
-    - name: Checkout
-      uses: actions/checkout@v4
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Setup OpenTofu
-      uses: opentofu/setup-opentofu@v1
-      
-    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-    - name: OpenTofu Init
-      run: tofu init
-      working-directory: tofu
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
 
-    # Checks that all Terraform configuration files adhere to a canonical format
-    - name: OpenTofu Format
-      run: tofu fmt -check
-      working-directory: tofu
+      # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+      - name: OpenTofu Init
+        run: tofu init
+        working-directory: tofu
 
-    # Generates an execution plan for Terraform
-    #- name: OpenTofu Plan
-    #  run: |
-    #    if tofu plan -input=false -detailed-exitcode; then
-    #      echo "OpenTofu plan matches the current state"
-    #    else
-    #      echo "OpenTofu plan does not match the current state"
-    #      exit 1
-    #    fi
-    #  working-directory: tofu
+      # Checks that all Terraform configuration files adhere to a canonical format
+      - name: OpenTofu Format
+        run: tofu fmt -check
+        working-directory: tofu
+        # Generates an execution plan for Terraform
+        #- name: OpenTofu Plan
+        #  run: |
+        #    if tofu plan -input=false -detailed-exitcode; then
+        #      echo "OpenTofu plan matches the current state"
+        #    else
+        #      echo "OpenTofu plan does not match the current state"
+        #      exit 1
+        #    fi
+        #  working-directory: tofu
 
-      # On push to "main", build or change infrastructure according to Terraform configuration files
-      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
-    #- name: Terraform Apply
-    #  if: github.ref == 'refs/heads/"main"' && github.event_name == 'push'
-    #  run: tofu apply -auto-approve -input=false
-    #  working-directory: tofu
+        # On push to "main", build or change infrastructure according to Terraform configuration files
+        # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+        #- name: Terraform Apply
+        #  if: github.ref == 'refs/heads/"main"' && github.event_name == 'push'
+        #  run: tofu apply -auto-approve -input=false
+        #  working-directory: tofu

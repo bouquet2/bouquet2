@@ -10,14 +10,14 @@ permissions:
 jobs:
   format:
     uses: ./.github/workflows/yaml-lint.yml
-    
+
   validate-k8s:
     needs: format
     uses: ./.github/workflows/k8s-static-val.yaml
 
   validate-tofu:
     needs: format
-    uses: ./.github/workflows/tofu.yml 
+    uses: ./.github/workflows/tofu.yml
 
   deploy-k8s:
     needs: validate-k8s
