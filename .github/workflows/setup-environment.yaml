@@ -12,6 +12,9 @@ on:
       TS_OAUTH_SECRET:
         required: true
 
+permissions:
+  contents: read
+
 jobs:
   setup:
     runs-on: ubuntu-latest
