@@ -4,16 +4,6 @@ This directory contains Kubernetes manifests for various applications deployed i
 
 ## Applications Overview
 
-### [Gatus](https://github.com/TwiN/gatus)
-- **Purpose**: Health status monitoring and uptime monitoring
-- **Namespace**: `gatus`
-- **URL**: [status.krea.to](https://status.krea.to)
-- **Features**:
-  - Monitors internal and external services
-  - Custom UI with krea.to branding
-  - 60-second monitoring intervals
-  - Monitors various services including rose, iris, lily, and external services
-
 ### [Mastodon](https://github.com/mastodon/mastodon)
 - **Purpose**: Social media platform
 - **Namespace**: `mastodon`

@@ -1,5 +1,4 @@
 resources:
-  - gatus/
   - mastodon/
   - open-webui/
   - jellyfin/
