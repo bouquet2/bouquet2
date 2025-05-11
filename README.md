@@ -53,6 +53,9 @@ just deploy-manifests
 just destroy
 ```
 
+### Kubernetes Manifests
+
+The Kubernetes manifests are organized in the `manifests/` directory and contain all the infrastructure components and applications. For detailed information about those, please refer to the [manifests documentation](manifests/README.md).
 
 ### Servers
 
