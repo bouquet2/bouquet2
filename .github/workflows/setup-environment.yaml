@@ -1,0 +1,111 @@
+name: Setup Environment for Updater
+
+on:
+  workflow_call:
+    secrets:
+      TALOSCONFIG:
+        required: true
+      KUBECONFIG:
+        required: true
+      TS_OAUTH_CLIENT_ID:
+        required: true
+      TS_OAUTH_SECRET:
+        required: true
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      control_planes: ${{ steps.control-planes.outputs.control_planes }}
+      worker_nodes: ${{ steps.worker-nodes.outputs.worker_nodes }}
+      cp_ips: ${{ steps.control-plane-ips.outputs.cp_ips }}
+      worker_ips: ${{ steps.worker-node-ips.outputs.worker_ips }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install kubectl
+        run: |
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          sudo mv kubectl /usr/local/bin/
+
+      - name: Install talosctl
+        run: |
+          curl -Lo /usr/local/bin/talosctl https://github.com/siderolabs/talos/releases/latest/download/talosctl-linux-amd64
+          chmod +x /usr/local/bin/talosctl
+
+      - name: Connect Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:k8s-deploy
+          hostname: kreat8s-setup
+          use-cache: true
+
+      - name: Add talosconfig
+        env:
+          TALOSCONFIG: ${{ secrets.TALOSCONFIG }}
+        run: |
+          mkdir -p ~/.talos
+          echo "$TALOSCONFIG" > ~/.talos/config
+          chmod 600 ~/.talos/config
+
+      - name: Add kubeconfig
+        env:
+          KUBECONFIG_DATA: ${{ secrets.KUBECONFIG }}
+        run: |
+          mkdir -p ~/.kube
+          echo "$KUBECONFIG_DATA" > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Parse control planes from nodes.tfvars
+        id: control-planes
+        run: |
+          # Extract control plane names using awk and join with comma
+          CP_NAMES=$(awk '/control_planes = {/,/^}/ {if ($1 ~ /name/) print $3}' tofu/nodes.tfvars | tr -d '",' | paste -sd,)
+          echo "control_planes=$CP_NAMES" >> $GITHUB_OUTPUT
+
+      - name: Parse worker nodes from nodes.tfvars
+        id: worker-nodes
+        run: |
+          # Extract worker node names using awk and join with comma
+          WORKER_NODES=$(awk '/workers = {/,/^}/ {if ($1 ~ /name/) print $3}' tofu/nodes.tfvars | tr -d '",' | paste -sd,)
+          echo "worker_nodes=$WORKER_NODES" >> $GITHUB_OUTPUT
+
+      - name: Get control plane IPs
+        id: control-plane-ips
+        run: |
+          CP_IPS=""
+          for cp in $(echo ${{ steps.control-planes.outputs.control_planes }} | tr ',' ' '); do
+            echo "Getting IP for control plane $cp..."
+            IP=$(tailscale ip -4 $cp)
+            if [ -z "$IP" ]; then
+              echo "::error::Could not get IP for control plane $cp"
+              exit 1
+            fi
+            echo "Found IP $IP for control plane $cp"
+            CP_IPS="$CP_IPS $IP"
+          done
+          # Trim leading space and store in output
+          CP_IPS=$(echo "$CP_IPS" | sed -e 's/^[[:space:]]*//')
+          echo "cp_ips=$CP_IPS" >> $GITHUB_OUTPUT
+
+      - name: Get worker node IPs
+        id: worker-node-ips
+        run: |
+          WORKER_IPS=""
+          for worker in $(echo ${{ steps.worker-nodes.outputs.worker_nodes }} | tr ',' ' '); do
+            echo "Getting IP for worker $worker..."
+            IP=$(tailscale ip -4 $worker)
+            if [ -z "$IP" ]; then
+              echo "::error::Could not get IP for worker $worker"
+              exit 1
+            fi
+            echo "Found IP $IP for worker $worker"
+            WORKER_IPS="$WORKER_IPS $IP"
+          done
+          # Trim leading space and store in output
+          WORKER_IPS=$(echo "$WORKER_IPS" | sed -e 's/^[[:space:]]*//')
+          echo "worker_ips=$WORKER_IPS" >> $GITHUB_OUTPUT 

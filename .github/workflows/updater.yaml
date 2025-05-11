@@ -13,8 +13,17 @@ on:
   workflow_dispatch:
 
 jobs:
+  setup:
+    uses: ./.github/workflows/setup-environment.yaml
+    secrets:
+      TALOSCONFIG: ${{ secrets.TALOSCONFIG }}
+      KUBECONFIG: ${{ secrets.KUBECONFIG }}
+      TS_OAUTH_CLIENT_ID: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+      TS_OAUTH_SECRET: ${{ secrets.TS_OAUTH_SECRET }}
+
   update-talos:
     runs-on: ubuntu-latest
+    needs: setup
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -42,14 +51,6 @@ jobs:
           mkdir -p ~/.talos
           echo "$TALOSCONFIG" > ~/.talos/config
           chmod 600 ~/.talos/config
-
-      - name: Add kubeconfig
-        env:
-          KUBECONFIG_DATA: ${{ secrets.KUBECONFIG }}
-        run: |
-          mkdir -p ~/.kube
-          echo "$KUBECONFIG_DATA" > ~/.kube/config
-          chmod 600 ~/.kube/config
 
       - name: Get current Talos version from nodes
         id: current-nodes-version
@@ -95,78 +96,32 @@ jobs:
           IMAGE_ID=$(grep imageId vars.yaml | cut -d' ' -f2)
           echo "image_id=$IMAGE_ID" >> $GITHUB_OUTPUT
 
-      - name: Parse control planes from nodes.tfvars
-        id: control-planes
-        run: |
-          # Extract control plane names using awk and join with comma
-          CP_NAMES=$(awk '/control_planes = {/,/^}/ {if ($1 ~ /name/) print $3}' tofu/nodes.tfvars | tr -d '",' | paste -sd,)
-          echo "control_planes=$CP_NAMES" >> $GITHUB_OUTPUT
-
-      - name: Parse worker nodes from nodes.tfvars
-        id: worker-nodes
-        run: |
-          # Extract worker node names using awk and join with comma
-          WORKER_NODES=$(awk '/workers = {/,/^}/ {if ($1 ~ /name/) print $3}' tofu/nodes.tfvars | tr -d '",' | paste -sd,)
-          echo "worker_nodes=$WORKER_NODES" >> $GITHUB_OUTPUT
-
-      - name: Get control plane IPs
-        id: control-plane-ips
-        run: |
-          for cp in $(echo ${{ steps.control-planes.outputs.control_planes }} | tr ',' ' '); do
-            echo "Getting IP for control plane $cp..."
-            IP=$(tailscale ip -4 $cp)
-            if [ -z "$IP" ]; then
-              echo "::error::Could not get IP for control plane $cp"
-              exit 1
-            fi
-            echo "Found IP $IP for control plane $cp"
-            echo "cp_ip_${cp}=$IP" >> $GITHUB_OUTPUT
-          done
-
-      - name: Get worker node IPs
-        id: worker-node-ips
-        run: |
-          for worker in $(echo ${{ steps.worker-nodes.outputs.worker_nodes }} | tr ',' ' '); do
-            echo "Getting IP for worker $worker..."
-            IP=$(tailscale ip -4 $worker)
-            if [ -z "$IP" ]; then
-                echo "::error::Could not get IP for worker $worker"
-                exit 1
-            fi
-            echo "Found IP $IP for worker $worker"
-            echo "worker_ip_${worker}=$IP" >> $GITHUB_OUTPUT
-          done
-
       - name: Update Talos version if changed (control planes)
         if: steps.current-nodes-version.outputs.current_nodes_version != steps.target-version.outputs.target_version
         run: |
           echo "Updating Talos version from ${{ steps.current-nodes-version.outputs.current_nodes_version }} to ${{ steps.target-version.outputs.target_version }} for control planes"
-          for cp in $(echo ${{ steps.control-planes.outputs.control_planes }} | tr ',' ' '); do
-            echo "Updating control plane: $cp"
-            NODE_IP=$(echo "${{ steps.control-plane-ips.outputs }}" | grep "cp_ip_${cp}=" | cut -d'=' -f2)
-            talosctl upgrade --image "factory.talos.dev/installer/${{ steps.image-id.outputs.image_id }}:${{ steps.target-version.outputs.target_version }}" --nodes "$NODE_IP"
-            sleep 60
+          talosctl upgrade --image "factory.talos.dev/installer/${{ steps.image-id.outputs.image_id }}:${{ steps.target-version.outputs.target_version }}" --nodes "${{ needs.setup.outputs.cp_ips }}"
+          sleep 60
 
-            MAX_ATTEMPTS=3
-            ATTEMPT=1
-            while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
-              echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to verify upgrade for $cp..."
-              UPGRADE_VERSION=$(talosctl version --nodes "$NODE_IP" | sed '1,/Server/d' | grep "Tag:" | sort -t: -u -k1,1 | awk '{printf $2}')
-              
-              if [ "$UPGRADE_VERSION" = "${{ steps.target-version.outputs.target_version }}" ]; then
-                echo "Successfully verified upgrade for $cp"
-                break
-              fi
+          MAX_ATTEMPTS=3
+          ATTEMPT=1
+          while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
+            echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to verify upgrade for control planes..."
+            UPGRADE_VERSION=$(talosctl version --nodes "${{ needs.setup.outputs.cp_ips }}" | sed '1,/Server/d' | grep "Tag:" | sort -t: -u -k1,1 | awk '{printf $2}')
+            
+            if [ "$UPGRADE_VERSION" = "${{ steps.target-version.outputs.target_version }}" ]; then
+              echo "Successfully verified upgrade for control planes"
+              break
+            fi
 
-              if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
-                echo "::error::Upgrade verification failed for $cp after $MAX_ATTEMPTS attempts"
-                exit 1
-              fi
+            if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
+              echo "::error::Upgrade verification failed for control planes after $MAX_ATTEMPTS attempts"
+              exit 1
+            fi
 
-              echo "Version mismatch, retrying in 30 seconds..."
-              sleep 30
-              ATTEMPT=$((ATTEMPT + 1))
-            done
+            echo "Version mismatch, retrying in 30 seconds..."
+            sleep 30
+            ATTEMPT=$((ATTEMPT + 1))
           done
 
       - name: Wait for control planes to be ready
@@ -178,26 +133,24 @@ jobs:
       - name: Update Talos version if changed (worker nodes)
         if: steps.current-nodes-version.outputs.current_nodes_version != steps.target-version.outputs.target_version
         run: |
-          echo "Updating Talos version from ${{ steps.current-nodes-version.outputs.current_nodes_version }} to ${{ steps.target-version.outputs.target_version }} for worker nodes"
-          for worker in $(echo ${{ steps.worker-nodes.outputs.worker_nodes }} | tr ',' ' '); do
-            echo "Updating worker node: $worker"
-            NODE_IP=$(echo "${{ steps.worker-node-ips.outputs }}" | grep "worker_ip_${worker}=" | cut -d'=' -f2)
-            talosctl upgrade --image "factory.talos.dev/installer/${{ steps.image-id.outputs.image_id }}:${{ steps.target-version.outputs.target_version }}" --nodes "$NODE_IP"
+          if [ -n "${{ needs.setup.outputs.worker_ips }}" ]; then
+            echo "Updating Talos version from ${{ steps.current-nodes-version.outputs.current_nodes_version }} to ${{ steps.target-version.outputs.target_version }} for worker nodes"
+            talosctl upgrade --image "factory.talos.dev/installer/${{ steps.image-id.outputs.image_id }}:${{ steps.target-version.outputs.target_version }}" --nodes "${{ needs.setup.outputs.worker_ips }}"
             sleep 60
 
             MAX_ATTEMPTS=3
             ATTEMPT=1
             while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
-              echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to verify upgrade for $worker..."
-              UPGRADE_VERSION=$(talosctl version --nodes "$NODE_IP" | sed '1,/Server/d' | grep "Tag:" | sort -t: -u -k1,1 | awk '{printf $2}')
+              echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to verify upgrade for worker nodes..."
+              UPGRADE_VERSION=$(talosctl version --nodes "${{ needs.setup.outputs.worker_ips }}" | sed '1,/Server/d' | grep "Tag:" | sort -t: -u -k1,1 | awk '{printf $2}')
               
               if [ "$UPGRADE_VERSION" = "${{ steps.target-version.outputs.target_version }}" ]; then
-                echo "Successfully verified upgrade for $worker"
+                echo "Successfully verified upgrade for worker nodes"
                 break
               fi
 
               if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
-                echo "::error::Upgrade verification failed for $worker after $MAX_ATTEMPTS attempts"
+                echo "::error::Upgrade verification failed for worker nodes after $MAX_ATTEMPTS attempts"
                 exit 1
               fi
 
@@ -205,11 +158,11 @@ jobs:
               sleep 30
               ATTEMPT=$((ATTEMPT + 1))
             done
-          done
+          fi
 
   update-kubernetes:
     runs-on: ubuntu-latest
-    needs: update-talos
+    needs: [setup, update-talos]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -250,48 +203,6 @@ jobs:
           echo "$KUBECONFIG_DATA" > ~/.kube/config
           chmod 600 ~/.kube/config
 
-      - name: Parse control planes from nodes.tfvars
-        id: control-planes
-        run: |
-          # Extract control plane names using awk and join with comma
-          CP_NAMES=$(awk '/control_planes = {/,/^}/ {if ($1 ~ /name/) print $3}' tofu/nodes.tfvars | tr -d '",' | paste -sd,)
-          echo "control_planes=$CP_NAMES" >> $GITHUB_OUTPUT
-
-      - name: Get control plane IPs
-        id: control-plane-ips
-        run: |
-          for cp in $(echo ${{ steps.control-planes.outputs.control_planes }} | tr ',' ' '); do
-            echo "Getting IP for control plane $cp..."
-            IP=$(tailscale ip -4 $cp)
-            if [ -z "$IP" ]; then
-              echo "::error::Could not get IP for control plane $cp"
-              exit 1
-            fi
-            echo "Found IP $IP for control plane $cp"
-            echo "cp_ip_${cp}=$IP" >> $GITHUB_OUTPUT
-          done
-
-      - name: Parse worker nodes from nodes.tfvars
-        id: worker-nodes
-        run: |
-          # Extract worker node names using awk and join with comma
-          WORKER_NODES=$(awk '/workers = {/,/^}/ {if ($1 ~ /name/) print $3}' tofu/nodes.tfvars | tr -d '",' | paste -sd,)
-          echo "worker_nodes=$WORKER_NODES" >> $GITHUB_OUTPUT
-
-      - name: Get worker node IPs
-        id: worker-node-ips
-        run: |
-          for worker in $(echo ${{ steps.worker-nodes.outputs.worker_nodes }} | tr ',' ' '); do
-            echo "Getting IP for worker $worker..."
-            IP=$(tailscale ip -4 $worker)
-            if [ -z "$IP" ]; then
-                echo "::error::Could not get IP for worker $worker"
-                exit 1
-            fi
-            echo "Found IP $IP for worker $worker"
-            echo "worker_ip_${worker}=$IP" >> $GITHUB_OUTPUT
-          done
-
       - name: Get current Kubernetes version
         id: current-k8s-version
         run: |
@@ -330,26 +241,7 @@ jobs:
         if: steps.current-k8s-version.outputs.current_k8s_version != steps.target-k8s-version.outputs.target_k8s_version
         run: |
           echo "Updating Kubernetes from ${{ steps.current-k8s-version.outputs.current_k8s_version }} to ${{ steps.target-k8s-version.outputs.target_k8s_version }} on control planes"
-          
-          # Collect control plane IPs
-          CP_IPS=""
-          for cp in $(echo ${{ steps.control-planes.outputs.control_planes }} | tr ',' ' '); do
-            IP=$(echo "${{ steps.control-plane-ips.outputs }}" | grep "cp_ip_${cp}=" | cut -d'=' -f2)
-            if [ -n "$IP" ]; then
-              CP_IPS="$CP_IPS $IP"
-            fi
-          done
-          
-          # Trim leading space
-          CP_IPS=$(echo "$CP_IPS" | sed -e 's/^[[:space:]]*//')
-          
-          if [ -z "$CP_IPS" ]; then
-            echo "::error::Could not get control plane IPs for Kubernetes upgrade"
-            exit 1
-          fi
-          
-          echo "Upgrading control planes with IPs: $CP_IPS"
-          talosctl --nodes $CP_IPS upgrade-k8s --to ${{ steps.target-k8s-version.outputs.target_k8s_version }}
+          talosctl --nodes ${{ needs.setup.outputs.cp_ips }} upgrade-k8s --to ${{ steps.target-k8s-version.outputs.target_k8s_version }}
 
       - name: Wait for control plane upgrade to complete
         if: steps.current-k8s-version.outputs.current_k8s_version != steps.target-k8s-version.outputs.target_k8s_version
@@ -384,32 +276,16 @@ jobs:
       - name: Upgrade Kubernetes on worker nodes if version changed
         if: steps.current-k8s-version.outputs.current_k8s_version != steps.target-k8s-version.outputs.target_k8s_version
         run: |
-          echo "Updating Kubernetes from ${{ steps.current-k8s-version.outputs.current_k8s_version }} to ${{ steps.target-k8s-version.outputs.target_k8s_version }} on worker nodes"
-          
-          # Collect worker node IPs
-          WORKER_IPS=""
-          for worker in $(echo ${{ steps.worker-nodes.outputs.worker_nodes }} | tr ',' ' '); do
-            IP=$(echo "${{ steps.worker-node-ips.outputs }}" | grep "worker_ip_${worker}=" | cut -d'=' -f2)
-            if [ -n "$IP" ]; then
-              WORKER_IPS="$WORKER_IPS $IP"
-            fi
-          done
-          
-          # Trim leading space
-          WORKER_IPS=$(echo "$WORKER_IPS" | sed -e 's/^[[:space:]]*//')
-          
-          if [ -z "$WORKER_IPS" ]; then
-            echo "::warning::No worker IPs found for Kubernetes upgrade"
-          else
-            echo "Upgrading worker nodes with IPs: $WORKER_IPS"
-            talosctl --nodes $WORKER_IPS upgrade-k8s --to ${{ steps.target-k8s-version.outputs.target_k8s_version }}
+          if [ -n "${{ needs.setup.outputs.worker_ips }}" ]; then
+            echo "Updating Kubernetes from ${{ steps.current-k8s-version.outputs.current_k8s_version }} to ${{ steps.target-k8s-version.outputs.target_k8s_version }} on worker nodes"
+            talosctl --nodes ${{ needs.setup.outputs.worker_ips }} upgrade-k8s --to ${{ steps.target-k8s-version.outputs.target_k8s_version }}
           fi
 
       - name: Wait for worker upgrade to complete
         if: steps.current-k8s-version.outputs.current_k8s_version != steps.target-k8s-version.outputs.target_k8s_version
         run: |
           # Only wait if we have worker nodes
-          if [ -n "$(echo ${{ steps.worker-nodes.outputs.worker_nodes }} | tr -d ',')" ]; then
+          if [ -n "${{ needs.setup.outputs.worker_ips }}" ]; then
             echo "Waiting for worker node Kubernetes upgrade to complete..."
             sleep 120
           fi
