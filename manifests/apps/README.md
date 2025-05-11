@@ -1,0 +1,122 @@
+# Applications
+
+This directory contains Kubernetes manifests for various applications deployed in the cluster. Each application is managed using Kustomize and may include Helm charts where appropriate.
+
+## Applications Overview
+
+### [Gatus](https://github.com/TwiN/gatus)
+- **Purpose**: Health status monitoring and uptime monitoring
+- **Namespace**: `gatus`
+- **URL**: [status.krea.to](https://status.krea.to)
+- **Features**:
+  - Monitors internal and external services
+  - Custom UI with krea.to branding
+  - 60-second monitoring intervals
+  - Monitors various services including rose, iris, lily, and external services
+
+### [Mastodon](https://github.com/mastodon/mastodon)
+- **Purpose**: Social media platform
+- **Namespace**: `mastodon`
+- **URL**: [m.kreato.dev](https://m.kreato.dev)
+- **Components**:
+  - Web service (port 3000)
+  - Streaming service
+  - Sidekiq workers
+  - PostgreSQL database
+  - Dragonfly for Redis
+  - Persistent storage (10Gi)
+
+### [Open WebUI](https://github.com/open-webui/open-webui)
+- **Purpose**: Web interface for AI models
+- **Namespace**: `open-webui`
+- **URL**: [ai.krea.to](https://ai.krea.to)
+- **Components**:
+  - Main service (port 1337)
+  - Copilot API service
+  - Persistent storage (5Gi)
+
+### [Jellyfin](https://github.com/jellyfin/jellyfin)
+- **Purpose**: Media server
+- **Namespace**: `jellyfin`
+- **URL**: [media.krea.to](https://media.krea.to)
+- **Features**:
+  - Media streaming platform
+  - Persistent storage:
+    - Config: 5Gi
+    - Media: 10Gi
+
+### [MinIO](https://github.com/minio/minio)
+- **Purpose**: Object storage
+- **Namespace**: `minio`
+- **URLs**:
+  - [s3.krea.to](https://s3.krea.to)
+  - [bin.kreato.dev](https://bin.kreato.dev)
+- **Components**:
+  - S3-compatible storage
+  - Ingress configuration
+  - Service endpoints
+
+### [n8n](https://github.com/n8n-io/n8n)
+- **Purpose**: Workflow automation
+- **Namespace**: `n8n`
+- **URL**: [n8n.krea.to](https://n8n.krea.to)
+- **Features**:
+  - Workflow automation platform
+  - Node-based automation
+
+### [Umami](https://github.com/umami-software/umami)
+- **Purpose**: Analytics platform
+- **Namespace**: `umami`
+- **URL**: [umami.krea.to](https://umami.krea.to)
+- **Components**:
+  - Web interface (port 3000)
+  - PostgreSQL database
+
+## Directory Structure
+
+Each application follows a similar structure:
+```
+app-name/
+├── namespace.yaml
+├── kustomization.yaml
+├── values.yaml (if using Helm)
+├── ingressroute.yaml
+├── networkpolicy.yaml
+└── other application-specific manifests
+```
+
+## Deployment
+
+Applications are deployed using Kustomize. The main `kustomization.yaml` in this directory includes all applications. To deploy:
+
+```bash
+kubectl apply -k .
+```
+
+To deploy a specific application:
+
+```bash
+kubectl apply -k ./app-name/
+```
+
+For applications that use Helm charts, you'll need to enable Helm support. You can do this in two ways:
+
+1. Standard deployment with Helm support:
+```bash
+kubectl kustomize --enable-helm | kubectl apply -f -
+```
+
+2. Server-side apply with force conflicts (useful for applications with large ConfigMaps):
+```bash
+kubectl kustomize --enable-helm | kubectl apply --server-side --force-conflicts -f -
+```
+
+Note: Server-side apply command is particularly recommended as it is the default for the justfile and the CI. It may not work otherwise.
+
+## Notes
+
+- All applications use Traefik for ingress routing
+- TLS certificates are managed by cert-manager
+- Network policies are implemented for security
+- Persistent storage is used where needed
+- Applications are configured with appropriate resource limits and requests 
