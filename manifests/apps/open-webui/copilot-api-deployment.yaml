@@ -23,6 +23,7 @@ spec:
             - run
             - dist/main.js
             - start
+            - --vision
           ports:
             - containerPort: 4141
               protocol: TCP
