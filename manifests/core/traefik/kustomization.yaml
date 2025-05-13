@@ -1,6 +1,7 @@
 resources:
   - namespace.yaml
   - cloudflare-middleware.yaml
+  - ratelimit-middleware.yaml
 sortOptions:
   order: legacy
   legacySortOptions:
