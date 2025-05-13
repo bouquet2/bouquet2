@@ -10,6 +10,18 @@ spec:
     - websecure
   routes:
     - kind: Rule
+      match: Host(`ai.krea.to`) && PathPrefix(`/api/v1/auths`)
+      priority: 20
+      middlewares:
+        - name: traefik-ratelimit@kubernetescrd
+      services:
+        - kind: Service
+          name: open-webui
+          namespace: open-webui
+          passHostHeader: true
+          port: 1337
+          scheme: http
+    - kind: Rule
       match: Host(`ai.krea.to`)
       priority: 10
       services:

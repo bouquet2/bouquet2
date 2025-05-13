@@ -10,6 +10,18 @@ spec:
     - websecure
   routes:
     - kind: Rule
+      match: Host(`media.krea.to`) && PathPrefix(`/Users/`)
+      priority: 20
+      middlewares:
+        - name: traefik-ratelimit@kubernetescrd
+      services:
+        - kind: Service
+          name: jellyfin
+          namespace: jellyfin
+          passHostHeader: true
+          port: 8096
+          scheme: http
+    - kind: Rule
       match: Host(`media.krea.to`)
       priority: 10
       services:

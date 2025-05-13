@@ -1,9 +1,9 @@
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
-  name: ratelimit-login
+  name: ratelimit
   namespace: traefik
 spec:
   rateLimit:
-    average: 10
-    burst: 20
+    average: 5
+    period: 1m

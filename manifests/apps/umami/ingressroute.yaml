@@ -8,6 +8,18 @@ spec:
     - websecure
   routes:
     - kind: Rule
+      match: "Host(`umami.krea.to`) && PathPrefix(`/api/auth/login`)"
+      priority: 20
+      middlewares:
+        - name: traefik-ratelimit@kubernetescrd
+      services:
+        - kind: Service
+          name: umami
+          namespace: umami
+          passHostHeader: true
+          port: 3000
+          scheme: http
+    - kind: Rule
       match: "HeaderRegexp(`Referer`, `^https?:\\/\\/(?:[a-zA-Z0-9\\-\\.]+\\.)?krea\\.to`) && (Method(`POST`) || Method(`OPTIONS`)) && Host(`umami.krea.to`) && PathPrefix(`/api`)"
       priority: 10
       services:

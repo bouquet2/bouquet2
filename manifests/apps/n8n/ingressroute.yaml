@@ -10,6 +10,18 @@ spec:
     - websecure
   routes:
     - kind: Rule
+      match: Host(`n8n.krea.to`) && PathPrefix(`/rest/login`)
+      priority: 20
+      middlewares:
+        - name: traefik-ratelimit@kubernetescrd
+      services:
+        - kind: Service
+          name: n8n
+          namespace: n8n
+          passHostHeader: true
+          port: 5678
+          scheme: http
+    - kind: Rule
       match: Host(`n8n.krea.to`)
       priority: 10
       services:

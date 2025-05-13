@@ -10,6 +10,18 @@ spec:
     - websecure
   routes:
     - kind: Rule
+      match: Host(`m.kreato.dev`) && PathPrefix(`/auth/`)
+      priority: 20
+      middlewares:
+        - name: traefik-ratelimit@kubernetescrd
+      services:
+        - kind: Service
+          name: web
+          namespace: mastodon
+          passHostHeader: true
+          port: 3000
+          scheme: http
+    - kind: Rule
       match: Host(`m.kreato.dev`)
       priority: 10
       services:
