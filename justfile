@@ -16,6 +16,13 @@ deploy:
     tofu output -raw kubeconfig > ~/.kube/config && \
     tofu output -raw talosconfig > ~/.talos/config
 
+delete-ciliumjob:
+    cd tofu && \
+    talosctl -n rose patch machineconfig -p @cilium-delete-patch.yaml && \
+    kubectl delete ClusterRoleBinding cilium-install && \
+    kubectl delete ServiceAccount cilium-install -n kube-system && \
+    kubectl delete Job cilium-install -n kube-system
+
 [confirm("Are you sure you want to destroy? This will delete all resources!")]
 destroy:
     cd tofu && \

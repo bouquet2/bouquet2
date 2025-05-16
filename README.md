@@ -52,6 +52,9 @@ just deploy
 ### Deploying Kubernetes manifests
 just deploy-manifests
 
+### Do this after Cilium is up
+just delete-ciliumjob
+
 ### Destroying the cluster
 just destroy
 ```
