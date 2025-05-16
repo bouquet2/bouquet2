@@ -93,6 +93,7 @@ jobs:
           done
           # Trim leading space and store in output
           CP_IPS=$(echo "$CP_IPS" | sed -e 's/^[[:space:]]*//')
+          echo "FINAL CP_IPS: $CP_IPS"
           echo "cp_ips=$CP_IPS" >> $GITHUB_OUTPUT
 
       - name: Get worker node IPs
