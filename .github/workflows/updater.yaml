@@ -271,6 +271,10 @@ jobs:
             ATTEMPT=$((ATTEMPT + 1))
           done
 
+      - name: Remove job batch cilium-install as it is immutable
+        run: |
+          kubectl delete job -n kube-system cilium-install
+
       - name: Upgrade Kubernetes on worker nodes if version changed
         if: steps.current-k8s-version.outputs.current_k8s_version != steps.target-k8s-version.outputs.target_k8s_version
         run: |
