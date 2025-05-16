@@ -2,6 +2,19 @@ name: Setup Environment for Updater
 
 on:
   workflow_call:
+    outputs:
+      control_planes:
+        description: "List of control plane node names"
+        value: ${{ jobs.setup.outputs.control_planes }}
+      worker_nodes:
+        description: "List of worker node names"
+        value: ${{ jobs.setup.outputs.worker_nodes }}
+      cp_ips:
+        description: "List of control plane IPs"
+        value: ${{ jobs.setup.outputs.cp_ips }}
+      worker_ips:
+        description: "List of worker node IPs"
+        value: ${{ jobs.setup.outputs.worker_ips }}
     secrets:
       TALOSCONFIG:
         required: true
