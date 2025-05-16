@@ -18,7 +18,7 @@ deploy:
 
 delete-ciliumjob:
     cd tofu && \
-    talosctl -n rose patch machineconfig -p @cilium-delete-patch.yaml && \
+    talosctl patch machineconfig -p @cilium-delete-patch.yaml && \
     kubectl delete ClusterRoleBinding cilium-install && \
     kubectl delete ServiceAccount cilium-install -n kube-system && \
     kubectl delete Job cilium-install -n kube-system
