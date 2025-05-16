@@ -1,4 +1,4 @@
 cluster:
   inlineManifests:
     - name: cilium-install
-      $patch: delete 
+      $patch: delete
