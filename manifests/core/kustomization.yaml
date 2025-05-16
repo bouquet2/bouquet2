@@ -1,4 +1,5 @@
 resources:
+  - cilium/
   - longhorn/
   - traefik/
   - cert-manager/

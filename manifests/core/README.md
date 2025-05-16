@@ -56,6 +56,17 @@ This directory contains Kubernetes manifests for core infrastructure components 
   - Memory efficient
   - Privileged security context
 
+### [Cilium](https://github.com/cilium/cilium)
+- **Purpose**: Container networking and security
+- **Namespace**: `kube-system`
+- **Features**:
+  - Kubernetes-native networking
+  - eBPF-based networking and security
+  - kube-proxy replacement
+  - Kubernetes IPAM integration
+  - Enhanced security capabilities
+  - Network policy enforcement
+
 ## Directory Structure
 
 Each component follows a similar structure:
