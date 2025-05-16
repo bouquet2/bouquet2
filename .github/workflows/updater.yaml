@@ -239,7 +239,7 @@ jobs:
         if: steps.current-k8s-version.outputs.current_k8s_version != steps.target-k8s-version.outputs.target_k8s_version
         run: |
           echo "Updating Kubernetes from ${{ steps.current-k8s-version.outputs.current_k8s_version }} to ${{ steps.target-k8s-version.outputs.target_k8s_version }} on control planes"
-          talosctl --nodes "${{ needs.setup.outputs.cp_ips }}" upgrade-k8s --to "${{ steps.target-k8s-version.outputs.target_k8s_version }}"
+          talosctl --nodes "${{ needs.setup.outputs.cp_ips }}" upgrade-k8s --to "${{ steps.target-k8s-version.outputs.target_k8s_version }}" > /dev/null
 
       - name: Wait for control plane upgrade to complete
         if: steps.current-k8s-version.outputs.current_k8s_version != steps.target-k8s-version.outputs.target_k8s_version
@@ -276,7 +276,7 @@ jobs:
         run: |
           if [ -n "${{ needs.setup.outputs.worker_ips }}" ]; then
             echo "Updating Kubernetes from ${{ steps.current-k8s-version.outputs.current_k8s_version }} to ${{ steps.target-k8s-version.outputs.target_k8s_version }} on worker nodes"
-            talosctl --nodes "${{ needs.setup.outputs.worker_ips }}" upgrade-k8s --to "${{ steps.target-k8s-version.outputs.target_k8s_version }}"
+            talosctl --nodes "${{ needs.setup.outputs.worker_ips }}" upgrade-k8s --to "${{ steps.target-k8s-version.outputs.target_k8s_version }}" > /dev/null
           fi
 
       - name: Wait for worker upgrade to complete
