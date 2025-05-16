@@ -235,10 +235,6 @@ jobs:
           K8S_VERSION=$(echo "$K8S_VERSION" | sed 's/^v//')
           echo "target_k8s_version=$K8S_VERSION" >> $GITHUB_OUTPUT
 
-      - name: Remove job batch cilium-install as it is immutable
-        run: |
-          kubectl delete job -n kube-system cilium-install
-
       - name: Upgrade Kubernetes on the cluster if version changed
         if: steps.current-k8s-version.outputs.current_k8s_version != steps.target-k8s-version.outputs.target_k8s_version
         run: |
