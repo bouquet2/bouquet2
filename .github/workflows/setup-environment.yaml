@@ -15,6 +15,9 @@ on:
       worker_ips:
         description: "List of worker node IPs"
         value: ${{ jobs.setup.outputs.worker_ips }}
+      node_versions:
+        description: "JSON mapping of Talos versions to node IPs"
+        value: ${{ jobs.setup.outputs.node_versions }}
     secrets:
       TALOSCONFIG:
         required: true
@@ -36,6 +39,7 @@ jobs:
       worker_nodes: ${{ steps.worker-nodes.outputs.worker_nodes }}
       cp_ips: ${{ steps.control-plane-ips.outputs.cp_ips }}
       worker_ips: ${{ steps.worker-node-ips.outputs.worker_ips }}
+      node_versions: ${{ steps.node-versions.outputs.node_versions }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -126,3 +130,52 @@ jobs:
           # Trim leading space and store in output
           WORKER_IPS=$(echo "$WORKER_IPS" | sed -e 's/^[[:space:]]*//')
           echo "worker_ips=$WORKER_IPS" >> $GITHUB_OUTPUT
+
+      - name: Get node versions and group by Talos version
+        id: node-versions
+        run: |
+          # Extract all IPs
+          ALL_IPS="${{ steps.control-plane-ips.outputs.cp_ips }} ${{ steps.worker-node-ips.outputs.worker_ips }}"
+          
+          # Initialize a JSON object to map versions to node IPs
+          echo "Collecting Talos versions for all nodes..."
+          NODE_VERSIONS="{"
+          
+          MAX_ATTEMPTS=3
+          for NODE_IP in $ALL_IPS; do
+            ATTEMPT=1
+            while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
+              echo "Getting Talos version for node $NODE_IP (attempt $ATTEMPT/$MAX_ATTEMPTS)..."
+              VERSION=$(talosctl version --nodes $NODE_IP | grep "Tag:" | grep -v "Client" | head -1 | awk '{print $2}')
+              
+              if [ -n "$VERSION" ]; then
+                echo "Node $NODE_IP is running Talos $VERSION"
+                
+                # Check if this version is already in our JSON
+                if [[ $NODE_VERSIONS == *"\"$VERSION\":"* ]]; then
+                  # Append to existing version entry
+                  NODE_VERSIONS=$(echo $NODE_VERSIONS | sed "s|\"$VERSION\":\[\"[^]]*\"|\"$VERSION\":[&,\"$NODE_IP\"|")
+                else
+                  # Add new version entry (with comma if not the first entry)
+                  if [[ $NODE_VERSIONS != "{" ]]; then
+                    NODE_VERSIONS="$NODE_VERSIONS,"
+                  fi
+                  NODE_VERSIONS="$NODE_VERSIONS\"$VERSION\":[\"$NODE_IP\"]"
+                fi
+                break
+              fi
+              
+              if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
+                echo "::warning::Could not get Talos version for node $NODE_IP after $MAX_ATTEMPTS attempts"
+              fi
+              
+              echo "No version found for $NODE_IP, retrying in 10 seconds..."
+              sleep 10
+              ATTEMPT=$((ATTEMPT + 1))
+            done
+          done
+          
+          # Close the JSON object
+          NODE_VERSIONS="$NODE_VERSIONS}"
+          echo "Nodes grouped by Talos version: $NODE_VERSIONS"
+          echo "node_versions=$NODE_VERSIONS" >> $GITHUB_OUTPUT

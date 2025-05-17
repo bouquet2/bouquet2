@@ -52,37 +52,6 @@ jobs:
           echo "$TALOSCONFIG" > ~/.talos/config
           chmod 600 ~/.talos/config
 
-      - name: Get current Talos version from nodes
-        id: current-nodes-version
-        run: |
-          MAX_ATTEMPTS=3
-          ATTEMPT=1
-          while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
-            echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to get Talos versions..."
-            VERSIONS=$(talosctl version | sed '1,/Server/d' | grep "Tag:" | sort -t: -u -k1,1 | awk '{printf $2}')
-            UNIQUE_VERSIONS=$(echo "$VERSIONS" | sort -u | wc -l)
-
-            if [ "$UNIQUE_VERSIONS" -gt 1 ]; then
-              echo "::error::Version mismatch between nodes, can't proceed safely"
-              exit 1
-            fi
-
-            if [ -n "$VERSIONS" ]; then
-              echo "Successfully got Talos versions"
-              echo "current_nodes_version=$VERSIONS" >> $GITHUB_OUTPUT
-              break
-            fi
-
-            if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
-              echo "::error::No Talos version found after $MAX_ATTEMPTS attempts"
-              exit 1
-            fi
-
-            echo "No version found, retrying in 30 seconds..."
-            sleep 30
-            ATTEMPT=$((ATTEMPT + 1))
-          done
-
       - name: Get target Talos version from vars.yaml
         id: target-version
         run: |
@@ -95,65 +64,147 @@ jobs:
           IMAGE_ID=$(grep imageId vars.yaml | cut -d' ' -f2)
           echo "image_id=$IMAGE_ID" >> $GITHUB_OUTPUT
 
-      - name: Update Talos version if changed (control planes)
-        if: steps.current-nodes-version.outputs.current_nodes_version != steps.target-version.outputs.target_version
+      - name: Process node versions
+        id: process-versions
         run: |
-          echo "Updating Talos version from ${{ steps.current-nodes-version.outputs.current_nodes_version }} to ${{ steps.target-version.outputs.target_version }} for control planes"
-          talosctl upgrade --image "factory.talos.dev/installer/${{ steps.image-id.outputs.image_id }}:${{ steps.target-version.outputs.target_version }}" --nodes "${{ needs.setup.outputs.cp_ips }}"
-          sleep 60
-
-          MAX_ATTEMPTS=3
-          ATTEMPT=1
-          while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
-            echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to verify upgrade for control planes..."
-            UPGRADE_VERSION=$(talosctl version --nodes "${{ needs.setup.outputs.cp_ips }}" | sed '1,/Server/d' | grep "Tag:" | sort -t: -u -k1,1 | awk '{printf $2}')
-
-            if [ "$UPGRADE_VERSION" = "${{ steps.target-version.outputs.target_version }}" ]; then
-              echo "Successfully verified upgrade for control planes"
-              break
+          # Parse the JSON string to extract node versions and IPs
+          NODE_VERSIONS='${{ needs.setup.outputs.node_versions }}'
+          TARGET_VERSION="${{ steps.target-version.outputs.target_version }}"
+          
+          # Use jq to get nodes that need updating
+          echo "$NODE_VERSIONS" > node_versions.json
+          
+          # Extract control planes that need updating, grouped by current version
+          echo "Identifying control planes that need updating..."
+          CP_IPS_TO_UPDATE=""
+          for NODE_IP in ${{ needs.setup.outputs.cp_ips }}; do
+            # Find the version for this node
+            VERSION=$(cat node_versions.json | grep -o "\"[^\"]*\":.*\"$NODE_IP\"" | cut -d':' -f1 | tr -d '"')
+            if [ "$VERSION" != "$TARGET_VERSION" ]; then
+              echo "Control plane $NODE_IP needs update from $VERSION to $TARGET_VERSION"
+              CP_IPS_TO_UPDATE="$CP_IPS_TO_UPDATE $NODE_IP"
+            else
+              echo "Control plane $NODE_IP already at target version $TARGET_VERSION"
             fi
-
-            if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
-              echo "::error::Upgrade verification failed for control planes after $MAX_ATTEMPTS attempts"
-              exit 1
-            fi
-
-            echo "Version mismatch, retrying in 30 seconds..."
-            sleep 30
-            ATTEMPT=$((ATTEMPT + 1))
           done
+          CP_IPS_TO_UPDATE=$(echo "$CP_IPS_TO_UPDATE" | sed -e 's/^[[:space:]]*//')
+          echo "cp_ips_to_update=$CP_IPS_TO_UPDATE" >> $GITHUB_OUTPUT
+          
+          # Extract worker nodes that need updating, grouped by current version
+          echo "Identifying worker nodes that need updating..."
+          WORKER_IPS_TO_UPDATE=""
+          for NODE_IP in ${{ needs.setup.outputs.worker_ips }}; do
+            # Find the version for this node
+            VERSION=$(cat node_versions.json | grep -o "\"[^\"]*\":.*\"$NODE_IP\"" | cut -d':' -f1 | tr -d '"')
+            if [ "$VERSION" != "$TARGET_VERSION" ]; then
+              echo "Worker node $NODE_IP needs update from $VERSION to $TARGET_VERSION"
+              WORKER_IPS_TO_UPDATE="$WORKER_IPS_TO_UPDATE $NODE_IP"
+            else
+              echo "Worker node $NODE_IP already at target version $TARGET_VERSION"
+            fi
+          done
+          WORKER_IPS_TO_UPDATE=$(echo "$WORKER_IPS_TO_UPDATE" | sed -e 's/^[[:space:]]*//')
+          echo "worker_ips_to_update=$WORKER_IPS_TO_UPDATE" >> $GITHUB_OUTPUT
+          
+          # Determine if we need to update anything
+          if [ -z "$CP_IPS_TO_UPDATE" ] && [ -z "$WORKER_IPS_TO_UPDATE" ]; then
+            echo "needs_update=false" >> $GITHUB_OUTPUT
+            echo "All nodes are already at the target version $TARGET_VERSION"
+          else
+            echo "needs_update=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update Talos version (control planes)
+        if: steps.process-versions.outputs.needs_update == 'true' && steps.process-versions.outputs.cp_ips_to_update != ''
+        run: |
+          echo "Updating control planes to ${{ steps.target-version.outputs.target_version }}"
+          CP_IPS="${{ steps.process-versions.outputs.cp_ips_to_update }}"
+          
+          if [ -n "$CP_IPS" ]; then
+            echo "Updating Talos to ${{ steps.target-version.outputs.target_version }} for control planes: $CP_IPS"
+            talosctl upgrade --image "factory.talos.dev/installer/${{ steps.image-id.outputs.image_id }}:${{ steps.target-version.outputs.target_version }}" --nodes "$CP_IPS"
+            sleep 60
+
+            MAX_ATTEMPTS=3
+            ATTEMPT=1
+            while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
+              echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to verify upgrade for control planes..."
+              VERIFICATION_FAILED=false
+              
+              for NODE_IP in $CP_IPS; do
+                echo "Checking version of control plane $NODE_IP..."
+                UPGRADE_VERSION=$(talosctl version --nodes "$NODE_IP" | sed '1,/Server/d' | grep "Tag:" | head -1 | awk '{printf $2}')
+                
+                if [ "$UPGRADE_VERSION" != "${{ steps.target-version.outputs.target_version }}" ]; then
+                  echo "Control plane $NODE_IP is still at version $UPGRADE_VERSION, not ${{ steps.target-version.outputs.target_version }}"
+                  VERIFICATION_FAILED=true
+                else
+                  echo "Control plane $NODE_IP successfully upgraded to ${{ steps.target-version.outputs.target_version }}"
+                fi
+              done
+              
+              if [ "$VERIFICATION_FAILED" = "false" ]; then
+                echo "Successfully verified upgrade for all control planes"
+                break
+              fi
+              
+              if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
+                echo "::error::Upgrade verification failed for some control planes after $MAX_ATTEMPTS attempts"
+                exit 1
+              fi
+              
+              echo "Some control planes still upgrading, retrying in 30 seconds..."
+              sleep 30
+              ATTEMPT=$((ATTEMPT + 1))
+            done
+          fi
 
       - name: Wait for control planes to be ready
-        if: steps.current-nodes-version.outputs.current_nodes_version != steps.target-version.outputs.target_version
+        if: steps.process-versions.outputs.needs_update == 'true' && steps.process-versions.outputs.cp_ips_to_update != ''
         run: |
           echo "Waiting for control planes to be ready..."
           sleep 60  # Wait 1 minute for control planes to stabilize
 
-      - name: Update Talos version if changed (worker nodes)
-        if: steps.current-nodes-version.outputs.current_nodes_version != steps.target-version.outputs.target_version
+      - name: Update Talos version (worker nodes)
+        if: steps.process-versions.outputs.needs_update == 'true' && steps.process-versions.outputs.worker_ips_to_update != ''
         run: |
-          if [ -n "${{ needs.setup.outputs.worker_ips }}" ]; then
-            echo "Updating Talos version from ${{ steps.current-nodes-version.outputs.current_nodes_version }} to ${{ steps.target-version.outputs.target_version }} for worker nodes"
-            talosctl upgrade --image "factory.talos.dev/installer/${{ steps.image-id.outputs.image_id }}:${{ steps.target-version.outputs.target_version }}" --nodes "${{ needs.setup.outputs.worker_ips }}"
+          echo "Updating worker nodes to ${{ steps.target-version.outputs.target_version }}"
+          WORKER_IPS="${{ steps.process-versions.outputs.worker_ips_to_update }}"
+          
+          if [ -n "$WORKER_IPS" ]; then
+            echo "Updating Talos to ${{ steps.target-version.outputs.target_version }} for worker nodes: $WORKER_IPS"
+            talosctl upgrade --image "factory.talos.dev/installer/${{ steps.image-id.outputs.image_id }}:${{ steps.target-version.outputs.target_version }}" --nodes "$WORKER_IPS"
             sleep 60
 
             MAX_ATTEMPTS=3
             ATTEMPT=1
             while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
               echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to verify upgrade for worker nodes..."
-              UPGRADE_VERSION=$(talosctl version --nodes "${{ needs.setup.outputs.worker_ips }}" | sed '1,/Server/d' | grep "Tag:" | sort -t: -u -k1,1 | awk '{printf $2}')
-
-              if [ "$UPGRADE_VERSION" = "${{ steps.target-version.outputs.target_version }}" ]; then
-                echo "Successfully verified upgrade for worker nodes"
+              VERIFICATION_FAILED=false
+              
+              for NODE_IP in $WORKER_IPS; do
+                echo "Checking version of worker node $NODE_IP..."
+                UPGRADE_VERSION=$(talosctl version --nodes "$NODE_IP" | sed '1,/Server/d' | grep "Tag:" | head -1 | awk '{printf $2}')
+                
+                if [ "$UPGRADE_VERSION" != "${{ steps.target-version.outputs.target_version }}" ]; then
+                  echo "Worker node $NODE_IP is still at version $UPGRADE_VERSION, not ${{ steps.target-version.outputs.target_version }}"
+                  VERIFICATION_FAILED=true
+                else
+                  echo "Worker node $NODE_IP successfully upgraded to ${{ steps.target-version.outputs.target_version }}"
+                fi
+              done
+              
+              if [ "$VERIFICATION_FAILED" = "false" ]; then
+                echo "Successfully verified upgrade for all worker nodes"
                 break
               fi
-
+              
               if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
-                echo "::error::Upgrade verification failed for worker nodes after $MAX_ATTEMPTS attempts"
+                echo "::error::Upgrade verification failed for some worker nodes after $MAX_ATTEMPTS attempts"
                 exit 1
               fi
-
-              echo "Version mismatch, retrying in 30 seconds..."
+              
+              echo "Some worker nodes still upgrading, retrying in 30 seconds..."
               sleep 30
               ATTEMPT=$((ATTEMPT + 1))
             done
