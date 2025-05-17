@@ -127,8 +127,14 @@ jobs:
           CP_IPS="${{ steps.process-versions.outputs.cp_ips_to_update }}"
           
           if [ -n "$CP_IPS" ]; then
-            echo "Updating Talos to ${{ steps.target-version.outputs.target_version }} for control planes: $CP_IPS"
-            talosctl upgrade --image "factory.talos.dev/installer/${{ steps.image-id.outputs.image_id }}:${{ steps.target-version.outputs.target_version }}" --nodes "$CP_IPS"
+            for NODE_IP in $CP_IPS; do
+              echo "Updating Talos to ${{ steps.target-version.outputs.target_version }} for control plane: $NODE_IP"
+              talosctl upgrade --image "factory.talos.dev/installer/${{ steps.image-id.outputs.image_id }}:${{ steps.target-version.outputs.target_version }}" --nodes "$NODE_IP"
+              echo "Sleeping 30 seconds before proceeding to next node or verification..."
+              sleep 30
+            done
+            
+            echo "All control plane upgrades initiated, waiting 60 more seconds before verification..."
             sleep 60
 
             MAX_ATTEMPTS=3
@@ -178,8 +184,14 @@ jobs:
           WORKER_IPS="${{ steps.process-versions.outputs.worker_ips_to_update }}"
           
           if [ -n "$WORKER_IPS" ]; then
-            echo "Updating Talos to ${{ steps.target-version.outputs.target_version }} for worker nodes: $WORKER_IPS"
-            talosctl upgrade --image "factory.talos.dev/installer/${{ steps.image-id.outputs.image_id }}:${{ steps.target-version.outputs.target_version }}" --nodes "$WORKER_IPS"
+            for NODE_IP in $WORKER_IPS; do
+              echo "Updating Talos to ${{ steps.target-version.outputs.target_version }} for worker node: $NODE_IP"
+              talosctl upgrade --image "factory.talos.dev/installer/${{ steps.image-id.outputs.image_id }}:${{ steps.target-version.outputs.target_version }}" --nodes "$NODE_IP"
+              echo "Sleeping 30 seconds before proceeding to next node..."
+              sleep 30
+            done
+
+            echo "All worker node upgrades initiated, waiting 60 more seconds before verification..."
             sleep 60
 
             MAX_ATTEMPTS=3
