@@ -71,17 +71,20 @@ jobs:
           NODE_VERSIONS='${{ needs.setup.outputs.node_versions }}'
           TARGET_VERSION="${{ steps.target-version.outputs.target_version }}"
           
-          # Use jq to get nodes that need updating
-          echo "$NODE_VERSIONS" > node_versions.json
+          # Print node versions for debugging
+          echo "Node versions JSON: $NODE_VERSIONS"
           
-          # Extract control planes that need updating, grouped by current version
+          # Extract control planes that need updating
           echo "Identifying control planes that need updating..."
           CP_IPS_TO_UPDATE=""
           for NODE_IP in ${{ needs.setup.outputs.cp_ips }}; do
-            # Find the version for this node
-            VERSION=$(cat node_versions.json | grep -o "\"[^\"]*\":.*\"$NODE_IP\"" | cut -d':' -f1 | tr -d '"')
-            if [ "$VERSION" != "$TARGET_VERSION" ]; then
-              echo "Control plane $NODE_IP needs update from $VERSION to $TARGET_VERSION"
+            # Get version directly from the node
+            echo "Getting current version for control plane $NODE_IP..."
+            CURRENT_VERSION=$(talosctl version --nodes "$NODE_IP" | sed '1,/Server/d' | grep "Tag:" | head -1 | awk '{print $2}')
+            echo "Control plane $NODE_IP current version: $CURRENT_VERSION"
+            
+            if [ "$CURRENT_VERSION" != "$TARGET_VERSION" ]; then
+              echo "Control plane $NODE_IP needs update from $CURRENT_VERSION to $TARGET_VERSION"
               CP_IPS_TO_UPDATE="$CP_IPS_TO_UPDATE $NODE_IP"
             else
               echo "Control plane $NODE_IP already at target version $TARGET_VERSION"
@@ -90,14 +93,17 @@ jobs:
           CP_IPS_TO_UPDATE=$(echo "$CP_IPS_TO_UPDATE" | sed -e 's/^[[:space:]]*//')
           echo "cp_ips_to_update=$CP_IPS_TO_UPDATE" >> $GITHUB_OUTPUT
           
-          # Extract worker nodes that need updating, grouped by current version
+          # Extract worker nodes that need updating
           echo "Identifying worker nodes that need updating..."
           WORKER_IPS_TO_UPDATE=""
           for NODE_IP in ${{ needs.setup.outputs.worker_ips }}; do
-            # Find the version for this node
-            VERSION=$(cat node_versions.json | grep -o "\"[^\"]*\":.*\"$NODE_IP\"" | cut -d':' -f1 | tr -d '"')
-            if [ "$VERSION" != "$TARGET_VERSION" ]; then
-              echo "Worker node $NODE_IP needs update from $VERSION to $TARGET_VERSION"
+            # Get version directly from the node
+            echo "Getting current version for worker node $NODE_IP..."
+            CURRENT_VERSION=$(talosctl version --nodes "$NODE_IP" | sed '1,/Server/d' | grep "Tag:" | head -1 | awk '{print $2}')
+            echo "Worker node $NODE_IP current version: $CURRENT_VERSION"
+            
+            if [ "$CURRENT_VERSION" != "$TARGET_VERSION" ]; then
+              echo "Worker node $NODE_IP needs update from $CURRENT_VERSION to $TARGET_VERSION"
               WORKER_IPS_TO_UPDATE="$WORKER_IPS_TO_UPDATE $NODE_IP"
             else
               echo "Worker node $NODE_IP already at target version $TARGET_VERSION"
