@@ -129,8 +129,28 @@ jobs:
           if [ -n "$CP_IPS" ]; then
             for NODE_IP in $CP_IPS; do
               echo "Updating Talos to ${{ steps.target-version.outputs.target_version }} for control plane: $NODE_IP"
-              talosctl upgrade --image "factory.talos.dev/installer/${{ steps.image-id.outputs.image_id }}:${{ steps.target-version.outputs.target_version }}" --nodes "$NODE_IP"
-              echo "Sleeping 30 seconds before proceeding to next node or verification..."
+              
+              # Try up to 3 times with 30 second cooldown
+              MAX_ATTEMPTS=3
+              ATTEMPT=1
+              while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
+                echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to update control plane $NODE_IP..."
+                if talosctl upgrade --image "factory.talos.dev/installer/${{ steps.image-id.outputs.image_id }}:${{ steps.target-version.outputs.target_version }}" --nodes "$NODE_IP"; then
+                  echo "Successfully initiated upgrade for control plane $NODE_IP"
+                  break
+                fi
+                
+                if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
+                  echo "::error::Failed to update control plane $NODE_IP after $MAX_ATTEMPTS attempts"
+                  exit 1
+                fi
+                
+                echo "Update attempt failed, waiting 30 seconds before retry..."
+                sleep 30
+                ATTEMPT=$((ATTEMPT + 1))
+              done
+              
+              echo "Sleeping 30 seconds before proceeding to next node..."
               sleep 30
             done
             
@@ -186,7 +206,27 @@ jobs:
           if [ -n "$WORKER_IPS" ]; then
             for NODE_IP in $WORKER_IPS; do
               echo "Updating Talos to ${{ steps.target-version.outputs.target_version }} for worker node: $NODE_IP"
-              talosctl upgrade --image "factory.talos.dev/installer/${{ steps.image-id.outputs.image_id }}:${{ steps.target-version.outputs.target_version }}" --nodes "$NODE_IP"
+              
+              # Try up to 3 times with 30 second cooldown
+              MAX_ATTEMPTS=3
+              ATTEMPT=1
+              while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
+                echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to update worker node $NODE_IP..."
+                if talosctl upgrade --image "factory.talos.dev/installer/${{ steps.image-id.outputs.image_id }}:${{ steps.target-version.outputs.target_version }}" --nodes "$NODE_IP"; then
+                  echo "Successfully initiated upgrade for worker node $NODE_IP"
+                  break
+                fi
+                
+                if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
+                  echo "::error::Failed to update worker node $NODE_IP after $MAX_ATTEMPTS attempts"
+                  exit 1
+                fi
+                
+                echo "Update attempt failed, waiting 30 seconds before retry..."
+                sleep 30
+                ATTEMPT=$((ATTEMPT + 1))
+              done
+              
               echo "Sleeping 30 seconds before proceeding to next node..."
               sleep 30
             done
