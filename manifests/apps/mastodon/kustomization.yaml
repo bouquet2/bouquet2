@@ -5,7 +5,6 @@ resources:
   - postgres.yaml
   - dragonfly.yaml
   - production-configmap.yaml
-  - mastodon-main-pvc.yaml
   - rbac.yaml
   - db-migration-job.yaml
   - sidekiq-deployment.yaml

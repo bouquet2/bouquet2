@@ -4,7 +4,7 @@ metadata:
   name: web
   namespace: mastodon
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: web
@@ -169,11 +169,4 @@ spec:
           ports:
             - containerPort: 3000
               protocol: TCP
-          volumeMounts:
-            - mountPath: /mastodon/public/system
-              name: mastodon-main
       restartPolicy: Always
-      volumes:
-        - name: mastodon-main
-          persistentVolumeClaim:
-            claimName: mastodon-main
