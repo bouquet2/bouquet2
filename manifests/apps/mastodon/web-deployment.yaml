@@ -166,7 +166,14 @@ spec:
                 - sh
                 - -c
                 - curl -s --noproxy localhost localhost:3000/health | grep -q 'OK' || exit 1
+          volumeMounts:
+            - mountPath: /mastodon/public/system
+              name: mastodon-main
           ports:
             - containerPort: 3000
               protocol: TCP
       restartPolicy: Always
+      volumes:
+        - name: mastodon-main
+          persistentVolumeClaim:
+            claimName: mastodon-main

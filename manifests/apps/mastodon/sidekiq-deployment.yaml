@@ -155,4 +155,11 @@ spec:
                 - sh
                 - -c
                 - "ps aux | grep '[s]idekiq' || exit 1"
+          volumeMounts:
+            - mountPath: /mastodon/public/system
+              name: mastodon-main
       restartPolicy: Always
+      volumes:
+        - name: mastodon-main
+          persistentVolumeClaim:
+            claimName: mastodon-main
