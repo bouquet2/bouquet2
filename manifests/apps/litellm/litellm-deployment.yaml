@@ -54,11 +54,18 @@ spec:
           # IMPORTANT: Keep necessary secrets mounted as environment variables
           # LiteLLM's config `os.environ/VAR_NAME` syntax will read these.
           env:
-            - name: DATABASE_URL
+            - name: DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  key: DATABASE_URL
+                  key: password
                   name: production
+            - name: DATABASE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: username
+                  name: production
+            - name: DATABASE_URL
+              value: postgresql://$(DATABASE_USERNAME):$(DATABASE_PASSWORD)@litellm-rw:5432/litellm"
             - name: LITELLM_MASTER_KEY
               valueFrom:
                 secretKeyRef:
@@ -88,6 +95,11 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: OPENROUTER_API_KEY
+                  name: production
+            - name: VOIDAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: VOIDAI_API_KEY
                   name: production
             - name: SLACK_WEBHOOK_URL
               valueFrom:
