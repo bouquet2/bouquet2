@@ -20,7 +20,7 @@
       "matchPackageNames": [
         "ghcr.io/berriai/litellm"
       ],
-      "versioning": "regex:^main-v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$-stable"
+      "versioning": "regex:^main-v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-stable$"
     }
   ],
   "customManagers": [
