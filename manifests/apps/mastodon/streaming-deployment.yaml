@@ -5,6 +5,7 @@ metadata:
   namespace: mastodon
 spec:
   replicas: 2
+  revisionHistoryLimit: 0
   selector:
     matchLabels:
       app: streaming
