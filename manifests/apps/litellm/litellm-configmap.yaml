@@ -60,6 +60,23 @@ data:
         model_info:
           id: copilot-claude-sonnet-4
 
+      # GPT-4o
+      - model_name: gpt-4o
+        litellm_params:
+          model: openai/gpt-4o
+          api_base: https://api.voidai.app/v1
+          api_key: "os.environ/VOIDAI_API_KEY"
+          rpm: 7
+        model_info:
+          id: voidai-gpt-4o
+      - model_name: copilot-gpt-4o
+        litellm_params:
+          model: openai/gpt-4o
+          api_base: http://copilot-api.open-webui.svc.cluster.local:4141
+          api_key: blabladoesntmatter
+        model_info:
+          id: copilot-gpt-4o
+
       # o4-mini
       - model_name: o4-mini
         litellm_params:
@@ -110,7 +127,6 @@ data:
       num_retries: 3
       allowed_fails: 3
       cooldown_time: 30
-      request_timeout: 5
       drop_params: True
       cache: true
       cache_params:
@@ -124,6 +140,8 @@ data:
           - copilot-o4-mini
         - gpt-4.1:
           - copilot-gpt-4.1
+        - gpt-4o:
+          - copilot-gpt-4o
 
     general_settings:
       alerting: ["slack"]
