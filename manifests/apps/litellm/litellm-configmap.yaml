@@ -31,72 +31,71 @@ data:
         model_info:
           id: copilot-gemini-2.5-pro
 
-    # O3-high
-    - model_name: o3-high
-      litellm_params:
-        model: openai/o3-high
-        api_base: https://api.voidai.app/v1
-        api_key: "os.environ/VOIDAI_API_KEY"
-        rpm: 7
-      model_info:
-        id: voidai-o3-high
+      # O3-high
+      - model_name: o3-high
+        litellm_params:
+          model: openai/o3-high
+          api_base: https://api.voidai.app/v1
+          api_key: "os.environ/VOIDAI_API_KEY"
+          rpm: 7
+        model_info:
+          id: voidai-o3-high
 
-    # O3-medium
-    - model_name: o3-medium
-      litellm_params:
-        model: openai/o3-medium
-        api_base: https://api.voidai.app/v1
-        api_key: "os.environ/VOIDAI_API_KEY"
-        rpm: 7
-      model_info:
-        id: voidai-o3-medium
+      # O3-medium
+      - model_name: o3-medium
+        litellm_params:
+          model: openai/o3-medium
+          api_base: https://api.voidai.app/v1
+          api_key: "os.environ/VOIDAI_API_KEY"
+          rpm: 7
+        model_info:
+          id: voidai-o3-medium
 
-    # o4-mini
-    - model_name: o4-mini
-      litellm_params:
-        model: openai/o4-mini
-        api_base: https://api.voidai.app/v1
-        api_key: "os.environ/VOIDAI_API_KEY"
-        rpm: 7
-      model_info:
-        id: voidai-o4-mini
+      # o4-mini
+      - model_name: o4-mini
+        litellm_params:
+          model: openai/o4-mini
+          api_base: https://api.voidai.app/v1
+          api_key: "os.environ/VOIDAI_API_KEY"
+          rpm: 7
+        model_info:
+          id: voidai-o4-mini
 
-    - model_name: copilot-o4-mini
-      litellm_params:
-        model: openai/o4-mini
-        api_base: http://copilot-api.open-webui.svc.cluster.local:4141
-        api_key: blabladoesntmatter
-      model_info:
-        id: copilot-o4-mini
+      - model_name: copilot-o4-mini
+        litellm_params:
+          model: openai/o4-mini
+          api_base: http://copilot-api.open-webui.svc.cluster.local:4141
+          api_key: blabladoesntmatter
+        model_info:
+          id: copilot-o4-mini
 
-    # gpt-4.1
-    - model_name: gpt-4.1
-      litellm_params:
-        model: openai/gpt-4.1
-        api_base: https://api.voidai.app/v1
-        api_key: "os.environ/VOIDAI_API_KEY"
-        rpm: 7
-      model_info:
-        id: voidai-gpt-4.1
+      # gpt-4.1
+      - model_name: gpt-4.1
+        litellm_params:
+          model: openai/gpt-4.1
+          api_base: https://api.voidai.app/v1
+          api_key: "os.environ/VOIDAI_API_KEY"
+          rpm: 7
+        model_info:
+          id: voidai-gpt-4.1
 
-    - model_name: copilot-gpt-4.1
-      litellm_params:
-        model: openai/gpt-4.1
-        api_base: http://copilot-api.open-webui.svc.cluster.local:4141
-        api_key: blabladoesntmatter
-      model_info:
-        id: copilot-gpt-4.1
+      - model_name: copilot-gpt-4.1
+        litellm_params:
+          model: openai/gpt-4.1
+          api_base: http://copilot-api.open-webui.svc.cluster.local:4141
+          api_key: blabladoesntmatter
+        model_info:
+          id: copilot-gpt-4.1
 
-
-    # gpt-image-1
-    - model_name: gpt-image-1
-      litellm_params:
-        model: openai/gpt-image-1
-        api_base: https://api.voidai.app/v1
-        api_key: "os.environ/VOIDAI_API_KEY"
-        rpm: 7
-      model_info:
-        id: voidai-gpt-image-1
+      # gpt-image-1
+      - model_name: gpt-image-1
+        litellm_params:
+          model: openai/gpt-image-1
+          api_base: https://api.voidai.app/v1
+          api_key: "os.environ/VOIDAI_API_KEY"
+          rpm: 7
+        model_info:
+          id: voidai-gpt-image-1
 
     litellm_settings:
       num_retries: 3
