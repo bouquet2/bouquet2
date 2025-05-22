@@ -4,7 +4,7 @@ metadata:
   name: litellm-config
   namespace: litellm
 data:
-  config.yaml: |
+  config.yaml: |-
     model_list:
       # DeepSeek R1 (MAI-DS-R1)
       - model_name: deepseek-r1
