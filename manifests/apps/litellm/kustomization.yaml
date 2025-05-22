@@ -17,4 +17,4 @@ secretGenerator:
 images:
   - name: ghcr.io/berriai/litellm
     newName: ghcr.io/berriai/litellm
-    newTag: main-v1.66.0-stable
+    newTag: main-v1.70.1-stable
