@@ -5,7 +5,8 @@ metadata:
     service: umami
   name: umami
 spec:
-  replicas: 1
+  replicas: 2
+  revisionHistoryLimit: 0
   selector:
     matchLabels:
       service: umami
