@@ -51,6 +51,15 @@ data:
         model_info:
           id: voidai-o3-medium
 
+      # Claude Sonnet 4
+      - model_name: claude-sonnet-4
+        litellm_params:
+          model: openai/claude-sonnet-4
+          api_base: http://copilot-api.open-webui.svc.cluster.local:4141
+          api_key: blabladoesntmatter
+        model_info:
+          id: copilot-claude-sonnet-4
+
       # o4-mini
       - model_name: o4-mini
         litellm_params:
