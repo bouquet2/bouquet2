@@ -4,7 +4,7 @@ metadata:
   name: litellm-config
   namespace: litellm
 data:
-  config.yaml: |
+  config.yaml: |-
     # TODO: Remove Copilot when it is supported on LiteLLM
     model_list:
       # Gemini 2.5 Pro 05-06
@@ -30,7 +30,7 @@ data:
           api_key: blabladoesntmatter
         model_info:
           id: copilot-gemini-2.5-pro
-    
+
     # O3-high
     - model_name: o3-high
       litellm_params:
@@ -86,7 +86,7 @@ data:
         api_key: blabladoesntmatter
       model_info:
         id: copilot-gpt-4.1
-   
+
 
     # gpt-image-1
     - model_name: gpt-image-1
