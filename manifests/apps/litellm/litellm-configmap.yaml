@@ -52,7 +52,7 @@ data:
           id: voidai-o3-medium
 
       # Claude Sonnet 4
-      
+
       - model_name: claude-sonnet-4
         litellm_params:
           model: openai/claude-sonnet-4-20250514

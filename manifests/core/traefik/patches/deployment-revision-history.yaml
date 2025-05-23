@@ -3,4 +3,4 @@ kind: Deployment
 metadata:
   name: traefik
 spec:
-  revisionHistoryLimit: 0 
+  revisionHistoryLimit: 0
