@@ -12,6 +12,11 @@ sortOptions:
       - Middleware
       - TLSStore
 namespace: traefik
+patches:
+  - path: patches/deployment-revision-history.yaml
+    target:
+      kind: Deployment
+      name: traefik
 helmCharts:
   - name: traefik
     repo: https://traefik.github.io/charts
