@@ -52,13 +52,43 @@ data:
           id: voidai-o3-medium
 
       # Claude Sonnet 4
+      
       - model_name: claude-sonnet-4
+        litellm_params:
+          model: openai/claude-sonnet-4-20250514
+          api_base: https://api.voidai.app/v1
+          api_key: "os.environ/VOIDAI_API_KEY"
+          rpm: 7
+        model_info:
+          id: voidai-claude-sonnet-4
+
+      - model_name: copilot-claude-sonnet-4
         litellm_params:
           model: openai/claude-sonnet-4
           api_base: http://copilot-api.open-webui.svc.cluster.local:4141
           api_key: blabladoesntmatter
         model_info:
           id: copilot-claude-sonnet-4
+
+      # Claude Opus 4
+      - model_name: claude-opus-4
+        litellm_params:
+          model: openai/claude-opus-4-20250514
+          api_base: https://api.voidai.app/v1
+          api_key: "os.environ/VOIDAI_API_KEY"
+          rpm: 7
+        model_info:
+          id: voidai-claude-opus-4
+
+     # Claude Opus 4 (Thinking)
+      - model_name: claude-opus-4-thinking
+        litellm_params:
+          model: openai/claude-opus-4-20250514-thinking
+          api_base: https://api.voidai.app/v1
+          api_key: "os.environ/VOIDAI_API_KEY"
+          rpm: 7
+        model_info:
+          id: voidai-claude-opus-4-thinking
 
       # GPT-4o
       - model_name: gpt-4o
@@ -142,6 +172,8 @@ data:
           - copilot-gpt-4.1
         - gpt-4o:
           - copilot-gpt-4o
+        - claude-sonnet-4:
+          - copilot-claude-sonnet-4
 
     general_settings:
       alerting: ["slack"]
