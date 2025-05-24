@@ -62,6 +62,7 @@ data:
         model_info:
           id: voidai-claude-sonnet-4
 
+
       - model_name: copilot-claude-sonnet-4
         litellm_params:
           model: openai/claude-sonnet-4
@@ -69,6 +70,16 @@ data:
           api_key: blabladoesntmatter
         model_info:
           id: copilot-claude-sonnet-4
+
+      # Claude Sonnet 4 (Thinking)
+      - model_name: claude-sonnet-4-thinking
+        litellm_params:
+          model: openai/claude-sonnet-4-20250514-thinking
+          api_base: https://api.voidai.app/v1
+          api_key: "os.environ/VOIDAI_API_KEY"
+          rpm: 7
+        model_info:
+          id: voidai-claude-sonnet-4-thinking
 
       # Claude Opus 4
       - model_name: claude-opus-4
