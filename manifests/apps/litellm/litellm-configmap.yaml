@@ -21,11 +21,7 @@ data:
         litellm_params:
           model: gemini/gemini-2.5-pro-preview-05-06
         model_info:
-          id: gemini-gemini-2.5-pro
-          input_cost_per_token: 0.00000125
-          input_cost_per_token_above_200k_tokens: 0.0000025
-          output_cost_per_token: 0.00001
-          output_cost_per_token_above_200k_tokens: 0.000015
+          id: gemini-2.5-pro-preview-05-06
 
       - model_name: copilot-gemini-2.5-pro
         litellm_params:
@@ -33,11 +29,7 @@ data:
           api_base: http://copilot-api.open-webui.svc.cluster.local:4141
           api_key: blabladoesntmatter
         model_info:
-          id: copilot-gemini-2.5-pro
-          input_cost_per_token: 0.00000125
-          input_cost_per_token_above_200k_tokens: 0.0000025
-          output_cost_per_token: 0.00001
-          output_cost_per_token_above_200k_tokens: 0.000015
+          id: gemini-2.5-pro-preview-05-06
 
       # O3-high
       - model_name: o3-high
@@ -76,9 +68,7 @@ data:
           api_base: http://copilot-api.open-webui.svc.cluster.local:4141
           api_key: blabladoesntmatter
         model_info:
-          id: copilot-claude-sonnet-4
-          output_cost_per_token: 15e-6
-          input_cost_per_token: 3e-6
+          id: claude-sonnet-4
 
       # Claude Sonnet 4 (Thinking)
       - model_name: claude-sonnet-4-thinking
@@ -97,15 +87,15 @@ data:
           api_base: https://api.voidai.app/v1
           api_key: "os.environ/VOIDAI_API_KEY"
           rpm: 7
+        model_info:
+          id: gpt-4o
       - model_name: copilot-gpt-4o
         litellm_params:
           model: openai/gpt-4o
           api_base: http://copilot-api.open-webui.svc.cluster.local:4141
           api_key: blabladoesntmatter
         model_info:
-          id: copilot-gpt-4o
-          input_cost_per_token: 0.0000025
-          output_cost_per_token: 0.000010
+          id: gpt-4o
 
 
       # o4-mini
@@ -115,6 +105,8 @@ data:
           api_base: https://api.voidai.app/v1
           api_key: "os.environ/VOIDAI_API_KEY"
           rpm: 7
+        model_info:
+          id: o4-mini
 
 
       - model_name: copilot-o4-mini
@@ -123,9 +115,7 @@ data:
           api_base: http://copilot-api.open-webui.svc.cluster.local:4141
           api_key: blabladoesntmatter
         model_info:
-          id: copilot-o4-mini
-          input_cost_per_token: 1.1e-6
-          output_cost_per_token: 4.4e-6
+          id: o4-mini
 
       # gpt-4.1
       - model_name: gpt-4.1
@@ -134,6 +124,8 @@ data:
           api_base: https://api.voidai.app/v1
           api_key: "os.environ/VOIDAI_API_KEY"
           rpm: 7
+        model_info:
+          id: gpt-4.1
 
       - model_name: copilot-gpt-4.1
         litellm_params:
@@ -141,9 +133,7 @@ data:
           api_base: http://copilot-api.open-webui.svc.cluster.local:4141
           api_key: blabladoesntmatter
         model_info:
-          id: copilot-gpt-4.1
-          input_cost_per_token: 2e-6
-          output_cost_per_token: 8e-6
+          id: gpt-4.1
 
 
       # gpt-image-1
@@ -153,6 +143,8 @@ data:
           api_base: https://api.voidai.app/v1
           api_key: "os.environ/VOIDAI_API_KEY"
           rpm: 7
+        model_info:
+          id: gpt-image-1
 
     litellm_settings:
       num_retries: 3
