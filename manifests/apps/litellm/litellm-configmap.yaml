@@ -15,12 +15,7 @@ data:
           api_key: "os.environ/VOIDAI_API_KEY"
           rpm: 7
         model_info:
-          id: voidai-gemini-2.5-pro
-          input_cost_per_token: 0.00000125
-          input_cost_per_token_above_200k_tokens: 0.0000025
-          output_cost_per_token: 0.00001
-          output_cost_per_token_above_200k_tokens: 0.000015
-
+          id: gemini-2.5-pro-preview-05-06
 
       - model_name: gemini-gemini-2.5-pro
         litellm_params:
@@ -52,10 +47,7 @@ data:
           api_key: "os.environ/VOIDAI_API_KEY"
           rpm: 7
         model_info:
-          id: voidai-o3-high
-          input_cost_per_token: 1e-5
-          output_cost_per_token: 4e-5
-
+          id: o3
       # O3-medium
       - model_name: o3-medium
         litellm_params:
@@ -64,9 +56,7 @@ data:
           api_key: "os.environ/VOIDAI_API_KEY"
           rpm: 7
         model_info:
-          id: voidai-o3-medium
-          input_cost_per_token: 1e-5
-          output_cost_per_token: 4e-5
+          id: o3
 
 
       # Claude Sonnet 4
@@ -78,10 +68,7 @@ data:
           api_key: "os.environ/VOIDAI_API_KEY"
           rpm: 7
         model_info:
-          id: voidai-claude-sonnet-4
-          output_cost_per_token: 15e-6
-          input_cost_per_token: 3e-6
-
+          id: claude-sonnet-4
 
       - model_name: copilot-claude-sonnet-4
         litellm_params:
@@ -101,9 +88,7 @@ data:
           api_key: "os.environ/VOIDAI_API_KEY"
           rpm: 7
         model_info:
-          id: voidai-claude-sonnet-4-thinking
-          output_cost_per_token: 15e-6
-          input_cost_per_token: 3e-6
+          id: claude-sonnet-4
 
       # GPT-4o
       - model_name: gpt-4o
@@ -112,10 +97,6 @@ data:
           api_base: https://api.voidai.app/v1
           api_key: "os.environ/VOIDAI_API_KEY"
           rpm: 7
-        model_info:
-          id: voidai-gpt-4o
-          input_cost_per_token: 0.0000025
-          output_cost_per_token: 0.000010
       - model_name: copilot-gpt-4o
         litellm_params:
           model: openai/gpt-4o
@@ -134,10 +115,6 @@ data:
           api_base: https://api.voidai.app/v1
           api_key: "os.environ/VOIDAI_API_KEY"
           rpm: 7
-        model_info:
-          id: voidai-o4-mini
-          input_cost_per_token: 1.1e-6
-          output_cost_per_token: 4.4e-6
 
 
       - model_name: copilot-o4-mini
@@ -157,10 +134,6 @@ data:
           api_base: https://api.voidai.app/v1
           api_key: "os.environ/VOIDAI_API_KEY"
           rpm: 7
-        model_info:
-          id: voidai-gpt-4.1
-          input_cost_per_token: 2e-6
-          output_cost_per_token: 8e-6
 
       - model_name: copilot-gpt-4.1
         litellm_params:
@@ -180,9 +153,6 @@ data:
           api_base: https://api.voidai.app/v1
           api_key: "os.environ/VOIDAI_API_KEY"
           rpm: 7
-        model_info:
-          id: voidai-gpt-image-1
-          input_cost_per_pixel: 4.0054321e-8
 
     litellm_settings:
       num_retries: 3
