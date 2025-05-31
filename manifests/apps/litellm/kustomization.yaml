@@ -3,7 +3,6 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - postgres.yaml
-  - dragonfly.yaml
   - litellm-deployment.yaml
   - litellm-service.yaml
   - litellm-configmap.yaml

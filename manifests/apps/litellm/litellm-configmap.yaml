@@ -143,10 +143,7 @@ data:
       allowed_fails: 3
       cooldown_time: 30
       drop_params: True
-      cache: true
-      cache_params:
-        type: redis
-        host: dragonfly-litellm
+      cache: false
       fallbacks:
         - gemini-2.5-pro:
           - gemini-gemini-2.5-pro
