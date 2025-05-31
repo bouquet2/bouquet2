@@ -47,6 +47,18 @@
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "kubernetes/kubernetes",
       "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^manifests/core/longhorn/kustomization\\.yaml$/"
+      ],
+      "matchStrings": [
+        "https://raw\\.githubusercontent\\.com/longhorn/longhorn/v(?<currentValue>\\d+\\.\\d+\\.\\d+)/deploy/longhorn\\.yaml"
+      ],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "longhorn/longhorn",
+      "versioningTemplate": "semver"
     }
   ]
 }
