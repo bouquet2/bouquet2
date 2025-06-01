@@ -3,9 +3,9 @@ kind: RoleBinding
 metadata:
   name: moniquet
 subjects:
-- kind: ServiceAccount
-  name: moniquet
+  - kind: ServiceAccount
+    name: moniquet
 roleRef:
   kind: Role
   name: moniquet
-  apiGroup: rbac.authorization.k8s.io 
+  apiGroup: rbac.authorization.k8s.io

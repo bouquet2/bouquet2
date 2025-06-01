@@ -20,29 +20,29 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       containers:
-      - name: moniquet
-        image: ghcr.io/kreatoo/moniquet
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop: ["ALL"]
-        env:
-        - name: POD_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
-        - name: POD_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        envFrom:
-        - secretRef:
-            name: moniquet-secrets
-        volumeMounts:
-        - name: config
-          mountPath: /app/config.yaml
-          subPath: config.yaml
+        - name: moniquet
+          image: ghcr.io/kreatoo/moniquet
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          envFrom:
+            - secretRef:
+                name: moniquet-secrets
+          volumeMounts:
+            - name: config
+              mountPath: /app/config.yaml
+              subPath: config.yaml
       volumes:
-      - name: config
-        configMap:
-          name: moniquet-config 
+        - name: config
+          configMap:
+            name: moniquet-config

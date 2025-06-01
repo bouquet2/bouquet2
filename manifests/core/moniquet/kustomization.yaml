@@ -18,6 +18,6 @@ images:
 secretGenerator:
   - name: moniquet-secrets
     envs:
-      - .env 
+      - .env
     options:
       disableNameSuffixHash: true

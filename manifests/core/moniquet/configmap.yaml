@@ -3,6 +3,6 @@ kind: ConfigMap
 metadata:
   name: moniquet-config
 data:
-  config.yaml: |
+  config.yaml: |-
     interval: 0
     log_level: info

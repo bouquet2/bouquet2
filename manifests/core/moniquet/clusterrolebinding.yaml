@@ -3,9 +3,9 @@ kind: ClusterRoleBinding
 metadata:
   name: moniquet
 subjects:
-- kind: ServiceAccount
-  name: moniquet
-  namespace: moniquet
+  - kind: ServiceAccount
+    name: moniquet
+    namespace: moniquet
 roleRef:
   kind: ClusterRole
   name: moniquet
