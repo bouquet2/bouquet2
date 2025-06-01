@@ -4,6 +4,13 @@ This directory contains Kubernetes manifests for core infrastructure components 
 
 ## Components Overview
 
+### [moniquet](https://github.com/kreatoo/moniquet)
+- **Purpose**: Cluster management and monitoring
+- **Namespace**: `moniquet`
+- **Features**:
+    - Discord webhook for notifications
+    - Multiple replicas for high availability
+
 ### [Traefik](https://github.com/traefik/traefik)
 - **Purpose**: Edge router and load balancer
 - **Namespace**: `traefik`
