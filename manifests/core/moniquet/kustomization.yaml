@@ -9,11 +9,11 @@ resources:
   - clusterrole.yaml
   - clusterrolebinding.yaml
   - configmap.yaml
-  - deployment.yaml
+  - daemonset.yaml
 
 images:
   - name: ghcr.io/kreatoo/moniquet
-    newTag: 0.0.7
+    newTag: 0.0.10
 
 secretGenerator:
   - name: moniquet-secrets

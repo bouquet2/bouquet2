@@ -4,7 +4,7 @@ metadata:
   name: moniquet
 rules:
   - apiGroups: [""]
-    resources: ["pods", "services", "configmaps", "secrets"]
+    resources: ["pods", "services", "configmaps", "secrets", "nodes"]
     verbs: ["get", "list", "watch"]
   - apiGroups: ["apps"]
     resources: ["deployments"]
