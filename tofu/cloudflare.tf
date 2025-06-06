@@ -18,9 +18,9 @@ resource "cloudflare_dns_record" "hetzner_workers_rr_external" {
   }
   zone_id = var.cloudflare_zone_id
   name    = var.rr_url
-  content = hcloud_server.worker[each.key].ipv4_address
+  content = hcloud_server.worker[each.key].ipv6_address
   comment = each.value.name
-  type    = "A"
+  type    = "AAAA"
   ttl     = 1
   proxied = true
 }
@@ -31,9 +31,9 @@ resource "cloudflare_dns_record" "hetzner_workers_external" {
   }
   zone_id = var.cloudflare_zone_id
   name    = "${each.value.name}.${var.worker_url_external_base}"
-  content = hcloud_server.worker[each.key].ipv4_address
+  content = hcloud_server.worker[each.key].ipv6_address
   comment = each.value.name
-  type    = "A"
+  type    = "AAAA"
   ttl     = 1
   proxied = true
 }
