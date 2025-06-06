@@ -4,6 +4,15 @@ This directory contains Kubernetes manifests for various applications deployed i
 
 ## Applications Overview
 
+### [LiteLLM](https://github.com/berriai/litellm)
+- **Purpose**: LLM proxy
+- **Namespace**: `litellm`
+- **URL**: [api.ai.krea.to](https://api.ai.krea.to)
+- **Components**:
+    - Web service (port 4000)
+    - PostgreSQL database
+    - Persistent storage (5Gi)
+
 ### [Mastodon](https://github.com/mastodon/mastodon)
 - **Purpose**: Social media platform
 - **Namespace**: `mastodon`
