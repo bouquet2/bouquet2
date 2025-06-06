@@ -4,7 +4,7 @@ metadata:
   labels:
     service: copilot-api
   name: copilot-api
-  namespace: open-webui
+  namespace: litellm
 spec:
   ports:
     - name: "4141"

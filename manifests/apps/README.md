@@ -16,15 +16,6 @@ This directory contains Kubernetes manifests for various applications deployed i
   - Dragonfly for Redis
   - Persistent storage (10Gi)
 
-### [Open WebUI](https://github.com/open-webui/open-webui)
-- **Purpose**: Web interface for AI models
-- **Namespace**: `open-webui`
-- **URL**: [ai.krea.to](https://ai.krea.to)
-- **Components**:
-  - Main service (port 1337)
-  - Copilot API service
-  - Persistent storage (5Gi)
-
 ### [Jellyfin](https://github.com/jellyfin/jellyfin)
 - **Purpose**: Media server
 - **Namespace**: `jellyfin`

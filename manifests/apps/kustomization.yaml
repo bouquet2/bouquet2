@@ -1,7 +1,6 @@
 resources:
   - mastodon/
   - litellm/
-  - open-webui/
   - jellyfin/
   - minio/
   - n8n/

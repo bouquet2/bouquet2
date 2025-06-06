@@ -6,6 +6,9 @@ resources:
   - litellm-deployment.yaml
   - litellm-service.yaml
   - litellm-configmap.yaml
+  - copilot-api-data-persistentvolumeclaim.yaml
+  - copilot-api-deployment.yaml
+  - copilot-api-service.yaml
 secretGenerator:
   - name: production
     namespace: litellm
@@ -17,3 +20,6 @@ images:
   - name: ghcr.io/berriai/litellm
     newName: ghcr.io/berriai/litellm
     newTag: main-v1.71.1-stable
+  - name: ghcr.io/kreatoo/copilot-api-docker
+    newName: ghcr.io/kreatoo/copilot-api-docker
+    newTag: v0.2.3

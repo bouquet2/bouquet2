@@ -4,7 +4,7 @@ metadata:
   labels:
     service: copilot-api-data
   name: copilot-api-data
-  namespace: open-webui
+  namespace: litellm
 spec:
   accessModes:
     - ReadWriteOnce
