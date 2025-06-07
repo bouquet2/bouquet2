@@ -6,3 +6,10 @@ data:
   config.yaml: |-
     interval: 0
     log_level: info
+    longhorn:
+      enabled: true
+      namespace: "longhorn-system"
+      alert_thresholds:
+        volume_usage_percent: 90
+        volume_capacity_critical: 2147483648
+        replica_failure_count: 1

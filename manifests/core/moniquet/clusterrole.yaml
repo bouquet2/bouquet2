@@ -12,3 +12,7 @@ rules:
   - apiGroups: ["coordination.k8s.io"]
     resources: ["leases"]
     verbs: ["get", "list", "watch", "create", "update", "patch"]
+  - apiGroups: ["longhorn.io"]
+    resources: ["volumes", "replicas", "engines", "nodes", "backups"]
+    verbs: ["get", "list", "watch"]
+
