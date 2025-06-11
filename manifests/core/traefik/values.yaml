@@ -1,6 +1,11 @@
+updateStrategy: 
+  rollingUpdate:
+    maxUnavailable: 1
+    maxSurge: 1
+
 deployment:
   replicas: 2
-  revisionHistoryLimit: 0
+
 ports:
   websecure:
     hostPort: 443
