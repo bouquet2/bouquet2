@@ -128,6 +128,23 @@ data:
         model_info:
           id: gpt-4.1
 
+      # text-embedding-3-large
+      - model_name: text-embedding-3-large
+        litellm_params:
+          model: openai/text-embedding-3-large
+          api_base: https://api.voidai.app/v1
+          api_key: "os.environ/VOIDAI_API_KEY"
+        model_info:
+          id: text-embedding-3-large
+
+      # text-embedding-3-small
+      - model_name: text-embedding-3-small
+        litellm_params:
+          model: openai/text-embedding-3-small
+          api_base: https://api.voidai.app/v1
+          api_key: "os.environ/VOIDAI_API_KEY"
+        model_info:
+          id: text-embedding-3-small
 
       # gpt-image-1
       - model_name: gpt-image-1
