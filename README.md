@@ -121,24 +121,6 @@ graph LR
         storage_longhorn -.-> storage_s3
     end
 
-    subgraph Ingress
-        direction TB
-        ingress_rr("roundrobin (cloudflare)")
-        ingress_watcher["Deployment that<br>watches over<br>Ingress resources"]
-        ingress_check{"Has this node failed to<br>provide resources?<br>(unstable/down)"}
-        ingress_yes["yes (remove<br>DNS record<br>of node)"]
-        ingress_no["no (continue<br>serving<br>connection)"]
-        ingress_note(["(traefik as IngressController)"])
-        style ingress_note fill:none,stroke:none,color:#aaa
-        %% Make note less prominent
-        ingress_rr -.-> ingress_watcher
-        ingress_watcher --> ingress_check
-        ingress_check -- yes --> ingress_yes
-        ingress_check -- no --> ingress_no
-        %% Place note loosely after decision
-        ingress_yes --> ingress_note
-        ingress_no --> ingress_note
-    end
 
     subgraph InternalNetworking [Internal Networking Flow]
         direction TB
@@ -155,7 +137,6 @@ graph LR
 
     %% Connections between subgraphs
     Storage <--> Core
-    Core <--> Ingress
     %% Show that Internal Networking runs *within* the Core nodes and relates to Pods
     Core -- "runs components like" --> InternalNetworking
 ```
