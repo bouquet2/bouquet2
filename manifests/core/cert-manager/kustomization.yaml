@@ -16,7 +16,7 @@ generatorOptions:
 helmCharts:
   - name: cert-manager
     repo: https://charts.jetstack.io
-    version: v1.18.0
+    version: v1.18.1
     releaseName: cert-manager
     namespace: traefik
     valuesInline:
