@@ -45,8 +45,8 @@ jobs:
           echo "$LONGHORNENV" > core/longhorn/.env
       - name: Add hack for immutable jobs
         run: |
-          kubectl delete -n mastodon job --all
-          kubectl delete -n traefik job cert-manager-startupapicheck
+          kubectl delete -n mastodon job --all || true
+          kubectl delete -n traefik job cert-manager-startupapicheck || true
       - name: Install Just
         run: |
           curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | sudo bash -s -- --to /usr/bin --tag 1.40.0
