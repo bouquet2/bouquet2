@@ -15,7 +15,7 @@ namespace: traefik
 helmCharts:
   - name: traefik
     repo: https://traefik.github.io/charts
-    version: 36.1.0
+    version: 36.2.0
     releaseName: traefik
     valuesFile: values.yaml
     namespace: traefik
