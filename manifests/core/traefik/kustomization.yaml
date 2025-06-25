@@ -21,6 +21,6 @@ helmCharts:
     namespace: traefik
   - name: traefik-crds
     repo: https://traefik.github.io/charts
-    version: 1.8.1
+    version: 1.9.0
     releaseName: traefik-crds
     namespace: traefik
