@@ -28,4 +28,4 @@ images:
     newTag: v4.3.8
   - name: ghcr.io/mastodon/mastodon-streaming
     newName: ghcr.io/mastodon/mastodon-streaming
-    newTag: v4.3.8
+    newTag: v4.3.9
