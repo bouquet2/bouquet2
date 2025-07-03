@@ -13,3 +13,6 @@ data:
         volume_usage_percent: 90
         volume_capacity_critical: 2147483648
         replica_failure_count: 1
+    node_monitoring:
+      enabled: true
+      cpu_threshold_percent: 80
