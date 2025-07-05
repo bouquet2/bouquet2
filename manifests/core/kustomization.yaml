@@ -6,5 +6,6 @@ resources:
   - cloudnative-pg/
   - dragonfly/
   - moniquet/
+  - descheduler/
 sortOptions:
   order: fifo

@@ -6,12 +6,7 @@ This directory contains the complete Kubernetes infrastructure configuration for
 
 The infrastructure should be deployed in the following order:
 
-1. Core components (from `core/` directory):
-   - Traefik (ingress controller)
-   - cert-manager (certificate management)
-   - Longhorn (storage)
-   - CloudNativePG (database operator)
-   - Dragonfly (in-memory store)
+1. Core components (from `core/` directory)
 
 2. Applications (from `apps/` directory):
    - Applications can be deployed after core components are ready

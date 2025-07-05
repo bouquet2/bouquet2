@@ -74,6 +74,16 @@ This directory contains Kubernetes manifests for core infrastructure components 
   - Enhanced security capabilities
   - Network policy enforcement
 
+### [Descheduler](https://github.com/kubernetes-sigs/descheduler)
+- **Purpose**: Pod eviction and rescheduling
+- **Namespace**: `kube-system`
+- **Features**:
+  - Automatic pod eviction and rescheduling
+  - Improves cluster resource utilization
+  - Balances pod distribution across nodes
+  - Removes pods from nodes that are under or over utilized
+  - Supports multiple eviction strategies
+
 ## Directory Structure
 
 Each component follows a similar structure:
