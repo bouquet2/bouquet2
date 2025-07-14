@@ -34,17 +34,19 @@ data:
       # O3-high
       - model_name: o3-high
         litellm_params:
-          model: openai/o3-high
+          model: openai/o3
           api_base: https://api.voidai.app/v1
           api_key: "os.environ/VOIDAI_API_KEY"
+          reasoning_effort: "high"
         model_info:
           id: o3
       # O3-medium
       - model_name: o3-medium
         litellm_params:
-          model: openai/o3-medium
+          model: openai/o3
           api_base: https://api.voidai.app/v1
           api_key: "os.environ/VOIDAI_API_KEY"
+          reasoning_effort: "medium"
         model_info:
           id: o3
 
@@ -146,6 +148,23 @@ data:
         model_info:
           id: text-embedding-3-small
 
+      # kimi-k2-instruct
+      - model_name: kimi-k2-instruct
+        litellm_params:
+          model: openai/kimi-k2-instruct
+          api_base: https://llm.chutes.ai/v1
+          api_key: "os.environ/CHUTES_API_KEY"
+        model_info:
+          id: kimi-k2-instruct
+
+      - model_name: void-kimi-k2-instruct
+        litellm_params:
+          model: openai/kimi-k2-instruct
+          api_base: https://api.voidai.app/v1
+          api_key: "os.environ/VOIDAI_API_KEY"
+        model_info:
+          id: kimi-k2-instruct
+
       # gpt-image-1
       - model_name: gpt-image-1
         litellm_params:
@@ -171,6 +190,8 @@ data:
           - copilot-gpt-4o
         - claude-sonnet-4:
           - copilot-claude-sonnet-4
+        - kimi-k2-instruct:
+          - void-kimi-k2-instruct
 
     general_settings:
       alerting: ["slack"]
