@@ -151,7 +151,7 @@ data:
       # kimi-k2-instruct
       - model_name: kimi-k2-instruct
         litellm_params:
-          model: openai/kimi-k2-instruct
+          model: openai/moonshotai/Kimi-K2-Instruct
           api_base: https://llm.chutes.ai/v1
           api_key: "os.environ/CHUTES_API_KEY"
         model_info:
