@@ -382,9 +382,3 @@ jobs:
             sleep 60
             ATTEMPT=$((ATTEMPT + 1))
           done
-
-      - name: Verify final cluster status
-        if: steps.current-k8s-version.outputs.current_k8s_version != steps.target-k8s-version.outputs.target_k8s_version
-        run: |-
-          echo "Verifying final cluster status..."
-          kubectl get nodes -o wide
