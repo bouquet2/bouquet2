@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml
+  - config-persistentvolumeclaim.yaml
+  - data-persistentvolumeclaim.yaml
+  - logs-persistentvolumeclaim.yaml
+  - maloja-deployment.yaml
+  - maloja-service.yaml
+  - ingressroute.yaml
+namespace: maloja
+images:
+  - name: krateng/maloja
+    newTag: 3.2.4

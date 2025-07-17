@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: maloja
+  name: maloja
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: maloja
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        service: maloja
+    spec:
+      containers:
+        - image: krateng/maloja
+          name: maloja
+          ports:
+            - containerPort: 42010
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /etc/maloja
+              name: config
+            - mountPath: /var/lib/maloja
+              name: data
+            - mountPath: /var/log/maloja
+              name: logs
+      restartPolicy: Always
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: config
+        - name: data
+          persistentVolumeClaim:
+            claimName: data
+        - name: logs
+          persistentVolumeClaim:
+            claimName: logs
