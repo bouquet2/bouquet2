@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: koito
+  name: koito
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: koito
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        service: koito
+    spec:
+      containers:
+        - image: ghcr.io/kreatoo/koito-docker
+          name: koito
+          env:
+            - name: KOITO_ALLOWED_HOSTS
+              value: "fm.krea.to"
+            - name: KOITO_DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: production
+                  key: username
+            - name: KOITO_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: production
+                  key: password
+            - name: KOITO_DATABASE_URL
+              value: postgresql://$(KOITO_DB_USERNAME):$(KOITO_DB_PASSWORD)@koito-rw:5432/koito
+          ports:
+            - containerPort: 4110
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /etc/koito
+              name: data
+      restartPolicy: Always
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: data

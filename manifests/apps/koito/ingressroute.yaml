@@ -1,7 +1,7 @@
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: maloja
+  name: koito
 spec:
   entryPoints:
     - websecure
@@ -11,10 +11,10 @@ spec:
       priority: 10
       services:
         - kind: Service
-          name: maloja
-          namespace: maloja
+          name: koito
+          namespace: koito
           passHostHeader: true
-          port: 42010
+          port: 4110
           scheme: http
   tls:
     domains:

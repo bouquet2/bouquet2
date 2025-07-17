@@ -62,12 +62,13 @@ This directory contains Kubernetes manifests for various applications deployed i
   - Web interface (port 3000)
   - PostgreSQL database
 
-### [Maloja](https://github.com/krateng/maloja)
-- **Purpose**: Alternative to last.fm
-- **Namespace**: `maloja`
+### [Koito](https://github.com/gabehf/koito)
+- **Purpose**: Music scrobbling service
+- **Namespace**: `koito`
 - **URL**: [fm.krea.to](https://fm.krea.to)
 - **Components**:
-  - Web service (port 42010)
+  - Web service (port 4110)
+  - PostgreSQL database
   - Persistent storage
 
 ## Directory Structure

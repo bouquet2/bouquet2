@@ -1,0 +1,16 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: koito
+  namespace: koito
+spec:
+  instances: 2
+  primaryUpdateStrategy: unsupervised
+  bootstrap:
+    initdb:
+      database: koito
+      owner: koito
+      secret:
+        name: production
+  storage:
+    size: 1Gi

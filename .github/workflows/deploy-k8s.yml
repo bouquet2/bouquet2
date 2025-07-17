@@ -35,6 +35,7 @@ jobs:
           LONGHORNENV: ${{ secrets.LONGHORNENV }}
           UMAMIENV: ${{ secrets.UMAMIENV }}
           MONIQUETENV: ${{ secrets.MONIQUETENV }}
+          KOITOENV: ${{ secrets.KOITOENV }}
         run: |
           cd manifests
           echo "$CERTMANAGERENV" > core/cert-manager/.env
@@ -43,6 +44,7 @@ jobs:
           echo "$LITELLMENV" > apps/litellm/.env
           echo "$UMAMIENV" > apps/umami/.env
           echo "$LONGHORNENV" > core/longhorn/.env
+          echo "$KOITOENV" > apps/koito/.env
       - name: Add hack for immutable jobs
         run: |
           kubectl delete -n mastodon job --all || true
