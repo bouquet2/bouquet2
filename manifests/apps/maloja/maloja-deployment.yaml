@@ -5,7 +5,7 @@ metadata:
     service: maloja
   name: maloja
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       service: maloja
@@ -19,24 +19,21 @@ spec:
       containers:
         - image: krateng/maloja
           name: maloja
+          env:
+            - name: MALOJA_DATA_DIRECTORY
+              value: /data
+            - name: PGID
+              value: "0"
+            - name: PUID
+              value: "0"
           ports:
             - containerPort: 42010
               protocol: TCP
           volumeMounts:
-            - mountPath: /etc/maloja
-              name: config
-            - mountPath: /var/lib/maloja
+            - mountPath: /data
               name: data
-            - mountPath: /var/log/maloja
-              name: logs
       restartPolicy: Always
       volumes:
-        - name: config
-          persistentVolumeClaim:
-            claimName: config
         - name: data
           persistentVolumeClaim:
             claimName: data
-        - name: logs
-          persistentVolumeClaim:
-            claimName: logs
