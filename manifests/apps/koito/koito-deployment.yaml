@@ -5,7 +5,7 @@ metadata:
     service: koito
   name: koito
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       service: koito
@@ -17,7 +17,7 @@ spec:
         service: koito
     spec:
       containers:
-        - image: ghcr.io/kreatoo/koito-docker
+        - image: ghcr.io/bouquet2/koito-docker
           name: koito
           env:
             - name: KOITO_ALLOWED_HOSTS

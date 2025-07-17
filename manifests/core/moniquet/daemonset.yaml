@@ -20,7 +20,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: moniquet
-          image: ghcr.io/kreatoo/moniquet
+          image: ghcr.io/bouquet2/moniquet
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:

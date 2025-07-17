@@ -17,7 +17,7 @@ spec:
         service: copilot-api
     spec:
       containers:
-        - image: ghcr.io/kreatoo/copilot-api-docker
+        - image: ghcr.io/bouquet2/copilot-api-docker
           name: copilot-api
           command:
             - bun

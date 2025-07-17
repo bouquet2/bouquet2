@@ -16,5 +16,5 @@ secretGenerator:
     options:
       disableNameSuffixHash: true
 images:
-  - name: ghcr.io/kreatoo/koito-docker
+  - name: ghcr.io/bouquet2/koito-docker
     newTag: v0.0.12

@@ -4,7 +4,7 @@ This directory contains Kubernetes manifests for core infrastructure components 
 
 ## Components Overview
 
-### [moniquet](https://github.com/kreatoo/moniquet)
+### [moniquet](https://github.com/bouquet2/moniquet)
 - **Purpose**: Cluster management and monitoring
 - **Namespace**: `moniquet`
 - **Features**:

@@ -12,7 +12,7 @@ resources:
   - daemonset.yaml
 
 images:
-  - name: ghcr.io/kreatoo/moniquet
+  - name: ghcr.io/bouquet2/moniquet
     newTag: 0.0.13
 
 secretGenerator:
