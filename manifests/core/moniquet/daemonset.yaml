@@ -11,6 +11,8 @@ spec:
       labels:
         app: moniquet
     spec:
+      tolerations:
+        - key: "node-role.kubernetes.io/control-plane"
       serviceAccountName: moniquet
       securityContext:
         runAsNonRoot: true
