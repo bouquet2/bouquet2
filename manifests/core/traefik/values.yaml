@@ -5,7 +5,8 @@ updateStrategy:
 
 deployment:
   replicas: 2
-
+providers:
+  kubernetesGateway: {}
 ports:
   websecure:
     hostPort: 443

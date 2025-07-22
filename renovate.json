@@ -59,6 +59,18 @@
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "longhorn/longhorn",
       "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^manifests/core/gateway-api/kustomization\\.yaml$/"
+      ],
+      "matchStrings": [
+        "https://github\\.com/kubernetes-sigs/gateway-api/releases/download/v(?<currentValue>\\d+\\.\\d+\\.\\d+)/standard-install\\.yaml"
+      ],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "kubernetes-sigs/gateway-api",
+      "versioningTemplate": "semver"
     }
   ]
 }

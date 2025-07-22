@@ -1,6 +1,7 @@
 resources:
   - cilium/
   - longhorn/
+  - gateway-api/
   - traefik/
   - cert-manager/
   - cloudnative-pg/
