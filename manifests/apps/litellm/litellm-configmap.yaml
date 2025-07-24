@@ -148,6 +148,16 @@ data:
         model_info:
           id: text-embedding-3-small
 
+
+      # qwen3-coder
+      - model_name: qwen3-coder
+        litellm_params:
+          model: openai/Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8
+          api_base: https://llm.chutes.ai/v1
+          api_key: "os.environ/CHUTES_API_KEY"
+        model_info:
+          id: qwen3-coder
+
       # kimi-k2-instruct
       - model_name: kimi-k2-instruct
         litellm_params:
