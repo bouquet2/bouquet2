@@ -71,6 +71,18 @@
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "kubernetes-sigs/gateway-api",
       "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^manifests\\/apps\\/ocis\\/kustomization\\.yaml$/"
+      ],
+      "matchStrings": [
+        "newTag:\\s*(?<currentValue>\\d+\\.\\d+\\.\\d+)"
+      ],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "owncloud/ocis",
+      "versioningTemplate": "semver"
     }
   ]
 }
