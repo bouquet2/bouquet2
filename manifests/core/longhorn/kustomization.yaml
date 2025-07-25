@@ -1,6 +1,6 @@
 namespace: longhorn-system
 resources:
-  - https://raw.githubusercontent.com/longhorn/longhorn/v1.9.0/deploy/longhorn.yaml
+  - https://raw.githubusercontent.com/longhorn/longhorn/v1.9.1/deploy/longhorn.yaml
 patches:
   - path: namespace.yaml
   - path: control-plane-toleration.yaml
