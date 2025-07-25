@@ -1,0 +1,25 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ocis
+  namespace: ocis
+  annotations:
+    cert-manager.io/cluster-issuer: mainissuer
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`cloud.krea.to`)
+      priority: 10
+      services:
+        - kind: Service
+          name: ocis
+          namespace: ocis
+          passHostHeader: true
+          port: 9200
+          scheme: http
+  tls:
+    secretName: wildcard-krea.to-tls
+    domains:
+      - main: cloud.krea.to

@@ -1,0 +1,10 @@
+resources:
+  - namespace.yaml
+  - config.yaml
+  - data.yaml
+  - env.yaml
+  - deployment.yaml
+  - service.yaml
+  - ingressroute.yaml
+
+namespace: ocis
