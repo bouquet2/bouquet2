@@ -45,7 +45,6 @@ jobs:
           echo "$KOITOENV" > apps/koito/.env
       - name: Add hack for immutable jobs
         run: |
-          kubectl delete -n mastodon job --all || true
           kubectl delete -n traefik job cert-manager-startupapicheck || true
       - name: Install Just
         run: |
