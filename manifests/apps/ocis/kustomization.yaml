@@ -8,3 +8,7 @@ resources:
   - ingressroute.yaml
 
 namespace: ocis
+
+images:
+  - name: owncloud/ocis
+    newTag: 7.2.0
