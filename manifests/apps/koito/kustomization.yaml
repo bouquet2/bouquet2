@@ -6,7 +6,7 @@ resources:
   - data-persistentvolumeclaim.yaml
   - koito-deployment.yaml
   - koito-service.yaml
-  - ingressroute.yaml
+  - gateway.yaml
 namespace: koito
 secretGenerator:
   - name: production

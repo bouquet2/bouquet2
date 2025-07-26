@@ -1,0 +1,43 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: koito-gateway
+  namespace: koito
+  annotations:
+    cert-manager.io/cluster-issuer: mainissuer
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: websecure
+      hostname: "fm.krea.to"
+      port: 8443
+      protocol: HTTPS
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: wildcard-krea.to-tls
+            namespace: traefik
+      allowedRoutes:
+        namespaces:
+          from: Same
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: koito-api-route
+  namespace: koito
+spec:
+  parentRefs:
+    - name: koito-gateway
+      namespace: koito
+  hostnames:
+    - "fm.krea.to"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /v1/
+      backendRefs:
+        - name: koito
+          port: 4110
+          kind: Service
