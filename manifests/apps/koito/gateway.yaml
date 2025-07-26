@@ -33,11 +33,7 @@ spec:
   hostnames:
     - "fm.krea.to"
   rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /v1/
-      backendRefs:
+    - backendRefs:
         - name: koito
           port: 4110
           kind: Service
