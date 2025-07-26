@@ -2,5 +2,6 @@ resources:
   - namespace.yaml
   - service.yaml
   - endpoints.yaml
-  - middleware.yaml
-  - ingressroute.yaml
+  - gateway.yaml
+  - httproute-bin.yaml
+  - httproute-s3.yaml

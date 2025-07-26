@@ -1,0 +1,23 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: minio-bin
+  namespace: minio
+spec:
+  parentRefs:
+    - name: main-gateway
+      namespace: minio
+
+  hostnames:
+    - "bin.kreato.dev"
+
+  rules:
+    - filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /kpkgrepobin
+      backendRefs:
+        - name: minio
+          port: 9000
