@@ -1,7 +1,7 @@
 resources:
   - namespace.yaml
   - networkpolicy.yaml
-  - ingressroute.yaml
+  - gateway.yaml
 namespace: jellyfin
 helmCharts:
   - name: jellyfin
