@@ -1,0 +1,55 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: n8n-gateway
+  namespace: n8n
+  annotations:
+    cert-manager.io/cluster-issuer: mainissuer
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: websecure
+      hostname: "n8n.krea.to"
+      port: 8443
+      protocol: HTTPS
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: wildcard-krea.to-tls
+            namespace: traefik
+      allowedRoutes:
+        namespaces:
+          from: Same
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: n8n-main-route
+  namespace: n8n
+spec:
+  parentRefs:
+    - name: n8n-gateway
+  hostnames:
+    - "n8n.krea.to"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /rest/login
+      backendRefs:
+        - name: n8n
+          port: 5678
+          filters:
+            - type: ExtensionRef
+              extensionRef:
+                group: traefik.io
+                kind: Middleware
+                name: ratelimit
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: n8n
+          port: 5678
+

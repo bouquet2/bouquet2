@@ -1,3 +1,19 @@
+---
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: allow-gateway-to-ssl-secrets-n8n
+  namespace: traefik
+spec:
+  from:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      namespace: n8n
+  to:
+    - group: ""
+      kind: Secret
+      name: wildcard-krea.to-tls
+---
 apiVersion: gateway.networking.k8s.io/v1beta1
 kind: ReferenceGrant
 metadata:
