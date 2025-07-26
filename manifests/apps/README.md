@@ -79,7 +79,7 @@ app-name/
 ├── namespace.yaml
 ├── kustomization.yaml
 ├── values.yaml (if using Helm)
-├── ingressroute.yaml
+├── gateway.yaml
 ├── networkpolicy.yaml
 └── other application-specific manifests
 ```

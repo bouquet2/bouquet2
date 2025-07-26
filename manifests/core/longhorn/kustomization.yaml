@@ -5,7 +5,7 @@ patches:
   - path: namespace.yaml
   - path: control-plane-toleration.yaml
 #- networkpolicy.yaml
-#  - ingressroute.yaml
+#  - gateway.yaml
 generatorOptions:
   disableNameSuffixHash: true
 secretGenerator:
