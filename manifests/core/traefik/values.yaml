@@ -5,9 +5,6 @@ updateStrategy:
 
 deployment:
   replicas: 2
-experimental:
-  kubernetesGateway:
-    enabled: true
 gateway:
   enabled: true
   listeners:
