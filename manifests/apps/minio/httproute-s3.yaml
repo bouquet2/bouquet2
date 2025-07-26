@@ -5,7 +5,7 @@ metadata:
   namespace: minio
 spec:
   parentRefs:
-    - name: main-gateway
+    - name: minio-gateway
       namespace: minio
 
   hostnames:

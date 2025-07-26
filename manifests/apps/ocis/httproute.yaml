@@ -5,7 +5,7 @@ metadata:
   namespace: ocis
 spec:
   parentRefs:
-    - name: main-gateway
+    - name: ocis-gateway
       sectionName: websecure
 
   hostnames:

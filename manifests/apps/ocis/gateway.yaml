@@ -1,7 +1,7 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
-  name: main-gateway
+  name: ocis-gateway
   namespace: ocis
   annotations:
     cert-manager.io/cluster-issuer: mainissuer
@@ -19,3 +19,4 @@ spec:
             namespace: traefik
       allowedRoutes:
         namespaces:
+          from: Same
