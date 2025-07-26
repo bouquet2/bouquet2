@@ -45,7 +45,7 @@ spec:
                 group: traefik.io
                 kind: Middleware
                 name: ratelimit
-    
+
     - matches:
         - method: GET
         - method: POST
