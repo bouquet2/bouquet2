@@ -9,7 +9,7 @@ resources:
   - copilot-api-data-persistentvolumeclaim.yaml
   - copilot-api-deployment.yaml
   - copilot-api-service.yaml
-  - ingressroute.yaml
+  - gateway.yaml
 secretGenerator:
   - name: production
     namespace: litellm
