@@ -7,7 +7,7 @@ spec:
   parentRefs:
     - name: main-gateway
       namespace: minio
-  
+
   hostnames:
     - "s3.krea.to"
 
