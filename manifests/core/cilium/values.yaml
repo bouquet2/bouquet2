@@ -27,4 +27,4 @@ cgroup:
   hostRoot: /sys/fs/cgroup
 
 gatewayAPI:
-  enabled: true
+  enabled: false # Enable it after a Cilium release that fixes https://github.com/cilium/cilium/issues/38420 is released
