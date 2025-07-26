@@ -1,0 +1,83 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: umami-gateway
+  namespace: umami
+  annotations:
+    cert-manager.io/cluster-issuer: mainissuer
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: websecure
+      hostname: "umami.krea.to"
+      port: 8443
+      protocol: HTTPS
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: wildcard-krea.to-tls
+            namespace: traefik
+      allowedRoutes:
+        namespaces:
+          from: Same
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: umami-main-route
+  namespace: umami
+spec:
+  parentRefs:
+    - name: umami-gateway
+  hostnames:
+    - "umami.krea.to"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /api/auth/login
+      backendRefs:
+        - name: umami
+          port: 3000
+          filters:
+            - type: ExtensionRef
+              extensionRef:
+                group: traefik.io
+                kind: Middleware
+                name: ratelimit
+    
+    - matches:
+        - method: GET
+        - method: POST
+          path:
+            type: PathPrefix
+            value: /websites
+        - method: POST
+          path:
+            type: PathPrefix
+            value: /dashboard
+      backendRefs:
+        - name: umami
+          port: 3000
+
+
+    - matches:
+        - method: POST
+          path:
+            type: PathPrefix
+            value: /api/
+          headers:
+            - type: RegularExpression
+              name: Referer
+              value: "^https?://([a-zA-Z0-9-]+\\.)*krea\\.to"
+        - method: OPTIONS
+          path:
+            type: PathPrefix
+            value: /api/
+          headers:
+            - type: RegularExpression
+              name: Referer
+              value: "^https?://([a-zA-Z0-9-]+\\.)*krea\\.to"
+      backendRefs:
+        - name: umami
+          port: 3000
