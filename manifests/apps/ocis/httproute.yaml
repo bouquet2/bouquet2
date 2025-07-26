@@ -7,7 +7,7 @@ spec:
   parentRefs:
     - name: main-gateway
       sectionName: websecure
-  
+
   hostnames:
     - "cloud.krea.to"
 
