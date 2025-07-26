@@ -5,6 +5,5 @@ resources:
   - n8n/
   - umami/
   - koito/
-  - ocis/
 sortOptions:
   order: fifo
