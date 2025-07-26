@@ -25,3 +25,6 @@ cgroup:
   autoMount:
     enabled: false
   hostRoot: /sys/fs/cgroup
+
+gatewayAPI:
+  enabled: true
