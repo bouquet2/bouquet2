@@ -5,7 +5,8 @@ resources:
   - env.yaml
   - deployment.yaml
   - service.yaml
-  - ingressroute.yaml
+  - gateway.yaml
+  - httproute.yaml 
 
 namespace: ocis
 

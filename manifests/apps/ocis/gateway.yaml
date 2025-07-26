@@ -1,0 +1,21 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: main-gateway
+  namespace: ocis
+  annotations:
+    cert-manager.io/cluster-issuer: mainissuer
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: websecure
+      hostname: "cloud.krea.to"
+      port: 8443
+      protocol: HTTPS
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: wildcard-krea.to-tls
+            namespace: traefik
+      allowedRoutes:
+        namespaces:

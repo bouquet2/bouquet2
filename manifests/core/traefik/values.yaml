@@ -5,8 +5,21 @@ updateStrategy:
 
 deployment:
   replicas: 2
+experimental:
+  kubernetesGateway:
+    enabled: true
+gateway:
+  enabled: true
+  listeners:
+    websecure:
+      port: 8443
+      protocol: HTTPS
+      certificateRefs:
+        - kind: Secret
+          name: wildcard-krea.to-tls
 providers:
-  kubernetesGateway: {}
+  kubernetesGateway:
+    enabled: true
 ports:
   websecure:
     hostPort: 443
