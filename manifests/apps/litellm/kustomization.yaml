@@ -23,4 +23,4 @@ images:
     newTag: main-v1.74.7-stable
   - name: ghcr.io/bouquet2/copilot-api-docker
     newName: ghcr.io/bouquet2/copilot-api-docker
-    newTag: v0.5.3
+    newTag: v0.5.6
