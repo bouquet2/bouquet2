@@ -16,4 +16,4 @@ secretGenerator:
       disableNameSuffixHash: true
 images:
   - name: ghcr.io/umami-software/umami
-    newTag: postgresql-v2.18.1
+    newTag: postgresql-v2.19.0
