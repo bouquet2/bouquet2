@@ -4,6 +4,7 @@ resources:
   - n8n-data-persistentvolumeclaim.yaml
   - n8n-deployment.yaml
   - n8n-service.yaml
+  - ratelimit.yaml
   - gateway.yaml
 namespace: n8n
 images:

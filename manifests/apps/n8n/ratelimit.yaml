@@ -2,7 +2,7 @@ apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
   name: ratelimit
-  namespace: traefik
+  namespace: n8n
 spec:
   rateLimit:
     average: 5

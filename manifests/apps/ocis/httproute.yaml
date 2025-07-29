@@ -12,7 +12,26 @@ spec:
     - "cloud.krea.to"
 
   rules:
-    - backendRefs:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /signin/
+      backendRefs:
+        - name: ocis
+          port: 9200
+          kind: Service
+          namespace: ocis
+          filters:
+            - type: ExtensionRef
+              extensionRef:
+                group: traefik.io
+                kind: Middleware
+                name: ratelimit
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
         - name: ocis
           port: 9200
           kind: Service
