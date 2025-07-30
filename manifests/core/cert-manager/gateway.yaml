@@ -20,3 +20,15 @@ spec:
       allowedRoutes:
         namespaces:
           from: All
+    - name: websecure-kreato.dev
+      hostname: "*.kreato.dev"
+      port: 8443
+      protocol: HTTPS
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: wildcard-kreato.dev-tls
+            namespace: cert-manager
+      allowedRoutes:
+        namespaces:
+          from: All
