@@ -9,4 +9,4 @@ resources:
 namespace: n8n
 images:
   - name: docker.n8n.io/n8nio/n8n
-    newTag: 1.104.1
+    newTag: 1.105.0
