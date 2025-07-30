@@ -5,7 +5,7 @@ resources:
   - postgres.yaml
   - umami-deployment.yaml
   - umami-service.yaml
-  - gateway.yaml
+  - httproute.yaml
 namespace: umami
 secretGenerator:
   - name: production

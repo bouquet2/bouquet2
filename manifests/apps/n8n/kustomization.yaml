@@ -5,7 +5,7 @@ resources:
   - n8n-deployment.yaml
   - n8n-service.yaml
   - ratelimit.yaml
-  - gateway.yaml
+  - httproute.yaml
 namespace: n8n
 images:
   - name: docker.n8n.io/n8nio/n8n

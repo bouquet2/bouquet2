@@ -1,21 +1,22 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
-  name: minio-gateway
-  namespace: minio
+  name: gateway
+  namespace: cert-manager
   annotations:
     cert-manager.io/cluster-issuer: mainissuer
 spec:
   gatewayClassName: traefik
   listeners:
     - name: websecure
+      hostname: "*.krea.to"
       port: 8443
       protocol: HTTPS
       tls:
         mode: Terminate
         certificateRefs:
           - name: wildcard-krea.to-tls
-            namespace: traefik
+            namespace: cert-manager
       allowedRoutes:
         namespaces:
-          from: Same
+          from: All

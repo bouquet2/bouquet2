@@ -1,7 +1,6 @@
 resources:
   - namespace.yaml
   - cloudflare-middleware.yaml
-  - referencegrant.yaml
 sortOptions:
   order: legacy
   legacySortOptions:

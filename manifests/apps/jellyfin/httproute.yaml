@@ -1,25 +1,3 @@
-apiVersion: gateway.networking.k8s.io/v1
-kind: Gateway
-metadata:
-  name: jellyfin-gateway
-  namespace: jellyfin
-  annotations:
-    cert-manager.io/cluster-issuer: mainissuer
-spec:
-  gatewayClassName: traefik
-  listeners:
-    - name: websecure
-      hostname: "media.krea.to"
-      port: 8443
-      protocol: HTTPS
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - name: wildcard-krea.to-tls
-            namespace: traefik
-      allowedRoutes:
-        namespaces:
-          from: Same
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -28,7 +6,8 @@ metadata:
   namespace: jellyfin
 spec:
   parentRefs:
-    - name: jellyfin-gateway
+    - name: gateway
+      namespace: cert-manager
   hostnames:
     - "media.krea.to"
   rules:

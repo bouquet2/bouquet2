@@ -1,25 +1,3 @@
-apiVersion: gateway.networking.k8s.io/v1
-kind: Gateway
-metadata:
-  name: umami-gateway
-  namespace: umami
-  annotations:
-    cert-manager.io/cluster-issuer: mainissuer
-spec:
-  gatewayClassName: traefik
-  listeners:
-    - name: websecure
-      hostname: "umami.krea.to"
-      port: 8443
-      protocol: HTTPS
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - name: wildcard-krea.to-tls
-            namespace: traefik
-      allowedRoutes:
-        namespaces:
-          from: Same
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -28,7 +6,8 @@ metadata:
   namespace: umami
 spec:
   parentRefs:
-    - name: umami-gateway
+    - name: gateway
+      namespace: cert-manager
   hostnames:
     - "umami.krea.to"
   rules:

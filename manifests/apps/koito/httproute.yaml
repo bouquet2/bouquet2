@@ -1,17 +1,17 @@
+---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: minio-s3
-  namespace: minio
+  name: koito-api-route
+  namespace: koito
 spec:
   parentRefs:
     - name: gateway
       namespace: cert-manager
-
   hostnames:
-    - "s3.krea.to"
-
+    - "fm.krea.to"
   rules:
     - backendRefs:
-        - name: minio
-          port: 9000
+        - name: koito
+          port: 4110
+          kind: Service

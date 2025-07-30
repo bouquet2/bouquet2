@@ -1,7 +1,7 @@
 resources:
   - namespace.yaml
   - networkpolicy.yaml
-  - gateway.yaml
+  - httproute.yaml
 namespace: jellyfin
 helmCharts:
   - name: jellyfin

@@ -5,8 +5,8 @@ metadata:
   namespace: minio
 spec:
   parentRefs:
-    - name: minio-gateway
-      namespace: minio
+    - name: gateway
+      namespace: cert-manager
 
   hostnames:
     - "bin.kreato.dev"

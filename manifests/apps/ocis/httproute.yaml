@@ -5,8 +5,8 @@ metadata:
   namespace: ocis
 spec:
   parentRefs:
-    - name: ocis-gateway
-      sectionName: websecure
+    - name: gateway
+      namespace: cert-manager
 
   hostnames:
     - "cloud.krea.to"
