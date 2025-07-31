@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sun-config
+data:
+  config.yaml: |-
+    interval: 3
+    log_level: info
+    gitops:
+      enabled: true
+      alert_on_mismatch: true
+      denylist:
+        kinds:
+          - "Secret"
+      repositories:
+        - name: "bouquet2"
+          url: "https://github.com/bouquet2/bouquet2.git"
+          path: "manifests/"
+          branch: "main"
+          alert_on_mismatch: true
+          kustomize:
+            copyEnvExample: true
+    longhorn:
+      enabled: true
+      namespace: "longhorn-system"
+      alert_thresholds:
+        volume_usage_percent: 90
+        volume_capacity_critical: 2147483648
+        replica_failure_count: 1
+    node_monitoring:
+      enabled: true
+      cpu_threshold_percent: 80

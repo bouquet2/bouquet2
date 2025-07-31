@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: moniquet
+  name: sun
 spec:
   selector:
     matchLabels:
-      app: moniquet
+      app: sun
   template:
     metadata:
       labels:
-        app: moniquet
+        app: sun
     spec:
       tolerations:
         - key: "node-role.kubernetes.io/control-plane"
-      serviceAccountName: moniquet
+      serviceAccountName: sun
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
@@ -21,8 +21,8 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       containers:
-        - name: moniquet
-          image: ghcr.io/bouquet2/moniquet
+        - name: sun
+          image: ghcr.io/bouquet2/sun
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -38,7 +38,7 @@ spec:
                   fieldPath: metadata.namespace
           envFrom:
             - secretRef:
-                name: moniquet-secrets
+                name: sun-secrets
           volumeMounts:
             - name: config
               mountPath: /app/config.yaml
@@ -46,4 +46,4 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: moniquet-config
+            name: sun-config
