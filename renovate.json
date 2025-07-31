@@ -35,10 +35,10 @@
     {
       "customType": "regex",
       "managerFilePatterns": [
-        "/^vars\\.yaml$/"
+        "/^water\\.yaml$/"
       ],
       "matchStrings": [
-        "talosVersion:\\s*(?<currentValue>v\\d+\\.\\d+\\.\\d+)"
+        "talos:\\s*version:\\s*\"(?<currentValue>v\\d+\\.\\d+\\.\\d+)\""
       ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "siderolabs/talos",
@@ -47,10 +47,10 @@
     {
       "customType": "regex",
       "managerFilePatterns": [
-        "/^vars\\.yaml$/"
+        "/^water\\.yaml$/"
       ],
       "matchStrings": [
-        "k8sVersion:\\s*(?<currentValue>v\\d+\\.\\d+\\.\\d+)"
+        "k8s:\\s*version:\\s*\"(?<currentValue>v\\d+\\.\\d+\\.\\d+)\""
       ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "kubernetes/kubernetes",
