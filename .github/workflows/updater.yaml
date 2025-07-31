@@ -1,4 +1,4 @@
-name: Update Talos and Kubernetes Version
+name: Run Water
 
 permissions:
   contents: read
@@ -7,7 +7,8 @@ permissions:
 on:
   push:
     paths:
-      - 'vars.yaml'
+      - 'water.yaml'
+      - 'water.yml'
     branches:
       - main
   workflow_dispatch:
@@ -21,7 +22,7 @@ jobs:
       TS_OAUTH_CLIENT_ID: ${{ secrets.TS_OAUTH_CLIENT_ID }}
       TS_OAUTH_SECRET: ${{ secrets.TS_OAUTH_SECRET }}
 
-  update-talos:
+  water:
     runs-on: ubuntu-latest
     needs: setup
     steps:
@@ -30,269 +31,13 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Install talosctl
-        run: |
-          curl -Lo /usr/local/bin/talosctl https://github.com/siderolabs/talos/releases/latest/download/talosctl-linux-amd64
-          chmod +x /usr/local/bin/talosctl
-
       - name: Connect Tailscale
         uses: tailscale/github-action@v3
         with:
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:k8s-deploy
-          hostname: kreat8s-talos-update
-          use-cache: true
-
-      - name: Add talosconfig
-        env:
-          TALOSCONFIG: ${{ secrets.TALOSCONFIG }}
-        run: |
-          mkdir -p ~/.talos
-          echo "$TALOSCONFIG" > ~/.talos/config
-          chmod 600 ~/.talos/config
-
-      - name: Get target Talos version from vars.yaml
-        id: target-version
-        run: |
-          TARGET_VERSION=$(grep talosVersion vars.yaml | cut -d' ' -f2)
-          echo "target_version=$TARGET_VERSION" >> $GITHUB_OUTPUT
-
-      - name: Get image ID from vars.yaml
-        id: image-id
-        run: |
-          IMAGE_ID=$(grep imageId vars.yaml | cut -d' ' -f2)
-          echo "image_id=$IMAGE_ID" >> $GITHUB_OUTPUT
-
-      - name: Process node versions
-        id: process-versions
-        run: |
-          # Parse the JSON string to extract node versions and IPs
-          NODE_VERSIONS='${{ needs.setup.outputs.node_versions }}'
-          TARGET_VERSION="${{ steps.target-version.outputs.target_version }}"
-          
-          # Print node versions for debugging
-          echo "Node versions JSON: $NODE_VERSIONS"
-          
-          # Extract control planes that need updating
-          echo "Identifying control planes that need updating..."
-          CP_IPS_TO_UPDATE=""
-          for NODE_IP in ${{ needs.setup.outputs.cp_ips }}; do
-            # Get version directly from the node
-            echo "Getting current version for control plane $NODE_IP..."
-            CURRENT_VERSION=$(talosctl version --nodes "$NODE_IP" | sed '1,/Server/d' | grep "Tag:" | head -1 | awk '{print $2}')
-            echo "Control plane $NODE_IP current version: $CURRENT_VERSION"
-            
-            if [ "$CURRENT_VERSION" != "$TARGET_VERSION" ]; then
-              echo "Control plane $NODE_IP needs update from $CURRENT_VERSION to $TARGET_VERSION"
-              CP_IPS_TO_UPDATE="$CP_IPS_TO_UPDATE $NODE_IP"
-            else
-              echo "Control plane $NODE_IP already at target version $TARGET_VERSION"
-            fi
-          done
-          CP_IPS_TO_UPDATE=$(echo "$CP_IPS_TO_UPDATE" | sed -e 's/^[[:space:]]*//')
-          echo "cp_ips_to_update=$CP_IPS_TO_UPDATE" >> $GITHUB_OUTPUT
-          
-          # Extract worker nodes that need updating
-          echo "Identifying worker nodes that need updating..."
-          WORKER_IPS_TO_UPDATE=""
-          for NODE_IP in ${{ needs.setup.outputs.worker_ips }}; do
-            # Get version directly from the node
-            echo "Getting current version for worker node $NODE_IP..."
-            CURRENT_VERSION=$(talosctl version --nodes "$NODE_IP" | sed '1,/Server/d' | grep "Tag:" | head -1 | awk '{print $2}')
-            echo "Worker node $NODE_IP current version: $CURRENT_VERSION"
-            
-            if [ "$CURRENT_VERSION" != "$TARGET_VERSION" ]; then
-              echo "Worker node $NODE_IP needs update from $CURRENT_VERSION to $TARGET_VERSION"
-              WORKER_IPS_TO_UPDATE="$WORKER_IPS_TO_UPDATE $NODE_IP"
-            else
-              echo "Worker node $NODE_IP already at target version $TARGET_VERSION"
-            fi
-          done
-          WORKER_IPS_TO_UPDATE=$(echo "$WORKER_IPS_TO_UPDATE" | sed -e 's/^[[:space:]]*//')
-          echo "worker_ips_to_update=$WORKER_IPS_TO_UPDATE" >> $GITHUB_OUTPUT
-          
-          # Determine if we need to update anything
-          if [ -z "$CP_IPS_TO_UPDATE" ] && [ -z "$WORKER_IPS_TO_UPDATE" ]; then
-            echo "needs_update=false" >> $GITHUB_OUTPUT
-            echo "All nodes are already at the target version $TARGET_VERSION"
-          else
-            echo "needs_update=true" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Update Talos version (control planes)
-        if: steps.process-versions.outputs.needs_update == 'true' && steps.process-versions.outputs.cp_ips_to_update != ''
-        run: |
-          echo "Updating control planes to ${{ steps.target-version.outputs.target_version }}"
-          CP_IPS="${{ steps.process-versions.outputs.cp_ips_to_update }}"
-          
-          if [ -n "$CP_IPS" ]; then
-            for NODE_IP in $CP_IPS; do
-              echo "Updating Talos to ${{ steps.target-version.outputs.target_version }} for control plane: $NODE_IP"
-              
-              # Try up to 3 times with 30 second cooldown
-              MAX_ATTEMPTS=3
-              ATTEMPT=1
-              while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
-                echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to update control plane $NODE_IP..."
-                if talosctl upgrade --image "factory.talos.dev/installer/${{ steps.image-id.outputs.image_id }}:${{ steps.target-version.outputs.target_version }}" --nodes "$NODE_IP"; then
-                  echo "Successfully initiated upgrade for control plane $NODE_IP"
-                  break
-                fi
-                
-                if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
-                  echo "::error::Failed to update control plane $NODE_IP after $MAX_ATTEMPTS attempts"
-                  exit 1
-                fi
-                
-                echo "Update attempt failed, waiting 30 seconds before retry..."
-                sleep 30
-                ATTEMPT=$((ATTEMPT + 1))
-              done
-              
-              echo "Sleeping 30 seconds before proceeding to next node..."
-              sleep 30
-            done
-            
-            echo "All control plane upgrades initiated, waiting 60 more seconds before verification..."
-            sleep 60
-
-            MAX_ATTEMPTS=3
-            ATTEMPT=1
-            while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
-              echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to verify upgrade for control planes..."
-              VERIFICATION_FAILED=false
-              
-              for NODE_IP in $CP_IPS; do
-                echo "Checking version of control plane $NODE_IP..."
-                UPGRADE_VERSION=$(talosctl version --nodes "$NODE_IP" | sed '1,/Server/d' | grep "Tag:" | head -1 | awk '{printf $2}')
-                
-                if [ "$UPGRADE_VERSION" != "${{ steps.target-version.outputs.target_version }}" ]; then
-                  echo "Control plane $NODE_IP is still at version $UPGRADE_VERSION, not ${{ steps.target-version.outputs.target_version }}"
-                  VERIFICATION_FAILED=true
-                else
-                  echo "Control plane $NODE_IP successfully upgraded to ${{ steps.target-version.outputs.target_version }}"
-                fi
-              done
-              
-              if [ "$VERIFICATION_FAILED" = "false" ]; then
-                echo "Successfully verified upgrade for all control planes"
-                break
-              fi
-              
-              if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
-                echo "::error::Upgrade verification failed for some control planes after $MAX_ATTEMPTS attempts"
-                exit 1
-              fi
-              
-              echo "Some control planes still upgrading, retrying in 30 seconds..."
-              sleep 30
-              ATTEMPT=$((ATTEMPT + 1))
-            done
-          fi
-
-      - name: Wait for control planes to be ready
-        if: steps.process-versions.outputs.needs_update == 'true' && steps.process-versions.outputs.cp_ips_to_update != ''
-        run: |
-          echo "Waiting for control planes to be ready..."
-          sleep 60  # Wait 1 minute for control planes to stabilize
-
-      - name: Update Talos version (worker nodes)
-        if: steps.process-versions.outputs.needs_update == 'true' && steps.process-versions.outputs.worker_ips_to_update != ''
-        run: |
-          echo "Updating worker nodes to ${{ steps.target-version.outputs.target_version }}"
-          WORKER_IPS="${{ steps.process-versions.outputs.worker_ips_to_update }}"
-          
-          if [ -n "$WORKER_IPS" ]; then
-            for NODE_IP in $WORKER_IPS; do
-              echo "Updating Talos to ${{ steps.target-version.outputs.target_version }} for worker node: $NODE_IP"
-              
-              # Try up to 3 times with 30 second cooldown
-              MAX_ATTEMPTS=3
-              ATTEMPT=1
-              while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
-                echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to update worker node $NODE_IP..."
-                if talosctl upgrade --image "factory.talos.dev/installer/${{ steps.image-id.outputs.image_id }}:${{ steps.target-version.outputs.target_version }}" --nodes "$NODE_IP"; then
-                  echo "Successfully initiated upgrade for worker node $NODE_IP"
-                  break
-                fi
-                
-                if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
-                  echo "::error::Failed to update worker node $NODE_IP after $MAX_ATTEMPTS attempts"
-                  exit 1
-                fi
-                
-                echo "Update attempt failed, waiting 30 seconds before retry..."
-                sleep 30
-                ATTEMPT=$((ATTEMPT + 1))
-              done
-              
-              echo "Sleeping 30 seconds before proceeding to next node..."
-              sleep 30
-            done
-
-            echo "All worker node upgrades initiated, waiting 60 more seconds before verification..."
-            sleep 60
-
-            MAX_ATTEMPTS=3
-            ATTEMPT=1
-            while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
-              echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to verify upgrade for worker nodes..."
-              VERIFICATION_FAILED=false
-              
-              for NODE_IP in $WORKER_IPS; do
-                echo "Checking version of worker node $NODE_IP..."
-                UPGRADE_VERSION=$(talosctl version --nodes "$NODE_IP" | sed '1,/Server/d' | grep "Tag:" | head -1 | awk '{printf $2}')
-                
-                if [ "$UPGRADE_VERSION" != "${{ steps.target-version.outputs.target_version }}" ]; then
-                  echo "Worker node $NODE_IP is still at version $UPGRADE_VERSION, not ${{ steps.target-version.outputs.target_version }}"
-                  VERIFICATION_FAILED=true
-                else
-                  echo "Worker node $NODE_IP successfully upgraded to ${{ steps.target-version.outputs.target_version }}"
-                fi
-              done
-              
-              if [ "$VERIFICATION_FAILED" = "false" ]; then
-                echo "Successfully verified upgrade for all worker nodes"
-                break
-              fi
-              
-              if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
-                echo "::error::Upgrade verification failed for some worker nodes after $MAX_ATTEMPTS attempts"
-                exit 1
-              fi
-              
-              echo "Some worker nodes still upgrading, retrying in 30 seconds..."
-              sleep 30
-              ATTEMPT=$((ATTEMPT + 1))
-            done
-          fi
-
-  update-kubernetes:
-    runs-on: ubuntu-latest
-    needs: [setup, update-talos]
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Install kubectl
-        run: |
-          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-          chmod +x kubectl
-          sudo mv kubectl /usr/local/bin/
-
-      - name: Install talosctl
-        run: |
-          curl -Lo /usr/local/bin/talosctl https://github.com/siderolabs/talos/releases/latest/download/talosctl-linux-amd64
-          chmod +x /usr/local/bin/talosctl
-
-      - name: Connect Tailscale
-        uses: tailscale/github-action@v3
-        with:
-          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
-          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
-          tags: tag:k8s-deploy
-          hostname: kreat8s-k8s-update
+          hostname: bouquet2-talos-update
           use-cache: true
 
       - name: Add talosconfig
@@ -305,80 +50,20 @@ jobs:
 
       - name: Add kubeconfig
         env:
-          KUBECONFIG_DATA: ${{ secrets.KUBECONFIG }}
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
         run: |
           mkdir -p ~/.kube
-          echo "$KUBECONFIG_DATA" > ~/.kube/config
+          echo "$KUBECONFIG" > ~/.kube/config
           chmod 600 ~/.kube/config
 
-      - name: Get current Kubernetes version
-        id: current-k8s-version
+      - name: Download water
         run: |
-          MAX_ATTEMPTS=3
-          ATTEMPT=1
-          while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
-            echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to get Kubernetes version..."
-            K8S_VERSION=$(kubectl version | grep 'Server' | awk '{printf $3}' | sed 's/v//')
+          LATEST_WATER_VERSION=$(curl -s https://api.github.com/repos/bouquet2/water/releases/latest | jq -r '.tag_name' | sed 's/v//')
+          curl https://github.com/bouquet2/water/releases/download/v${LATEST_WATER_VERSION}/water_${LATEST_WATER_VERSION}_linux_amd64.tar.gz -L -o water.tar.gz
+          tar -xzf water.tar.gz
+          chmod +x water
+          ./water --version
 
-            if [ -n "$K8S_VERSION" ]; then
-              echo "Successfully got Kubernetes version"
-              echo "current_k8s_version=$K8S_VERSION" >> $GITHUB_OUTPUT
-              break
-            fi
-
-            if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
-              echo "::error::No Kubernetes version found after $MAX_ATTEMPTS attempts"
-              exit 1
-            fi
-
-            echo "No version found, retrying in 30 seconds..."
-            sleep 30
-            ATTEMPT=$((ATTEMPT + 1))
-          done
-
-      - name: Get target Kubernetes version from vars.yaml
-        id: target-k8s-version
+      - name: Run water
         run: |
-          K8S_VERSION=$(grep k8sVersion vars.yaml | cut -d' ' -f2)
-          # Remove 'v' prefix if present
-          K8S_VERSION=$(echo "$K8S_VERSION" | sed 's/^v//')
-          echo "target_k8s_version=$K8S_VERSION" >> $GITHUB_OUTPUT
-
-      - name: Upgrade Kubernetes on the cluster if version changed
-        if: steps.current-k8s-version.outputs.current_k8s_version != steps.target-k8s-version.outputs.target_k8s_version
-        run: |
-          echo "Updating Kubernetes from ${{ steps.current-k8s-version.outputs.current_k8s_version }} to ${{ steps.target-k8s-version.outputs.target_k8s_version }} on the cluster"
-          for node in ${{ needs.setup.outputs.cp_ips }}; do
-            echo "Upgrading Kubernetes on control plane IP $node..."
-            talosctl --nodes "$node" upgrade-k8s --to "${{ steps.target-k8s-version.outputs.target_k8s_version }}" > /dev/null
-          done
-
-      - name: Wait for control plane upgrade to complete
-        if: steps.current-k8s-version.outputs.current_k8s_version != steps.target-k8s-version.outputs.target_k8s_version
-        run: |
-          echo "Waiting for control plane Kubernetes upgrade to complete..."
-          sleep 120
-
-      - name: Verify control plane upgrade
-        if: steps.current-k8s-version.outputs.current_k8s_version != steps.target-k8s-version.outputs.target_k8s_version
-        run: |
-          MAX_ATTEMPTS=5
-          ATTEMPT=1
-          while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
-            echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to verify control plane Kubernetes upgrade..."
-            CURRENT_K8S_VERSION=$(kubectl version | grep 'Server' | awk '{printf $3}' | sed 's/v//')
-
-            if [ "$CURRENT_K8S_VERSION" = "${{ steps.target-k8s-version.outputs.target_k8s_version }}" ]; then
-              echo "Successfully verified control plane Kubernetes upgrade to ${{ steps.target-k8s-version.outputs.target_k8s_version }}"
-              break
-            fi
-
-            if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
-              echo "::error::Control plane Kubernetes upgrade verification failed after $MAX_ATTEMPTS attempts"
-              exit 1
-            fi
-
-            echo "Version mismatch, retrying in 60 seconds..."
-            sleep 60
-            ATTEMPT=$((ATTEMPT + 1))
-          done
+          ./water
