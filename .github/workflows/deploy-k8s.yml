@@ -33,12 +33,12 @@ jobs:
           LITELLMENV: ${{ secrets.LITELLMENV }}
           LONGHORNENV: ${{ secrets.LONGHORNENV }}
           UMAMIENV: ${{ secrets.UMAMIENV }}
-          MONIQUETENV: ${{ secrets.MONIQUETENV }}
+          SUNENV: ${{ secrets.SUNENV }}
           KOITOENV: ${{ secrets.KOITOENV }}
         run: |
           cd manifests
           echo "$CERTMANAGERENV" > core/cert-manager/.env
-          echo "$MONIQUETENV" > core/moniquet/.env
+          echo "$SUNENV" > core/sun/.env
           echo "$LITELLMENV" > apps/litellm/.env
           echo "$UMAMIENV" > apps/umami/.env
           echo "$LONGHORNENV" > core/longhorn/.env
