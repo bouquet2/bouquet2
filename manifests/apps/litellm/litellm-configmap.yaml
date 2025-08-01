@@ -10,15 +10,6 @@ data:
       # Gemini 2.5 Pro 05-06
       - model_name: gemini-2.5-pro
         litellm_params:
-          model: openai/gemini-2.5-pro-preview-05-06
-          api_base: https://api.voidai.app/v1
-          api_key: "os.environ/VOIDAI_API_KEY"
-          max_tokens: 65535
-        model_info:
-          id: gemini-2.5-pro-preview-05-06
-
-      - model_name: gemini-gemini-2.5-pro
-        litellm_params:
           model: gemini/gemini-2.5-pro-preview-05-06
         model_info:
           id: gemini-2.5-pro-preview-05-06
@@ -52,16 +43,7 @@ data:
 
 
       # Claude Sonnet 4
-
       - model_name: claude-sonnet-4
-        litellm_params:
-          model: openai/claude-sonnet-4-20250514
-          api_base: https://api.voidai.app/v1
-          api_key: "os.environ/VOIDAI_API_KEY"
-        model_info:
-          id: claude-sonnet-4
-
-      - model_name: copilot-claude-sonnet-4
         litellm_params:
           model: openai/claude-sonnet-4
           api_base: http://copilot-api:4141
@@ -69,24 +51,8 @@ data:
         model_info:
           id: claude-sonnet-4
 
-      # Claude Sonnet 4 (Thinking)
-      - model_name: claude-sonnet-4-thinking
-        litellm_params:
-          model: openai/claude-sonnet-4-20250514-thinking
-          api_base: https://api.voidai.app/v1
-          api_key: "os.environ/VOIDAI_API_KEY"
-        model_info:
-          id: claude-sonnet-4
-
       # GPT-4o
       - model_name: gpt-4o
-        litellm_params:
-          model: openai/gpt-4o
-          api_base: https://api.voidai.app/v1
-          api_key: "os.environ/VOIDAI_API_KEY"
-        model_info:
-          id: gpt-4o
-      - model_name: copilot-gpt-4o
         litellm_params:
           model: openai/gpt-4o
           api_base: http://copilot-api:4141
@@ -95,17 +61,7 @@ data:
           id: gpt-4o
 
 
-      # o4-mini
       - model_name: o4-mini
-        litellm_params:
-          model: openai/o4-mini
-          api_base: https://api.voidai.app/v1
-          api_key: "os.environ/VOIDAI_API_KEY"
-        model_info:
-          id: o4-mini
-
-
-      - model_name: copilot-o4-mini
         litellm_params:
           model: openai/o4-mini
           api_base: http://copilot-api:4141
@@ -115,14 +71,6 @@ data:
 
       # gpt-4.1
       - model_name: gpt-4.1
-        litellm_params:
-          model: openai/gpt-4.1
-          api_base: https://api.voidai.app/v1
-          api_key: "os.environ/VOIDAI_API_KEY"
-        model_info:
-          id: gpt-4.1
-
-      - model_name: copilot-gpt-4.1
         litellm_params:
           model: openai/gpt-4.1
           api_base: http://copilot-api:4141
@@ -177,14 +125,6 @@ data:
           model: openrouter/moonshotai/kimi-k2:free
           api_key: "os.environ/OPENROUTER_API_KEY"
 
-      - model_name: void-kimi-k2-instruct
-        litellm_params:
-          model: openai/kimi-k2-instruct
-          api_base: https://api.voidai.app/v1
-          api_key: "os.environ/VOIDAI_API_KEY"
-        model_info:
-          id: kimi-k2-instruct
-
       # gpt-image-1
       - model_name: gpt-image-1
         litellm_params:
@@ -200,19 +140,7 @@ data:
       cache: false
       fallbacks:
         - gemini-2.5-pro:
-          - gemini-gemini-2.5-pro
           - copilot-gemini-2.5-pro
-        - o4-mini:
-          - copilot-o4-mini
-        - gpt-4.1:
-          - copilot-gpt-4.1
-        - gpt-4o:
-          - copilot-gpt-4o
-        - claude-sonnet-4:
-          - copilot-claude-sonnet-4
-        - kimi-k2-instruct:
-          - void-kimi-k2-instruct
-
     general_settings:
       alerting: ["slack"]
       alert_types:
