@@ -26,5 +26,8 @@ cgroup:
     enabled: false
   hostRoot: /sys/fs/cgroup
 
+socketLB:
+  hostNamespaceOnly: true
+
 gatewayAPI:
   enabled: false # Enable it after a Cilium release that fixes https://github.com/cilium/cilium/issues/38420 is released
