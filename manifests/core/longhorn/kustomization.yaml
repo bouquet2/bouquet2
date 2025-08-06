@@ -3,7 +3,6 @@ resources:
   - https://raw.githubusercontent.com/longhorn/longhorn/v1.9.1/deploy/longhorn.yaml
 patches:
   - path: namespace.yaml
-  - path: control-plane-toleration.yaml
 #- networkpolicy.yaml
 #  - gateway.yaml
 generatorOptions:
