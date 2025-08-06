@@ -78,6 +78,15 @@ data:
         model_info:
           id: gpt-4.1
 
+      # gpt-oss-120b
+      - model_name: gpt-oss-120b
+        litellm_params:
+          model: openai/gpt-oss-120b
+          api_base: https://llm.chutes.ai/v1
+          api_key: "os.environ/CHUTES_API_KEY"
+        model_info:
+          id: gpt-oss-120b
+
       # text-embedding-3-large
       - model_name: text-embedding-3-large
         litellm_params:
