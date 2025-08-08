@@ -20,7 +20,7 @@ secretGenerator:
 images:
   - name: ghcr.io/berriai/litellm
     newName: ghcr.io/berriai/litellm
-    newTag: main-v1.74.9-stable
+    newTag: main-v1.74.15-stable
   - name: ghcr.io/bouquet2/copilot-api-docker
     newName: ghcr.io/bouquet2/copilot-api-docker
     newTag: v0.5.6
