@@ -1,0 +1,102 @@
+name: Kubernetes Image Vulnerability Scan
+
+on:
+  schedule:
+    - cron: '0 3 * * *' # Daily at 03:00 UTC
+  workflow_dispatch:
+    inputs:
+      namespaces:
+        description: 'Comma-separated list of namespaces to scan (empty = entire cluster)'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  trivy-k8s-scan:
+    name: Scan running Kubernetes images and upload SARIF
+    runs-on: ubuntu-latest
+    env:
+      NAMESPACES_INPUT: ${{ github.event.inputs.namespaces }}
+    steps:
+      - name: Connect Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:k8s-deploy
+          hostname: kreat8s-scan
+          use-cache: true
+
+      - name: Install kubectl
+        uses: Azure/setup-kubectl@v4.0.1
+
+      - name: Configure kubeconfig from secret
+        env:
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
+        run: |
+          mkdir -p "$HOME/.kube"
+          echo "$KUBECONFIG" > "$HOME/.kube/config"
+          chmod 600 "$HOME/.kube/config"
+
+      - name: Verify cluster access
+        run: |
+          kubectl version --short
+          kubectl get nodes
+
+      - name: Install Trivy
+        uses: aquasecurity/setup-trivy@v0
+
+      - name: Compute Trivy target scope
+        id: scope
+        shell: bash
+        run: |
+          if [ -n "${NAMESPACES_INPUT}" ]; then
+            IFS=',' read -ra NS_ARR <<< "${NAMESPACES_INPUT}"
+            ns_flags=()
+            for ns in "${NS_ARR[@]}"; do
+              ns_trimmed=$(echo "$ns" | xargs)
+              [ -n "$ns_trimmed" ] && ns_flags+=("--namespace" "$ns_trimmed")
+            done
+            printf 'target=namespaces\n' >> "$GITHUB_OUTPUT"
+            printf 'ns_flags=%s\n' "${ns_flags[*]}" >> "$GITHUB_OUTPUT"
+          else
+            printf 'target=cluster\n' >> "$GITHUB_OUTPUT"
+            printf 'ns_flags=\n' >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Scan Kubernetes for image vulnerabilities (CRITICAL,HIGH)
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'Updating Trivy DB (this may take a moment)...'
+          trivy --download-db-only || true
+
+          if [ "${{ steps.scope.outputs.target }}" = "cluster" ]; then
+            echo 'Scanning entire cluster...'
+            trivy k8s cluster \
+              --format sarif \
+              --output trivy-k8s.sarif \
+              --severity CRITICAL,HIGH \
+              --ignore-unfixed \
+              --timeout 15m
+          else
+            echo 'Scanning specified namespaces...'
+            # shellcheck disable=SC2086
+            trivy k8s ${{ steps.scope.outputs.ns_flags }} \
+              --format sarif \
+              --output trivy-k8s.sarif \
+              --severity CRITICAL,HIGH \
+              --ignore-unfixed \
+              --timeout 15m
+          fi
+
+          echo 'Scan complete; SARIF saved to trivy-k8s.sarif'
+
+      - name: Upload SARIF to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-k8s.sarif
+          category: k8s-image-scan
