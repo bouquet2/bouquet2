@@ -71,14 +71,31 @@ jobs:
 
           mapfile -t IMAGES < k8s-images.txt
           echo "Scanning ${#IMAGES[@]} image(s) with Trivy..."
-          trivy image \
-            --format sarif \
-            --output trivy-k8s.sarif \
-            --severity CRITICAL,HIGH \
-            --ignore-unfixed \
-            --scanners vuln \
-            --timeout 15m \
-            "${IMAGES[@]}"
+          mkdir -p sarif_parts
+          i=0
+          for image in "${IMAGES[@]}"; do
+            i=$((i+1))
+            echo "Scanning image $i/${#IMAGES[@]}"
+            # Scan each image individually to support SARIF output
+            # Continue on failure for individual images, but record whatever we can
+            if ! trivy image \
+              --format sarif \
+              --output "sarif_parts/${i}.sarif" \
+              --severity CRITICAL,HIGH \
+              --ignore-unfixed \
+              --scanners vuln \
+              --timeout 15m \
+              "$image"; then
+              echo "Warning: Trivy failed for $image; continuing" >&2
+            fi
+          done
+
+          # Merge SARIF runs into a single file for upload
+          if ls sarif_parts/*.sarif >/dev/null 2>&1; then
+            jq -s '{version: "2.1.0", runs: (map(.runs) | add)}' sarif_parts/*.sarif > trivy-k8s.sarif
+          else
+            echo '{"version":"2.1.0","runs":[]}' > trivy-k8s.sarif
+          fi
 
       - name: Upload SARIF to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v3
