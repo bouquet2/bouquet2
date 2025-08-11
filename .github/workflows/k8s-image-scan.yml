@@ -90,9 +90,19 @@ jobs:
             fi
           done
 
-          # Merge SARIF runs into a single file for upload
+          # Merge SARIF into a single run for upload (CodeQL requires one run per category)
           if ls sarif_parts/*.sarif >/dev/null 2>&1; then
-            jq -s '{version: "2.1.0", runs: (map(.runs) | add)}' sarif_parts/*.sarif > trivy-k8s.sarif
+            jq -s '
+              def run: .runs[0];
+              {version: "2.1.0", runs: [
+                ( (.[0]|run) as $base
+                  | $base + {
+                      results: (map(run.results // []) | add),
+                      artifacts: (map(run.artifacts // []) | add)
+                    }
+                )
+              ]}
+            ' sarif_parts/*.sarif > trivy-k8s.sarif
           else
             echo '{"version":"2.1.0","runs":[]}' > trivy-k8s.sarif
           fi
