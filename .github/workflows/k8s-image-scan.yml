@@ -4,11 +4,7 @@ on:
   schedule:
     - cron: '0 3 * * *' # Daily at 03:00 UTC
   workflow_dispatch:
-    inputs:
-      namespaces:
-        description: 'Comma-separated list of namespaces to scan (empty = entire cluster)'
-        required: false
-        default: ''
+    {}
 
 permissions:
   contents: read
@@ -16,10 +12,8 @@ permissions:
 
 jobs:
   trivy-k8s-scan:
-    name: Scan running Kubernetes images and upload SARIF
+    name: Scan running Kubernetes images (JSON)
     runs-on: ubuntu-latest
-    env:
-      NAMESPACES_INPUT: ${{ github.event.inputs.namespaces }}
     steps:
       - name: Connect Tailscale
         uses: tailscale/github-action@v3
@@ -54,24 +48,6 @@ jobs:
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin
           trivy --version
 
-      - name: Compute Trivy target scope
-        id: scope
-        shell: bash
-        run: |
-          if [ -n "${NAMESPACES_INPUT}" ]; then
-            IFS=',' read -ra NS_ARR <<< "${NAMESPACES_INPUT}"
-            ns_flags=()
-            for ns in "${NS_ARR[@]}"; do
-              ns_trimmed=$(echo "$ns" | xargs)
-              [ -n "$ns_trimmed" ] && ns_flags+=("--namespace" "$ns_trimmed")
-            done
-            printf 'target=namespaces\n' >> "$GITHUB_OUTPUT"
-            printf 'ns_flags=%s\n' "${ns_flags[*]}" >> "$GITHUB_OUTPUT"
-          else
-            printf 'target=cluster\n' >> "$GITHUB_OUTPUT"
-            printf 'ns_flags=\n' >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Scan Kubernetes for image vulnerabilities (CRITICAL,HIGH)
         shell: bash
         run: |
@@ -79,26 +55,30 @@ jobs:
           echo 'Updating Trivy DB (this may take a moment)...'
           trivy --download-db-only || true
 
-          if [ "${{ steps.scope.outputs.target }}" = "cluster" ]; then
-            echo 'Scanning entire cluster...'
-            trivy k8s cluster \
-              --format sarif \
-              --output trivy-k8s.sarif \
-              --severity CRITICAL,HIGH \
-              --ignore-unfixed \
-              --timeout 15m
-          else
-            echo 'Scanning specified namespaces...'
-            # shellcheck disable=SC2086
-            trivy k8s ${{ steps.scope.outputs.ns_flags }} \
-              --format sarif \
-              --output trivy-k8s.sarif \
-              --severity CRITICAL,HIGH \
-              --ignore-unfixed \
-              --timeout 15m
-          fi
+          echo 'Scanning entire cluster...'
+          trivy k8s \
+            --format json \
+            --report summary \
+            --output trivy-k8s.json \
+            --severity CRITICAL,HIGH \
+            --ignore-unfixed \
+            --scanners vuln \
+            --disable-node-collector \
+            --timeout 15m
 
-          echo 'Scan complete; SARIF saved to trivy-k8s.sarif'
+          echo 'Scan complete; JSON saved to trivy-k8s.json'
+
+      - name: Upload Trivy JSON report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-k8s-json
+          path: trivy-k8s.json
+
+      - name: Convert Trivy JSON to SARIF
+        shell: bash
+        run: |
+          set -euo pipefail
+          trivy convert --format sarif -o trivy-k8s.sarif trivy-k8s.json
 
       - name: Upload SARIF to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v3
