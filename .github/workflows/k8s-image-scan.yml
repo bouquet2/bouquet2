@@ -47,7 +47,7 @@ jobs:
           kubectl get nodes
 
       - name: Install Trivy
-        uses: aquasecurity/setup-trivy@v0
+        uses: aquasecurity/setup-trivy@v0.2.3
 
       - name: Compute Trivy target scope
         id: scope
