@@ -47,7 +47,12 @@ jobs:
           kubectl get nodes
 
       - name: Install Trivy
-        uses: aquasecurity/setup-trivy@v0.2.3
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Installing Trivy via official install script..."
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin
+          trivy --version
 
       - name: Compute Trivy target scope
         id: scope
