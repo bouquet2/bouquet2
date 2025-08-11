@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   trivy-k8s-scan:
-    name: Scan running Kubernetes images (JSON)
+    name: Scan running Kubernetes images (SARIF)
     runs-on: ubuntu-latest
     steps:
       - name: Connect Tailscale
@@ -48,37 +48,37 @@ jobs:
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin
           trivy --version
 
-      - name: Scan Kubernetes for image vulnerabilities (CRITICAL,HIGH)
+      - name: Collect running images from Kubernetes
         shell: bash
         run: |
           set -euo pipefail
-          echo 'Updating Trivy DB (this may take a moment)...'
-          trivy --download-db-only || true
+          # Collect images from both initContainers and containers, dedupe, and store
+          kubectl get pods --all-namespaces -o jsonpath="{range .items[*]}{.spec.initContainers[*].image}{' '}{.spec.containers[*].image}{' '}{end}" \
+            | tr -s ' ' '\n' \
+            | sort -u \
+            | sed '/^$/d' \
+            > k8s-images.txt
 
-          echo 'Scanning entire cluster...'
-          trivy k8s \
-            --format json \
-            --report summary \
-            --output trivy-k8s.json \
+      - name: Scan images with Trivy (CRITICAL,HIGH) -> SARIF
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -s k8s-images.txt ]; then
+            echo 'No images found to scan. Creating empty SARIF.'
+            echo '{"version":"2.1.0","runs":[]}' > trivy-k8s.sarif
+            exit 0
+          fi
+
+          mapfile -t IMAGES < k8s-images.txt
+          echo "Scanning ${#IMAGES[@]} image(s) with Trivy..."
+          trivy image \
+            --format sarif \
+            --output trivy-k8s.sarif \
             --severity CRITICAL,HIGH \
             --ignore-unfixed \
             --scanners vuln \
-            --disable-node-collector \
-            --timeout 15m
-
-          echo 'Scan complete; JSON saved to trivy-k8s.json'
-
-      - name: Upload Trivy JSON report
-        uses: actions/upload-artifact@v4
-        with:
-          name: trivy-k8s-json
-          path: trivy-k8s.json
-
-      - name: Convert Trivy JSON to SARIF
-        shell: bash
-        run: |
-          set -euo pipefail
-          trivy convert --format sarif -o trivy-k8s.sarif trivy-k8s.json
+            --timeout 15m \
+            "${IMAGES[@]}"
 
       - name: Upload SARIF to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v3
