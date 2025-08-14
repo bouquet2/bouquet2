@@ -61,3 +61,10 @@ jobs:
     uses: ./.github/workflows/deploy-k8s.yml
     secrets: inherit
     if: needs.check-deployment.outputs.should_deploy == 'true'
+
+  run-updater:
+    name: Run Updater
+    needs: deploy-k8s
+    uses: ./.github/workflows/updater.yaml
+    secrets: inherit
+    if: github.ref == 'refs/heads/main'

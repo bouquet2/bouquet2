@@ -5,13 +5,8 @@ permissions:
   id-token: write
 
 on:
-  push:
-    paths:
-      - 'water.yaml'
-      - 'water.yml'
-    branches:
-      - main
   workflow_dispatch:
+  workflow_call:
 
 jobs:
   water:
