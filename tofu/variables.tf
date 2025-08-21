@@ -50,7 +50,7 @@ variable "firewall_rules" {
     description = string
     protocol    = string
     direction   = string
-    port        = number
+    port        = string
     cloud_type  = string
     source_ips  = list(string)
   }))

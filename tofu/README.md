@@ -32,6 +32,7 @@ This directory contains Terraform configurations for deploying and managing bouq
 - HTTPS (TCP/UDP): Port 443
 - Tailscale: Port 41641/UDP
 - KubeSpan: Port 51820/UDP
+- NodePort: Ports 30000-32767 (TCP/UDP)
 
 ## Maintenance
 

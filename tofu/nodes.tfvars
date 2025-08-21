@@ -105,5 +105,29 @@ firewall_rules = {
       "0.0.0.0/0",
       "::/0"
     ]
+  },
+  5 = {
+    name        = "NodePort (TCP)",
+    description = "Allow Kubernetes NodePort TCP range",
+    protocol    = "tcp",
+    direction   = "in",
+    port        = "30000-32767",
+    cloud_type  = "both",
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  },
+  6 = {
+    name        = "NodePort (UDP)",
+    description = "Allow Kubernetes NodePort UDP range",
+    protocol    = "udp",
+    direction   = "in",
+    port        = "30000-32767",
+    cloud_type  = "both",
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
   }
 }
