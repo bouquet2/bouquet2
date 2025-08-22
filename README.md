@@ -90,53 +90,36 @@ The Kubernetes manifests are organized in the `manifests/` directory and contain
 ```mermaid
 graph LR
     classDef dashed stroke-dasharray: 5 5, stroke-width:1px
-    %% User Context:
-    %% 1. [2025-04-10]. User knows Ansible
-    %% - All nodes run Talos Linux
-    %% - Will be multi-cloud
-    %% - Will be expandable
-    %% - hopefully be reproducible (fingers crossed)
-    %% - velero might not happen depends on my wallet idk
 
     subgraph Core [core]
         direction TB
         core_rose["rose (control plane)"]
         core_talos_api_up["Talos API (TCP 50000*)"]:::dashed
-        core_tailscale["Tailscale (siderolabs/tailscale) and KubeSpan"]
+        core_cilium_wireguard["Cilium WireGuard (internal mesh) (UDP 51871)"]
         core_talos_api_down["Talos API (TCP 50000*)"]:::dashed
         core_iris["iris (worker)"]
         core_lily["lily (worker)"]
-        core_iris --> core_talos_api_down
-        core_lily --> core_talos_api_down
-        core_talos_api_down --> core_tailscale
-        core_tailscale --> core_talos_api_up
-        core_talos_api_up --> core_rose
+        core_iris <--> core_talos_api_down
+        core_lily <--> core_talos_api_down
+        core_talos_api_down <--> core_cilium_wireguard
+        core_cilium_wireguard <--> core_talos_api_up
+        core_talos_api_up <--> core_rose
+    end
+
+    subgraph Access [access]
+        direction TB
+        ext_tailscale["Tailscale (siderolabs/tailscale)<br>External access and fallback (UDP 41641)"]
     end
 
     subgraph Storage [storage]
         direction TB
         storage_longhorn{"Longhorn"}:::dashed
         %% Kept Longhorn as per original chart text
-        storage_s3["S3 (Oracle<br>MinIO Instance)"]
+        storage_s3["Backups (S3) (Oracle<br>MinIO Instance)"]
         storage_longhorn -.-> storage_s3
-    end
-
-
-    subgraph InternalNetworking [Internal Networking Flow]
-        direction TB
-        int_net_node[Node]
-        int_net_coredns[CoreDNS]
-        int_net_cilium["Cilium (Both as CNI<br>and as kube-proxy<br>replacement)"]
-        int_net_pod[Pod]
-        %% Use dashed lines for first two hops as in the source image
-        int_net_node -.-> int_net_coredns
-        int_net_coredns -.-> int_net_cilium
-        %% Use solid line for the last hop as in the source image
-        int_net_cilium --> int_net_pod
     end
 
     %% Connections between subgraphs
     Storage <--> Core
-    %% Show that Internal Networking runs *within* the Core nodes and relates to Pods
-    Core -- "runs components like" --> InternalNetworking
+    Access <--> Core
 ```
