@@ -1,0 +1,13 @@
+---
+machine:
+  network:
+    interfaces:
+      - interface: tailscale0
+      - interface: cilium_wg0
+  kubelet:
+    nodeIP:
+      validSubnets:
+        - 10.0.0.0/8
+        - '!10.0.0.3/32'
+        - fdc7::/16
+        - 100.64.0.0/10
