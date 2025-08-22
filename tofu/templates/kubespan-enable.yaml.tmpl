@@ -1,10 +1,10 @@
 machine:
     network:
         kubespan:
-            enabled: true # Enable the KubeSpan feature.
+            enabled: false # Enable the KubeSpan feature.
 cluster:
     discovery:
-        enabled: true
+        enabled: false
         # Configure registries used for cluster member discovery.
         registries:
             kubernetes: # Kubernetes registry is problematic with KubeSpan, if the control plane endpoint is routeable itself via KubeSpan.

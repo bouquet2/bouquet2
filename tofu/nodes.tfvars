@@ -95,11 +95,11 @@ firewall_rules = {
     ]
   },
   4 = {
-    name        = "KubeSpan (UDP)",
-    description = "Allow direct KubeSpan traffic",
+    name        = "Cilium WireGuard (UDP)",
+    description = "Allow direct Cilium WireGuard traffic",
     protocol    = "udp",
     direction   = "in",
-    port        = "51820",
+    port        = "51871",
     cloud_type  = "both",
     source_ips = [
       "0.0.0.0/0",

@@ -11,6 +11,9 @@ bpf:
   masquerade: true
 ipMasqAgent:
   enabled: true
+encryption:
+  enabled: true
+  type: wireguard
 hubble:
   relay:
     enabled: true
