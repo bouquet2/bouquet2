@@ -8,13 +8,13 @@ kubeProxyReplacement: true
 k8sServiceHost: localhost
 k8sServicePort: 7445
 bpf:
-  masquerade: false
+  masquerade: true
 ipMasqAgent:
-  enabled: false
+  enabled: true
 encryption:
   enabled: true
   type: wireguard
-  nodeEncryption: false
+  nodeEncryption: true
 hubble:
   relay:
     enabled: true
