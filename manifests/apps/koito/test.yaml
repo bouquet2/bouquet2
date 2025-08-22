@@ -6,9 +6,9 @@ metadata:
 spec:
   gatewayClassName: cilium # This MUST match the GatewayClass name
   listeners:
-  - name: http
-    protocol: HTTP
-    port: 80
-    allowedRoutes:
-      namespaces:
-        from: All
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: All
