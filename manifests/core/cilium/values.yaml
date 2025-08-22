@@ -11,13 +11,20 @@ bpf:
   masquerade: true
 ipMasqAgent:
   enabled: true
+  config:
+    # Pods can't reach Tailscale IPs if we don't masquerade them
+    # Which is why this whole section is here
+    nonMasqueradeCIDRs:
+      - 10.0.0.0/8
+      - 172.16.0.0/12
+      - 192.168.0.0/16
 encryption:
   enabled: true
   type: wireguard
   nodeEncryption: true
 hubble:
   relay:
-    enabled: true
+    enabled: false
 securityContext:
   capabilities:
     ciliumAgent:
@@ -45,7 +52,7 @@ socketLB:
   hostNamespaceOnly: true
 
 # Specify which device(s) run the eBPF datapath. Must be a string.
-devices: "eth0"
+devices: "eth0,tailscale0"
 
 gatewayAPI:
   enabled: false # Enable it after a Cilium release that fixes https://github.com/cilium/cilium/issues/38420 is released
