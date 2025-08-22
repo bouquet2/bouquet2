@@ -23,7 +23,8 @@ data "talos_machine_configuration" "controlplane" {
     templatefile("${path.module}/templates/disable-cni.yaml.tmpl", {}),
     templatefile("${path.module}/templates/cilium.yaml.tmpl", {}),
     templatefile("${path.module}/templates/kubespan-enable.yaml.tmpl", {}),
-    templatefile("${path.module}/templates/dualstack.yaml.tmpl", {})
+    templatefile("${path.module}/templates/dualstack.yaml.tmpl", {}),
+    templatefile("${path.module}/templates/hostdns.yaml.tmpl", {})
   ]
 }
 
@@ -67,7 +68,8 @@ data "talos_machine_configuration" "worker" {
     templatefile("${path.module}/templates/disable-cni.yaml.tmpl", {}),
     templatefile("${path.module}/templates/cilium.yaml.tmpl", {}),
     templatefile("${path.module}/templates/kubespan-enable.yaml.tmpl", {}),
-    templatefile("${path.module}/templates/dualstack.yaml.tmpl", {})
+    templatefile("${path.module}/templates/dualstack.yaml.tmpl", {}),
+    templatefile("${path.module}/templates/hostdns.yaml.tmpl", {})
   ]
 
   depends_on = [
