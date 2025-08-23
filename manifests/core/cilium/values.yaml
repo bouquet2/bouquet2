@@ -49,10 +49,10 @@ cgroup:
   hostRoot: /sys/fs/cgroup
 
 socketLB:
-  hostNamespaceOnly: true
+  hostNamespaceOnly: false
 
 # Specify which device(s) run the eBPF datapath. Must be a string.
-devices: "eth0,tailscale0"
+devices: "eth0"
 
 gatewayAPI:
   enabled: false # Enable it after a Cilium release that fixes https://github.com/cilium/cilium/issues/38420 is released
