@@ -57,4 +57,4 @@ socketLB:
 devices: "eth0"
 
 gatewayAPI:
-  enabled: false # Enable it after a Cilium release that fixes https://github.com/cilium/cilium/issues/38420 is released
+  enabled: true
