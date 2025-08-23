@@ -12,13 +12,6 @@ bpf:
   lbExternalClusterIP: true
 ipMasqAgent:
   enabled: true
-  config:
-    # Pods can't reach Tailscale IPs if we don't masquerade them
-    # Which is why this whole section is here
-    nonMasqueradeCIDRs:
-      - 10.0.0.0/8
-      - 172.16.0.0/12
-      - 192.168.0.0/16
 encryption:
   enabled: true
   type: wireguard
