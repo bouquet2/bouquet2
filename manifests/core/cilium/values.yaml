@@ -9,6 +9,7 @@ k8sServiceHost: localhost
 k8sServicePort: 7445
 bpf:
   masquerade: true
+  lbExternalClusterIP: true
 ipMasqAgent:
   enabled: true
   config:
@@ -49,6 +50,7 @@ cgroup:
   hostRoot: /sys/fs/cgroup
 
 socketLB:
+  enabled: true
   hostNamespaceOnly: false
 
 # Specify which device(s) run the eBPF datapath. Must be a string.
