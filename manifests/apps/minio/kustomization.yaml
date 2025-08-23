@@ -1,6 +1,0 @@
-resources:
-  - namespace.yaml
-  - service.yaml
-  - endpoints.yaml
-  - httproute-bin.yaml
-  - httproute-s3.yaml

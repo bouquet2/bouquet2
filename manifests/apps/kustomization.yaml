@@ -1,7 +1,6 @@
 resources:
   - litellm/
   - jellyfin/
-  - minio/
   - n8n/
   - umami/
   - koito/
