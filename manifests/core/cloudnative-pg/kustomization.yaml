@@ -12,6 +12,7 @@ helmCharts:
     version: 0.26.0
     namespace: cnpg-system
     valuesInline:
+      replicaCount: 2
       webhook:
         mutating:
           failurePolicy: Ignore
