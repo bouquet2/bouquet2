@@ -1,0 +1,147 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mayastor
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mayastor-loop-setup
+  namespace: mayastor
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: mayastor-loop-setup
+rules:
+  - apiGroups: ["openebs.io"]
+    resources: ["diskpools"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: mayastor-loop-setup
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: mayastor-loop-setup
+subjects:
+  - kind: ServiceAccount
+    name: mayastor-loop-setup
+    namespace: mayastor
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: mayastor-loopback
+  namespace: mayastor
+spec:
+  selector:
+    matchLabels:
+      app: mayastor-loopback
+  template:
+    metadata:
+      labels:
+        app: mayastor-loopback
+    spec:
+      serviceAccountName: mayastor-loop-setup
+      hostPID: true
+      tolerations:
+        - key: "node-role.kubernetes.io/control-plane"
+          operator: "Exists"
+          effect: "NoSchedule"
+        - key: "node-role.kubernetes.io/master"
+          operator: "Exists"
+          effect: "NoSchedule"
+      containers:
+        - name: loop-setup
+          image: alpine:3.20
+          securityContext:
+            privileged: true
+          env:
+            - name: POOL_SIZE
+              value: "100G"
+            - name: LOOP_DEVICE
+              value: "/dev/loop10"
+            - name: POOL_IMG
+              value: "/var/local/mayastor/disk.img"
+          volumeMounts:
+            - name: host-dev
+              mountPath: /dev
+            - name: host-mayastor
+              mountPath: /var/local/mayastor
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -eux
+              apk add --no-cache util-linux
+              mkdir -p /var/local/mayastor
+              if [ ! -f "$POOL_IMG" ]; then
+                # Create sparse file quickly
+                truncate -s "$POOL_SIZE" "$POOL_IMG"
+              fi
+              # Attach to fixed loop device for a stable path
+              if losetup -a | grep -q "$POOL_IMG"; then
+                echo "Loop already attached"
+              else
+                # Detach if LOOP_DEVICE is already attached to something else
+                if losetup "$LOOP_DEVICE" >/dev/null 2>&1; then
+                  losetup -d "$LOOP_DEVICE" || true
+                fi
+                losetup "$LOOP_DEVICE" "$POOL_IMG"
+              fi
+              # Keep container alive just long enough for second container to run
+              sleep 2
+        - name: create-diskpool
+          image: bitnami/kubectl:1.29
+          securityContext:
+            runAsUser: 0
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: LOOP_DEVICE
+              value: "/dev/loop10"
+          volumeMounts:
+            - name: host-dev
+              mountPath: /dev
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -eux
+              # Wait until the DiskPool CRD is installed by the Mayastor chart
+              until kubectl get crd diskpools.openebs.io >/dev/null 2>&1; do
+                echo "Waiting for CRD diskpools.openebs.io to become available..."
+                sleep 5
+              done
+              # Create/patch DiskPool for this node
+              cat <<EOF | kubectl apply -f -
+              apiVersion: openebs.io/v1alpha1
+              kind: DiskPool
+              metadata:
+                name: pool-${NODE_NAME}
+              spec:
+                node: ${NODE_NAME}
+                disks:
+                  - ${LOOP_DEVICE}
+              EOF
+              # sleep to keep pod from restarting too quickly
+              sleep 5
+      volumes:
+        - name: host-dev
+          hostPath:
+            path: /dev
+            type: Directory
+        - name: host-mayastor
+          hostPath:
+            path: /var/local/mayastor
+            type: DirectoryOrCreate
+      terminationGracePeriodSeconds: 5
+      restartPolicy: Always
+  updateStrategy:
+    type: RollingUpdate
+

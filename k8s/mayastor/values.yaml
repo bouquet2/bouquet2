@@ -1,0 +1,37 @@
+namespace: mayastor
+
+# Tolerations to allow scheduling on control-plane nodes
+tolerations:
+  - key: "node-role.kubernetes.io/control-plane"
+    operator: "Exists"
+    effect: "NoSchedule"
+  - key: "node-role.kubernetes.io/master"
+    operator: "Exists"
+    effect: "NoSchedule"
+
+# io-engine DaemonSet specific (chart-key names may vary by version)
+io_engine:
+  tolerations:
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
+    - key: "node-role.kubernetes.io/master"
+      operator: "Exists"
+      effect: "NoSchedule"
+  nodeSelector: {}
+
+# CSI node plugin tolerations as fallback
+csi:
+  node:
+    tolerations:
+      - key: "node-role.kubernetes.io/control-plane"
+        operator: "Exists"
+        effect: "NoSchedule"
+      - key: "node-role.kubernetes.io/master"
+        operator: "Exists"
+        effect: "NoSchedule"
+
+# Disable any auto-pool creation if chart exposes it; we create DiskPools via DS
+diskPools:
+  create: false
+

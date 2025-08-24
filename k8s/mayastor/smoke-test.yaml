@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mayastor-test
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: test-pvc
+  namespace: mayastor-test
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: mayastor-repl3
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fio
+  namespace: mayastor-test
+spec:
+  tolerations:
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
+    - key: "node-role.kubernetes.io/master"
+      operator: "Exists"
+      effect: "NoSchedule"
+  containers:
+    - name: app
+      image: alpine:3.20
+      command: ["/bin/sh", "-c", "set -eux; dd if=/dev/urandom of=/data/test.bin bs=1M count=64; ls -l /data; sleep 3600"]
+      volumeMounts:
+        - mountPath: /data
+          name: data
+  volumes:
+    - name: data
+      persistentVolumeClaim:
+        claimName: test-pvc
+
