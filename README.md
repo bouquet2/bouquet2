@@ -1,3 +1,7 @@
+## ARCHIVED UNTIL FURTHER NOTICE
+As I've left my job, I've decided to stop spending money on cloud providers for now.
+I think I've learnt enough from this project to be on my own.
+
 <img src="https://raw.githubusercontent.com/xelab04/ServiceLogos/refs/heads/main/Kubernetes/Kubernetes%20V3.png"  height="100">
 
 ## bouquet2
